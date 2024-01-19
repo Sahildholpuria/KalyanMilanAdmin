@@ -68,6 +68,9 @@ export const CustomersTable = (props) => {
                   />
                 </TableCell> */}
                 <TableCell>
+                  #
+                </TableCell>
+                <TableCell>
                   Name
                 </TableCell>
                 <TableCell>
@@ -91,7 +94,7 @@ export const CustomersTable = (props) => {
                     No user data
                   </TableCell>
                 </TableRow>
-              ) : (paginatedItems?.map((customer) => {
+              ) : (paginatedItems?.map((customer, index) => {
                 // const isSelected = selected.includes(customer.id);
                 const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
 
@@ -114,6 +117,9 @@ export const CustomersTable = (props) => {
                         }}
                       />
                     </TableCell> */}
+                    <TableCell>
+                      {index + 1 + page * rowsPerPage}
+                    </TableCell>
                     <TableCell>
                       <Stack
                         alignItems="center"

@@ -68,19 +68,19 @@ export const GamesTable = (props) => {
                   />
                 </TableCell> */}
                                 <TableCell>
-                                    Name
+                                    #
                                 </TableCell>
                                 <TableCell>
-                                    Email
+                                    Game Name
                                 </TableCell>
                                 <TableCell>
-                                    Date
+                                    Open Timing
                                 </TableCell>
                                 <TableCell>
-                                    Phone
+                                    Close Timing
                                 </TableCell>
                                 <TableCell>
-                                    Coins
+                                    Active
                                 </TableCell>
                             </TableRow>
                         </TableHead>
@@ -91,7 +91,7 @@ export const GamesTable = (props) => {
                                         No user data
                                     </TableCell>
                                 </TableRow>
-                            ) : (paginatedItems?.map((customer) => {
+                            ) : (paginatedItems?.map((customer, index) => {
                                 // const isSelected = selected.includes(customer.id);
                                 const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
 
@@ -115,6 +115,9 @@ export const GamesTable = (props) => {
                       />
                     </TableCell> */}
                                         <TableCell>
+                                            {index + 1 + page * rowsPerPage}
+                                        </TableCell>
+                                        <TableCell>
                                             <Stack
                                                 alignItems="center"
                                                 direction="row"
@@ -137,9 +140,9 @@ export const GamesTable = (props) => {
                                         <TableCell>
                                             {customer.phone}
                                         </TableCell>
-                                        <TableCell>
+                                        {/* <TableCell>
                                             {createdAt}
-                                        </TableCell>
+                                        </TableCell> */}
                                     </TableRow>
                                 );
                             }))}
