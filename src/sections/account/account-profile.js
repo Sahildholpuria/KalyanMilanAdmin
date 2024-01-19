@@ -12,6 +12,9 @@ import {
 const user = {
   avatar: '/assets/avatars/avatar-anika-visser.png',
   city: 'Los Angeles',
+  email: 'demo@devias.io',
+  date: 'Thu Jan 11 2024',
+  coins: 1000,
   country: 'USA',
   jobTitle: 'Senior Developer',
   name: 'Anika Visser',
@@ -46,24 +49,30 @@ export const AccountProfile = () => (
           color="text.secondary"
           variant="body2"
         >
-          {user.city} {user.country}
+          {user.email}
         </Typography>
         <Typography
           color="text.secondary"
           variant="body2"
         >
-          {user.timezone}
+          {user.date}
+        </Typography>
+        <Typography
+          color="text.primary"
+          variant="body2"
+        >
+          Available Balance : {user.coins}
         </Typography>
       </Box>
     </CardContent>
     <Divider />
-    <CardActions>
+    {/* <CardActions>
       <Button
         fullWidth
         variant="text"
       >
         Upload picture
       </Button>
-    </CardActions>
+    </CardActions> */}
   </Card>
 );

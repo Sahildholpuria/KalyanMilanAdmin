@@ -32,12 +32,14 @@ const states = [
 
 export const AccountProfileDetails = () => {
   const [values, setValues] = useState({
-    firstName: 'Anika',
-    lastName: 'Visser',
+    name: 'Anika',
+    // lastName: 'Visser',
+    password: 'demo@123',
     email: 'demo@devias.io',
-    phone: '',
-    state: 'los-angeles',
-    country: 'USA'
+    coins: 1000,
+    phone: '8209555243',
+    // state: 'los-angeles',
+    // country: 'USA'
   });
 
   const handleChange = useCallback(
@@ -56,6 +58,7 @@ export const AccountProfileDetails = () => {
     },
     []
   );
+  console.log(values, 'values')
 
   return (
     <form
@@ -80,12 +83,12 @@ export const AccountProfileDetails = () => {
               >
                 <TextField
                   fullWidth
-                  helperText="Please specify the first name"
-                  label="First name"
-                  name="firstName"
+                  // helperText="Please specify the first name"
+                  label="Name"
+                  name="name"
                   onChange={handleChange}
                   required
-                  value={values.firstName}
+                  value={values.name}
                 />
               </Grid>
               <Grid
@@ -94,11 +97,11 @@ export const AccountProfileDetails = () => {
               >
                 <TextField
                   fullWidth
-                  label="Last name"
-                  name="lastName"
+                  label="Password"
+                  name="password"
                   onChange={handleChange}
-                  required
-                  value={values.lastName}
+                  // required
+                  value={values.password}
                 />
               </Grid>
               <Grid
@@ -124,6 +127,7 @@ export const AccountProfileDetails = () => {
                   name="phone"
                   onChange={handleChange}
                   type="number"
+                  required
                   value={values.phone}
                 />
               </Grid>
@@ -133,14 +137,15 @@ export const AccountProfileDetails = () => {
               >
                 <TextField
                   fullWidth
-                  label="Country"
-                  name="country"
+                  label="Coins"
+                  name="coins"
+                  type='number'
                   onChange={handleChange}
                   required
-                  value={values.country}
+                  value={values.coins}
                 />
               </Grid>
-              <Grid
+              {/* <Grid
                 xs={12}
                 md={6}
               >
@@ -163,13 +168,13 @@ export const AccountProfileDetails = () => {
                     </option>
                   ))}
                 </TextField>
-              </Grid>
+              </Grid> */}
             </Grid>
           </Box>
         </CardContent>
         <Divider />
         <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button variant="contained">
+          <Button variant="contained" onClick={handleSubmit}>
             Save details
           </Button>
         </CardActions>

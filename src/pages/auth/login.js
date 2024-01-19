@@ -75,7 +75,7 @@ const Login = () => {
 
     // Clean up the effect when the component unmounts
     return () => {
-      document.title = 'Default Title'; // Set a default title if needed
+      document.title = 'KalyanMatka Official'; // Set a default title if needed
     };
   }, []);
   // Check if the user is already authenticated, and redirect to home page

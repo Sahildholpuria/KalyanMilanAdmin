@@ -7,8 +7,9 @@ import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import ArrowUturnLeftIcon from '@heroicons/react/24/solid/ArrowUturnLeftIcon';
 import { AccountBankDetails } from '../sections/account/account-bank-details';
 import { useParams } from 'react-router-dom';
+import { GameProfileDetails } from '../sections/companies/game-profile-details';
 
-const User = () => {
+const Game = () => {
     const params = useParams();
     console.log(params, 'params')
     return (
@@ -34,7 +35,7 @@ const User = () => {
                         >
                             <Stack spacing={1}>
                                 <Typography variant="h4">
-                                    User
+                                    Game
                                 </Typography>
                             </Stack>
                             <div>
@@ -56,33 +57,19 @@ const User = () => {
                                 container
                                 spacing={3}
                             >
-                                <Grid
+                                {/* <Grid
                                     xs={12}
                                     md={6}
                                     lg={4}
                                 >
                                     <AccountProfile />
-                                </Grid>
-                                <Grid
-                                    xs={12}
-                                    md={6}
-                                    lg={8}
-                                >
-                                    <AccountProfileDetails />
-                                </Grid>
-                            </Grid>
-                        </div>
-                        <div>
-                            <Grid
-                                container
-                                spacing={3}
-                            >
+                                </Grid> */}
                                 <Grid
                                     xs={12}
                                     md={12}
                                     lg={12}
                                 >
-                                    <AccountBankDetails />
+                                    <GameProfileDetails />
                                 </Grid>
                             </Grid>
                         </div>
@@ -93,10 +80,10 @@ const User = () => {
     )
 };
 
-User.getLayout = (page) => (
+Game.getLayout = (page) => (
     <DashboardLayout>
         {page}
     </DashboardLayout>
 );
 
-export default User;
+export default Game;

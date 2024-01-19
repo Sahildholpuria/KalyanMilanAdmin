@@ -32,7 +32,7 @@ export const SettingsPassword = () => {
     },
     []
   );
-
+    console.log(values, 'values')
   return (
     <form onSubmit={handleSubmit}>
       <Card>
@@ -66,7 +66,7 @@ export const SettingsPassword = () => {
         </CardContent>
         <Divider />
         <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button variant="contained">
+          <Button variant="contained" type='submit'>
             Update
           </Button>
         </CardActions>

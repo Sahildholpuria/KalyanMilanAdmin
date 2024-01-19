@@ -9,6 +9,8 @@ import WalletManagement from './pages/account';
 import Settings from './pages/settings';
 import ErrorPage from './pages/404';
 import User from './pages/single-user';
+import Game from './pages/single-game';
+import DeclareResult from './pages/result';
 
 function App() {
   const location = useLocation();
@@ -30,7 +32,9 @@ function App() {
               <Route path="/users" element={<UserManagement />} />
               <Route path="/users/:id" element={<User />} />
               <Route path="/games" element={<GameManagement />} />
+              <Route path="/games/:id" element={<Game />} />
               <Route path="/withdraw" element={<WalletManagement />} />
+              <Route path="/result" element={<DeclareResult />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="*" element={<ErrorPage />} />
             </Routes>

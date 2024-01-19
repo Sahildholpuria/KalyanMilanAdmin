@@ -3,6 +3,7 @@ import { Box, Container, Stack, Typography } from '@mui/material';
 import { SettingsNotifications } from '../sections/settings/settings-notifications';
 import { SettingsPassword } from '../sections/settings/settings-password';
 import { Layout as DashboardLayout } from '../layouts/dashboard/layout';
+import { SettingDetails } from '../sections/settings/settings-details';
 
 const Settings = () => (
   <>
@@ -23,7 +24,8 @@ const Settings = () => (
           <Typography variant="h4">
             Settings
           </Typography>
-          <SettingsNotifications />
+          <SettingDetails />
+          {/* <SettingsNotifications /> */}
           <SettingsPassword />
         </Stack>
       </Container>

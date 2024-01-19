@@ -14,11 +14,11 @@ export const CustomersSearch = ({ onSearch }) => {
   return (
     <Card sx={{ p: 2 }}>
       <OutlinedInput
-        defaultValue=""
+        // defaultValue=""
         value={searchQuery}
         onChange={handleSearchChange}
         fullWidth
-        placeholder="Search customer"
+        placeholder="Search User"
         startAdornment={(
           <InputAdornment position="start">
             <SvgIcon
