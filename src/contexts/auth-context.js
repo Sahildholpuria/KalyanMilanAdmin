@@ -1,5 +1,7 @@
-import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
+import { createContext, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+import { collection, query, onSnapshot } from "firebase/firestore"
+import { db } from './firebase'
 
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
@@ -60,9 +62,23 @@ const reducer = (state, action) => (
 export const AuthContext = createContext({ undefined });
 
 export const AuthProvider = (props) => {
+  const [admin, setAdmin] = useState(null);
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialState);
   const initialized = useRef(false);
+  const handleAdmin = async () => {
+    const q = query(collection(db, 'admin'));
+
+    await onSnapshot(q, (querySnapshot) => {
+      setAdmin(querySnapshot.docs.map(doc => ({
+        id: doc.ref._key.path.segments.slice(-1)[0],
+        avatar: '/assets/avatars/avatar-marcus-finn.png',
+        name: 'Admin',
+        email: doc.data().email,
+        password: doc.data().password,
+      })))
+    })
+  }
 
   const initialize = async () => {
     // Prevent from calling twice in development mode with React.StrictMode enabled
@@ -73,24 +89,25 @@ export const AuthProvider = (props) => {
     initialized.current = true;
 
     let isAuthenticated = false;
-
+    let adminData;
     try {
       isAuthenticated = window.sessionStorage.getItem('authenticated') === 'true';
     } catch (err) {
       console.error(err);
     }
-
+    
     if (isAuthenticated) {
-      const user = {
-        id: '5e86809283e28b96d2d38537',
-        avatar: '/assets/avatars/avatar-fran-perez.png',
-        name: 'Anika Visser',
-        email: 'anika.visser@devias.io'
-      };
-
+      adminData = window.sessionStorage.getItem('admin');
+      // const user = {
+      //   id: '5e86809283e28b96d2d38537',
+      //   avatar: '/assets/avatars/avatar-marcus-finn.png',
+      //   name: 'Anika Visser',
+      //   email: 'anika.visser@devias.io'
+      // };
+      setAdmin(adminData)
       dispatch({
         type: HANDLERS.INITIALIZE,
-        payload: user
+        payload: adminData
       });
     } else {
       dispatch({
@@ -102,6 +119,7 @@ export const AuthProvider = (props) => {
   useEffect(
     () => {
       initialize();
+      handleAdmin();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
@@ -116,7 +134,7 @@ export const AuthProvider = (props) => {
 
     const user = {
       id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-fran-perez.png',
+      avatar: '/assets/avatars/avatar-marcus-finn.png',
       name: 'Anika Visser',
       email: 'anika.visser@devias.io'
     };
@@ -128,26 +146,27 @@ export const AuthProvider = (props) => {
   };
 
   const signIn = async (email, password) => {
-    if (email !== 'demo@devias.io' || password !== 'Password123!') {
+    if (email !== admin[0].email || password !== admin[0].password) {
       throw new Error('Please check your email and password');
     }
 
     try {
       window.sessionStorage.setItem('authenticated', 'true');
+      window.sessionStorage.setItem('admin', admin[0]);
     } catch (err) {
       console.error(err);
     }
 
-    const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-fran-perez.png',
-      name: 'Anika Visser',
-      email: 'anika.visser@devias.io'
-    };
+    // const user = {
+    //   id: '5e86809283e28b96d2d38537',
+    //   avatar: '/assets/avatars/avatar-marcus-finn.png',
+    //   name: 'Anika Visser',
+    //   email: 'anika.visser@devias.io'
+    // };
 
     dispatch({
       type: HANDLERS.SIGN_IN,
-      payload: user
+      payload: admin?.[0]
     });
   };
 
@@ -173,7 +192,8 @@ export const AuthProvider = (props) => {
         skip,
         signIn,
         signUp,
-        signOut
+        signOut,
+        admin
       }}
     >
       {children}

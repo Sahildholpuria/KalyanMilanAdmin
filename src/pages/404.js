@@ -2,10 +2,20 @@
 // import NextLink from 'next/link';
 import ArrowLeftIcon from '@heroicons/react/24/solid/ArrowLeftIcon';
 import { Box, Button, Container, SvgIcon, Typography } from '@mui/material';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const ErrorPage = () => {
   const navigate = useNavigate();
+  useEffect(() => {
+    // Dynamically set the document title
+    document.title = '404 | KalyanMatka Official';
+
+    // Clean up the effect when the component unmounts
+    return () => {
+      document.title = 'KalyanMatka Official'; // Set a default title if needed
+    };
+  }, []);
   return (
     <>
       {/* <Head>

@@ -10,20 +10,59 @@ import { OverviewTasksProgress } from '../sections/overview/overview-tasks-progr
 import { OverviewTotalCustomers } from '../sections/overview/overview-total-customers';
 import { OverviewTotalProfit } from '../sections/overview/overview-total-profit';
 import { OverviewTraffic } from '../sections/overview/overview-traffic';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { formatUserCount } from '../utils/format-count';
+import { db } from '../contexts/firebase';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import nProgress from 'nprogress';
 
 const now = new Date();
 
 const Home = () => {
+  const [usersCount, setUsersCount] = useState(0);
+  const [gamesCount, setGamesCount] = useState(0);
+  const [profitCount, setProfitCount] = useState(0);
+  const [withdrawReqCount, setWithdrawReqCount] = useState(0);
   useEffect(() => {
     // Dynamically set the document title
     document.title = 'Home | KalyanMatka Official';
 
     // Clean up the effect when the component unmounts
     return () => {
-      document.title = 'Default Title'; // Set a default title if needed
+      document.title = 'KalyanMatka Official'; // Set a default title if needed
     };
+  }, []);
+  useEffect(() => {
+    const fetchDocumentCount = async (collectionName, setCountFunction) => {
+      try {
+        nProgress.start();
+        if (collectionName === 'AddMoney'){
+          const q = query(collection(db, collectionName), where('name', '==', 'admin'));
+          onSnapshot(q, (querySnapshot) => {
+            const count = querySnapshot?.docs[0]?.data()?.earnings;
+            setCountFunction(count);
+          });
+        }else{
+          const q = query(collection(db, collectionName));
+          onSnapshot(q, (querySnapshot) => {
+            const count = querySnapshot?.size;
+            setCountFunction(count);
+          });
+        }
+      } catch (error) {
+        console.error(`Error fetching count for ${collectionName}`, error);
+      }finally{
+        setTimeout(() => {
+          nProgress.done();
+        }, 1000);
+      }
+    };
+
+    // Assuming you have collections named 'Users', 'Events', 'admin', 'Withdraw_List'
+      fetchDocumentCount('Users', setUsersCount);
+      fetchDocumentCount('Events', setGamesCount);
+      fetchDocumentCount('AddMoney', setProfitCount);
+      fetchDocumentCount('Withdraw_List', setWithdrawReqCount);
   }, []);
   return (
     <>
@@ -65,7 +104,7 @@ const Home = () => {
                 // difference={16}
                 // positive={false}
                 sx={{ height: '100%', cursor: 'pointer' }}
-                value={formatUserCount(2500)}
+                value={formatUserCount(usersCount)}
               />
             </Grid>
             <Grid
@@ -77,7 +116,7 @@ const Home = () => {
                 // difference={12}
                 // positive
                 sx={{ height: '100%', cursor: 'pointer' }}
-                value={formatUserCount(500)}
+                value={formatUserCount(gamesCount)}
               />
             </Grid>
             <Grid
@@ -87,7 +126,7 @@ const Home = () => {
             >
               <OverviewTotalProfit
                 sx={{ height: '100%' }}
-                value={formatUserCount(1000)}
+                value={formatUserCount(profitCount)}
               />
             </Grid>
             <Grid
@@ -99,7 +138,7 @@ const Home = () => {
                 // difference={12}
                 // positive
                 sx={{ height: '100%', cursor: 'pointer' }}
-                value={formatUserCount(2500)}
+                value={formatUserCount(withdrawReqCount)}
               />
             </Grid>
             {/* <Grid

@@ -27,8 +27,8 @@ const Login = () => {
   const [method, setMethod] = useState('email');
   const formik = useFormik({
     initialValues: {
-      email: 'demo@devias.io',
-      password: 'Password123!',
+      email: '',
+      password: '',
       submit: null
     },
     validationSchema: Yup.object({
@@ -196,7 +196,7 @@ const Login = () => {
                   variant="contained"
                   // onClick={handleSignIn}
                 >
-                  Continue
+                  Log In
                 </Button>
                 {/* <Button
                   fullWidth

@@ -2,7 +2,7 @@
 import { Box, Container, Stack, Typography, Unstable_Grid2 as Grid, Button, SvgIcon } from '@mui/material';
 import { Layout as DashboardLayout } from '../layouts/dashboard/layout';
 import { GameProfileDetails } from '../sections/companies/game-profile-details';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ResultTable } from '../sections/results/result-table';
 import { ResultDetails } from '../sections/results/result-details';
 import { DeclareResultDetails } from '../sections/results/declare-result';
@@ -30,7 +30,15 @@ const DeclareResult = () => {
     const handleValues = (values) => {
       setValues(values);
     }
-    
+    useEffect(() => {
+        // Dynamically set the document title
+        document.title = 'Result | KalyanMatka Official';
+
+        // Clean up the effect when the component unmounts
+        return () => {
+            document.title = 'KalyanMatka Official'; // Set a default title if needed
+        };
+    }, []);
     return (
         <>
             {/* <Head>

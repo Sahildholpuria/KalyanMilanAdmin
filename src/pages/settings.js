@@ -4,8 +4,19 @@ import { SettingsNotifications } from '../sections/settings/settings-notificatio
 import { SettingsPassword } from '../sections/settings/settings-password';
 import { Layout as DashboardLayout } from '../layouts/dashboard/layout';
 import { SettingDetails } from '../sections/settings/settings-details';
+import { useEffect } from 'react';
 
-const Settings = () => (
+const Settings = () => {
+  useEffect(() => {
+    // Dynamically set the document title
+    document.title = 'Settings | KalyanMatka Official';
+
+    // Clean up the effect when the component unmounts
+    return () => {
+      document.title = 'KalyanMatka Official'; // Set a default title if needed
+    };
+  }, []);
+  return (
   <>
     {/* <Head>
       <title>
@@ -32,7 +43,7 @@ const Settings = () => (
     </Box>
   </>
 );
-
+}
 Settings.getLayout = (page) => (
   <DashboardLayout>
     {page}

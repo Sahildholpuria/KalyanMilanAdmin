@@ -250,7 +250,15 @@ const GameManagement = () => {
   useEffect(() => {
     setUsers(data);
   }, [])
+  useEffect(() => {
+    // Dynamically set the document title
+    document.title = 'Games | KalyanMatka Official';
 
+    // Clean up the effect when the component unmounts
+    return () => {
+      document.title = 'KalyanMatka Official'; // Set a default title if needed
+    };
+  }, []);
   return (
     <>
       {/* <Head>

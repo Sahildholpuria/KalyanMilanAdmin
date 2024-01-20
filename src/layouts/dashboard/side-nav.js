@@ -18,13 +18,15 @@ import { Scrollbar } from '../../components/scrollbar';
 import { items } from './config';
 import { SideNavItem } from './side-nav-item';
 import { useLocation } from 'react-router-dom';
+import { useAuth } from '../../hooks/use-auth';
 
 export const SideNav = (props) => {
   const { open, onClose } = props;
   const location = useLocation();
   const pathname = location.pathname;
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
-
+  const auth = useAuth();
+  const { admin } = auth;
   const content = (
     <Scrollbar
       sx={{
@@ -73,13 +75,13 @@ export const SideNav = (props) => {
                 color="inherit"
                 variant="subtitle1"
               >
-                Devias
+                {admin[0]?.name}
               </Typography>
               <Typography
                 color="neutral.400"
                 variant="body2"
               >
-                Admin
+                Dashboard
               </Typography>
             </div>
             {/* <SvgIcon
