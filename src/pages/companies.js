@@ -19,6 +19,8 @@ import { subDays, subHours } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 import { GamesTable } from '../sections/companies/games-table';
+import { collection, onSnapshot, query } from 'firebase/firestore';
+import { db } from '../contexts/firebase';
 
 const now = new Date();
 
@@ -246,9 +248,25 @@ const GameManagement = () => {
     // console.log(data)
     // router.push(`/user/${data.id}`);
   }
-
+  const handleUsers = async () => {
+    try {
+      const q = query(collection(db, 'Events'));
+      await onSnapshot(q, (querySnapshot) => {
+        setUsers(querySnapshot.docs.map(doc => ({
+          id: doc.ref._key.path.segments.slice(-1)[0],
+          // avatar: '',
+          title: doc.data().title,
+          isActive: doc.data().isActive,
+          open: doc.data().open,
+          close: doc.data().close,
+        })))
+      })
+    } catch (error) {
+      console.log(error, 'error')
+    }
+  }
   useEffect(() => {
-    setUsers(data);
+    handleUsers();
   }, [])
   useEffect(() => {
     // Dynamically set the document title

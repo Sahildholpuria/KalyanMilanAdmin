@@ -8,10 +8,18 @@ import ArrowUturnLeftIcon from '@heroicons/react/24/solid/ArrowUturnLeftIcon';
 import { AccountBankDetails } from '../sections/account/account-bank-details';
 import { useParams } from 'react-router-dom';
 import { GameProfileDetails } from '../sections/companies/game-profile-details';
+import { fetchGameData } from '../utils/get-single-game';
+import { useEffect, useState } from 'react';
 
 const Game = () => {
     const params = useParams();
-    console.log(params, 'params')
+    const [user, setUser] = useState(null);
+    useEffect(() => {
+        if (params.id) {
+            fetchGameData(params.id, setUser);
+        }
+    }, [params.id]);
+    console.log(user, 'params')
     return (
         <>
             {/* <Head>
@@ -69,7 +77,7 @@ const Game = () => {
                                     md={12}
                                     lg={12}
                                 >
-                                    <GameProfileDetails />
+                                    <GameProfileDetails games={user} id={params?.id}/>
                                 </Grid>
                             </Grid>
                         </div>

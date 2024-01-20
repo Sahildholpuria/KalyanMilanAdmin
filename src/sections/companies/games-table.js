@@ -36,8 +36,7 @@ export const GamesTable = (props) => {
         searchQuery = '', // Accept search query as a prop
     } = props;
     const filteredItems = items?.filter((customer) =>
-        customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        customer.phone.toLowerCase().includes(searchQuery.toLowerCase())
+        customer.title.toLowerCase().includes(searchQuery.toLowerCase())
         // Add more fields as needed for search
     );
     // Apply pagination to the filtered results
@@ -93,7 +92,7 @@ export const GamesTable = (props) => {
                                 </TableRow>
                             ) : (paginatedItems?.map((customer, index) => {
                                 // const isSelected = selected.includes(customer.id);
-                                const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
+                                // const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
 
                                 return (
                                     <TableRow
@@ -123,22 +122,22 @@ export const GamesTable = (props) => {
                                                 direction="row"
                                                 spacing={2}
                                             >
-                                                <Avatar src={customer.avatar}>
+                                                {/* <Avatar src={customer.avatar}>
                                                     {getInitials(customer.name)}
-                                                </Avatar>
+                                                </Avatar> */}
                                                 <Typography variant="subtitle2">
-                                                    {customer.name}
+                                                    {customer.title}
                                                 </Typography>
                                             </Stack>
                                         </TableCell>
                                         <TableCell>
-                                            {customer.email}
+                                            {customer.open}
                                         </TableCell>
                                         <TableCell>
-                                            {customer.address.city}, {customer.address.state}, {customer.address.country}
+                                            {customer.close}
                                         </TableCell>
                                         <TableCell>
-                                            {customer.phone}
+                                            {customer.isActive}
                                         </TableCell>
                                         {/* <TableCell>
                                             {createdAt}
