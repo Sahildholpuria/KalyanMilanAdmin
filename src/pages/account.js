@@ -12,6 +12,8 @@ import { CustomersSearch } from '../sections/customer/customers-search';
 import { applyPagination } from '../utils/apply-pagination';
 import { useNavigate } from 'react-router-dom';
 import { WithdrawTable } from '../sections/withdraw/withdraw-table';
+import { collection, onSnapshot, query } from 'firebase/firestore';
+import { db } from '../contexts/firebase';
 
 const now = new Date();
 
@@ -190,9 +192,26 @@ const WalletManagement = () => {
   //   // console.log(data)
   //   // router.push(`/user/${data.id}`);
   // }
-
+  const handleUsers = async () => {
+    try {
+      const q = query(collection(db, 'Withdraw_List'));
+      await onSnapshot(q, (querySnapshot) => {
+        setUsers(querySnapshot.docs.map(doc => ({
+          id: doc.ref._key.path.segments.slice(-1)[0],
+          // avatar: '',
+          name: doc.data().name,
+          phone: doc.data().phone,
+          date: new Date(doc.data().time),
+          method: doc.data().method,
+          amount: doc.data().amount
+        })))
+      })
+    } catch (error) {
+      console.log(error, 'error')
+    }
+  }
   useEffect(() => {
-    setUsers(data);
+    handleUsers();
   }, [])
   useEffect(() => {
     // Dynamically set the document title

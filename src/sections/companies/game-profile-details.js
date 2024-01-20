@@ -113,7 +113,6 @@ export const GameProfileDetails = ({ games, id }) => {
         setSnackbarMessage(null);
     };
 
-    console.log(values, 'values')
     return (
         <>
             <Snackbar
@@ -280,7 +279,7 @@ export const GameProfileDetails = ({ games, id }) => {
                     </CardContent>
                     <Divider />
                     <CardActions sx={{ justifyContent: 'flex-end' }}>
-                        <Button variant="contained" onClick={handleSubmit}>
+                        <Button variant="contained" onClick={handleSubmit} disabled={!formModified}>
                             Save details
                         </Button>
                     </CardActions>

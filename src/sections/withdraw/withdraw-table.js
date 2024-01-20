@@ -68,6 +68,9 @@ export const WithdrawTable = (props) => {
                   />
                 </TableCell> */}
                                 <TableCell>
+                                    #
+                                </TableCell>
+                                <TableCell>
                                     Name
                                 </TableCell>
                                 <TableCell>
@@ -91,16 +94,16 @@ export const WithdrawTable = (props) => {
                                         No user data
                                     </TableCell>
                                 </TableRow>
-                            ) : (paginatedItems?.map((customer) => {
+                            ) : (paginatedItems?.map((customer, index) => {
                                 // const isSelected = selected.includes(customer.id);
-                                const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
+                                const createdAt = format(customer?.date, 'dd/MM/yyyy');
 
                                 return (
                                     <TableRow
                                         hover
                                         key={customer.id}
-                                        // selected={isSelected}
-                                        // onClick={() => handleRowSelect(customer.id)}
+                                    // selected={isSelected}
+                                    // onClick={() => handleRowSelect(customer.id)}
                                     >
                                         {/* <TableCell padding="checkbox">
                       <Checkbox
@@ -114,6 +117,9 @@ export const WithdrawTable = (props) => {
                         }}
                       />
                     </TableCell> */}
+                                        <TableCell>
+                                            {index + 1 + page * rowsPerPage}
+                                        </TableCell>
                                         <TableCell>
                                             <Stack
                                                 alignItems="center"
@@ -129,16 +135,16 @@ export const WithdrawTable = (props) => {
                                             </Stack>
                                         </TableCell>
                                         <TableCell>
-                                            {customer.email}
-                                        </TableCell>
-                                        <TableCell>
-                                            {customer.address.city}, {customer.address.state}, {customer.address.country}
-                                        </TableCell>
-                                        <TableCell>
                                             {customer.phone}
                                         </TableCell>
                                         <TableCell>
                                             {createdAt}
+                                        </TableCell>
+                                        <TableCell>
+                                            {customer.method}
+                                        </TableCell>
+                                        <TableCell>
+                                            {customer.amount}
                                         </TableCell>
                                     </TableRow>
                                 );
