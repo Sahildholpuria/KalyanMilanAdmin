@@ -7,10 +7,18 @@ import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import ArrowUturnLeftIcon from '@heroicons/react/24/solid/ArrowUturnLeftIcon';
 import { AccountBankDetails } from '../sections/account/account-bank-details';
 import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { fetchUserData } from '../utils/get-single-user';
 
 const User = () => {
     const params = useParams();
-    console.log(params, 'params')
+    const [user, setUser] = useState(null);
+    useEffect(() => {
+        if (params.id) {
+            fetchUserData(params.id, setUser);
+        }
+    }, [params.id]);
+    // console.log(user, 'params')
     return (
         <>
             {/* <Head>
@@ -61,14 +69,14 @@ const User = () => {
                                     md={6}
                                     lg={4}
                                 >
-                                    <AccountProfile />
+                                    <AccountProfile user={user}/>
                                 </Grid>
                                 <Grid
                                     xs={12}
                                     md={6}
                                     lg={8}
                                 >
-                                    <AccountProfileDetails />
+                                    <AccountProfileDetails user={user} id={params?.id}/>
                                 </Grid>
                             </Grid>
                         </div>
@@ -82,7 +90,7 @@ const User = () => {
                                     md={12}
                                     lg={12}
                                 >
-                                    <AccountBankDetails />
+                                    <AccountBankDetails user={user}/>
                                 </Grid>
                             </Grid>
                         </div>

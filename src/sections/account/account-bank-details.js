@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
     Box,
     Button,
@@ -11,6 +11,7 @@ import {
     Unstable_Grid2 as Grid,
     Typography
 } from '@mui/material';
+import nProgress from 'nprogress';
 
 const states = [
     {
@@ -31,17 +32,17 @@ const states = [
     }
 ];
 
-export const AccountBankDetails = () => {
+export const AccountBankDetails = ({ user }) => {
     const [values, setValues] = useState({
-        firstName: 'Anika',
-        lastName: 'Visser',
-        password: 'demo@123',
-        email: 'demo@devias.io',
-        coins: 1000,
-        phone: '8209555243',
-        state: 'los-angeles',
-        country: 'USA',
-        phonepe: '8209555243',
+        // firstName: 'Anika',
+        // lastName: 'Visser',
+        // password: 'demo@123',
+        // email: 'demo@devias.io',
+        // coins: 1000,
+        // phone: '8209555243',
+        // state: 'los-angeles',
+        // country: 'USA',
+        phonepe: '',
         googlepay: '',
         paytm: '',
     });
@@ -63,31 +64,49 @@ export const AccountBankDetails = () => {
     //     },
     //     []
     // );
-
+    useEffect(() => {
+        if (user) {
+            try {
+                nProgress.start();
+                setValues((preValues) => ({
+                    ...preValues,
+                    phonepe: user?.phonepe,
+                    googlepay: user?.googlepay,
+                    paytm: user?.paytm,
+                }));
+            } catch (error) {
+                console.log(error, 'error')
+            } finally {
+                setTimeout(() => {
+                    nProgress.done();
+                }, 500);
+            }
+        }
+    }, [user])
     return (
         // <form
         //     autoComplete="off"
         //     noValidate
         //     onSubmit={handleSubmit}
         // >
-            <Card>
-                <CardHeader
-                    // subheader="The information can be edited"
-                    title="Bank Details"
-                />
-                <CardContent sx={{ pt: 0 }}>
-                    <Box sx={{ m: -1.5 }}>
+        <Card>
+            <CardHeader
+                // subheader="The information can be edited"
+                title="Bank Details"
+            />
+            <CardContent sx={{ pt: 0 }}>
+                <Box sx={{ m: -1.5 }}>
+                    <Grid
+                        container
+                        spacing={3}
+                        style={{
+                            marginLeft: 10,
+                        }}
+                    >
                         <Grid
-                            container
-                            spacing={3}
-                            style={{
-                                marginLeft: 10,
-                            }}
+                            xs={12}
+                            md={6}
                         >
-                            <Grid
-                                xs={12}
-                                md={6}
-                            >
                             <Typography
                                 // gutterBottom
                                 variant="subtitle1"
@@ -100,7 +119,7 @@ export const AccountBankDetails = () => {
                             >
                                 {values.phonepe ? values.phonepe : 'N/A'}
                             </Typography>
-                                {/* <TextField
+                            {/* <TextField
                                     fullWidth
                                     // helperText="Please specify the first name"
                                     label="First name"
@@ -109,11 +128,11 @@ export const AccountBankDetails = () => {
                                     required
                                     value={values.firstName}
                                 /> */}
-                            </Grid>
-                            <Grid
-                                xs={12}
-                                md={6}
-                            >
+                        </Grid>
+                        <Grid
+                            xs={12}
+                            md={6}
+                        >
                             <Typography
                                 // gutterBottom
                                 variant="subtitle1"
@@ -126,7 +145,7 @@ export const AccountBankDetails = () => {
                             >
                                 {values.googlepay ? values.googlepay : 'N/A'}
                             </Typography>
-                                {/* <TextField
+                            {/* <TextField
                                     fullWidth
                                     label="Password"
                                     name="password"
@@ -134,11 +153,11 @@ export const AccountBankDetails = () => {
                                     // required
                                     value={values.password}
                                 /> */}
-                            </Grid>
-                            <Grid
-                                xs={12}
-                                md={6}
-                            >
+                        </Grid>
+                        <Grid
+                            xs={12}
+                            md={6}
+                        >
                             <Typography
                                 // gutterBottom
                                 variant="subtitle1"
@@ -151,7 +170,7 @@ export const AccountBankDetails = () => {
                             >
                                 {values.paytm ? values.paytm : 'N/A'}
                             </Typography>
-                                {/* <TextField
+                            {/* <TextField
                                     fullWidth
                                     label="Email Address"
                                     name="email"
@@ -159,8 +178,8 @@ export const AccountBankDetails = () => {
                                     required
                                     value={values.email}
                                 /> */}
-                            </Grid>
-                            {/* <Grid
+                        </Grid>
+                        {/* <Grid
                                 xs={12}
                                 md={6}
                             >
@@ -188,7 +207,7 @@ export const AccountBankDetails = () => {
                                     value={values.coins}
                                 />
                             </Grid> */}
-                            {/* <Grid
+                        {/* <Grid
                 xs={12}
                 md={6}
               >
@@ -212,16 +231,16 @@ export const AccountBankDetails = () => {
                   ))}
                 </TextField>
               </Grid> */}
-                        </Grid>
-                    </Box>
-                </CardContent>
-                {/* <Divider /> */}
-                {/* <CardActions sx={{ justifyContent: 'flex-end' }}>
+                    </Grid>
+                </Box>
+            </CardContent>
+            {/* <Divider /> */}
+            {/* <CardActions sx={{ justifyContent: 'flex-end' }}>
                     <Button variant="contained" onClick={handleSubmit}>
                         Save details
                     </Button>
                 </CardActions> */}
-            </Card>
+        </Card>
         // </form>
     );
 };

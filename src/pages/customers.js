@@ -11,6 +11,8 @@ import { CustomersTable } from '../sections/customer/customers-table';
 import { CustomersSearch } from '../sections/customer/customers-search';
 import { applyPagination } from '../utils/apply-pagination';
 import { useNavigate } from 'react-router-dom';
+import { collection, onSnapshot, query } from 'firebase/firestore';
+import { db } from '../contexts/firebase';
 
 const now = new Date();
 
@@ -207,9 +209,26 @@ const UserManagement = () => {
     // console.log(data)
     // router.push(`/user/${data.id}`);
   }
-
+  const handleUsers = async () => {
+    try {
+      const q = query(collection(db, 'Users'));
+      await onSnapshot(q, (querySnapshot) => {
+        setUsers(querySnapshot.docs.map(doc => ({
+          id: doc.ref._key.path.segments.slice(-1)[0],
+          avatar: '',
+          name: doc.data().name,
+          email: doc.data().email,
+          coins: doc.data().coins,
+          date: new Date(doc.data().date),
+          phone: doc.data().phone,
+        })))
+      })
+    } catch (error) {
+      console.log(error, 'error')
+    }
+  }
   useEffect(() => {
-    setUsers(data);
+    handleUsers();
   }, [])
   useEffect(() => {
     // Dynamically set the document title
@@ -220,6 +239,7 @@ const UserManagement = () => {
       document.title = 'KalyanMatka Official'; // Set a default title if needed
     };
   }, []);
+
   return (
     <>
       {/* <Head>

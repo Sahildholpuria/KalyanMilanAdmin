@@ -96,7 +96,7 @@ export const CustomersTable = (props) => {
                 </TableRow>
               ) : (paginatedItems?.map((customer, index) => {
                 // const isSelected = selected.includes(customer.id);
-                const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
+                const createdAt = format(customer.date, 'dd/MM/yyyy');
 
                 return (
                   <TableRow
@@ -138,13 +138,14 @@ export const CustomersTable = (props) => {
                       {customer.email}
                     </TableCell>
                     <TableCell>
-                      {customer.address.city}, {customer.address.state}, {customer.address.country}
+                      {/* {customer.address.city}, {customer.address.state}, {customer.address.country} */}
+                      {createdAt}
                     </TableCell>
                     <TableCell>
                       {customer.phone}
                     </TableCell>
                     <TableCell>
-                      {createdAt}
+                      {customer.coins}
                     </TableCell>
                   </TableRow>
                 );
