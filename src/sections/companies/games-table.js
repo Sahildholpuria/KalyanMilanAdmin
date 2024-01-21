@@ -126,7 +126,7 @@ export const GamesTable = (props) => {
                                                     {getInitials(customer.name)}
                                                 </Avatar> */}
                                                 <Typography variant="subtitle2">
-                                                    {customer.title}
+                                                    {customer.title.toUpperCase()}
                                                 </Typography>
                                             </Stack>
                                         </TableCell>
