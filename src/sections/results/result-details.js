@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
     Box,
     Button,
@@ -8,13 +8,16 @@ import {
     CardHeader,
     Divider,
     TextField,
-    Unstable_Grid2 as Grid
+    Unstable_Grid2 as Grid,
+    Snackbar
 } from '@mui/material';
 import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { Stack } from '@mui/system';
 import dayjs from 'dayjs';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../contexts/firebase';
 
 const states = [
     {
@@ -54,6 +57,7 @@ const session = [
 ];
 
 export const ResultDetails = ({ setShow, handleValues }) => {
+    const [snackbarMessage, setSnackbarMessage] = useState(null);
     const [values, setValues] = useState({
         result_date: dayjs().format('YYYY-MM-DD'),
         game_name: '',
@@ -66,60 +70,85 @@ export const ResultDetails = ({ setShow, handleValues }) => {
         // state: 'los-angeles',
         // country: 'USA'
     });
+    // State to hold game titles
+    const [gameTitles, setGameTitles] = useState([
+        {
+            value: '',
+            label: '',
+        },
+    ]);
+    // Function to fetch game titles from Firebase
+    const fetchGameTitles = async () => {
+        try {
+            // Replace this with the actual logic to fetch game titles from Firebase
+            // For example, if you're using Firestore
+            const eventsCollection = collection(db, 'Events');
+            const eventsSnapshot = await getDocs(eventsCollection);
 
+            const titles = eventsSnapshot.docs.map(doc => ({
+                value: doc.data().title, // Keep original casing as label
+                label: doc.data().title.toUpperCase(), // Set value to lowercase
+            }));
+
+            // Update the gameTitles state by merging the existing titles with the new ones
+            setGameTitles((prevTitles) => [...prevTitles, ...titles]);
+        } catch (error) {
+            console.error('Error fetching game titles:', error);
+        }
+    };
     const handleChange = useCallback(
         (event) => {
             setValues((prevState) => ({
                 ...prevState,
                 [event.target.name]: event.target.value
             }));
-        },
-        []
-    );
-    const handleTimeChange = useCallback(
-        (name, newValue) => {
-            // Ensure that newValue is a Date object
-            // const selectedTime = newValue instanceof Date ? newValue : new Date();
-
-            // Extract the time portion
-            const timeValue = newValue.format('hh:mm A');
-
-            // Update the state
-            setValues((prevState) => ({
-                ...prevState,
-                [name]: timeValue,
-            }));
+            setShow(false);
         },
         []
     );
     const handleSubmit = (event) => {
         event.preventDefault();
         // Other form submission logic
-
+        if (!values.game_name || !values.session) {
+            setSnackbarMessage('Please Fill all fields!');
+            return;
+        }
         // If the form is successfully submitted, call the callback function
         setShow(true);
         handleValues(values);
     };
-
-    console.log(values, 'values')
+    useEffect(() => {
+        fetchGameTitles();
+    }, [])
+    const handleCloseSnackbar = () => {
+        setSnackbarMessage(null);
+    };
     return (
-        <form
-            autoComplete="off"
-            noValidate
-            onSubmit={handleSubmit}
-        >
-            <Card>
-                <CardHeader
-                    // subheader="The information can be edited"
-                    title="Select Game"
-                />
-                <CardContent sx={{ pt: 0 }}>
-                    <Box sx={{ m: -1.5 }}>
-                        <Grid
-                            container
-                            spacing={3}
-                        >
-                            {/* <Grid
+        <>
+            <Snackbar
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                open={!!snackbarMessage}
+                autoHideDuration={3000}
+                onClose={handleCloseSnackbar}
+                message={snackbarMessage}
+            />
+            <form
+                autoComplete="off"
+                noValidate
+                onSubmit={handleSubmit}
+            >
+                <Card>
+                    <CardHeader
+                        // subheader="The information can be edited"
+                        title="Select Game"
+                    />
+                    <CardContent sx={{ pt: 0 }}>
+                        <Box sx={{ m: -1.5 }}>
+                            <Grid
+                                container
+                                spacing={3}
+                            >
+                                {/* <Grid
                                 xs={12}
                                 md={6}
                             >
@@ -147,41 +176,41 @@ export const ResultDetails = ({ setShow, handleValues }) => {
                                     value={values.isPlay}
                                 />
                             </Grid> */}
-                            <Grid
-                                xs={12}
-                                md={6}
-                                lg={6}
-                            >
-                                <Stack sx={{
-                                    '& .css-4jnixx-MuiStack-root': {
-                                        padding: '2px'
-                                    }
-                                }}>
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <DemoContainer components={['DatePicker']}>
-                                            <DatePicker
-                                                label="Result Date"
-                                                value={dayjs(values.result_date)}
-                                                onChange={(newValue) => {
-                                                    setValues((prevState) => ({
-                                                        ...prevState,
-                                                        result_date: newValue.format('YYYY-MM-DD'),
-                                                    }));
-                                                }}
-                                                textField={(props) => (
-                                                    <TextField fullWidth label="Result Date" {...props} sx={{ width: '100%' }} />
-                                                )}
-                                                slotProps={{
-                                                    textField: {
-                                                        helperText: 'MM/DD/YYYY',
-                                                    },
-                                                }}
-                                                maxDate={dayjs()} // Disable future dates
-                                            />
-                                        </DemoContainer>
-                                    </LocalizationProvider>
-                                </Stack>
-                                {/* <TextField
+                                <Grid
+                                    xs={12}
+                                    md={6}
+                                    lg={6}
+                                >
+                                    <Stack sx={{
+                                        '& .css-4jnixx-MuiStack-root': {
+                                            padding: '2px'
+                                        }
+                                    }}>
+                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                            <DemoContainer components={['DatePicker']}>
+                                                <DatePicker
+                                                    label="Result Date"
+                                                    value={dayjs(values.result_date)}
+                                                    onChange={(newValue) => {
+                                                        setValues((prevState) => ({
+                                                            ...prevState,
+                                                            result_date: newValue.format('YYYY-MM-DD'),
+                                                        }));
+                                                    }}
+                                                    textField={(props) => (
+                                                        <TextField fullWidth label="Result Date" {...props} sx={{ width: '100%' }} />
+                                                    )}
+                                                    slotProps={{
+                                                        textField: {
+                                                            helperText: 'MM/DD/YYYY',
+                                                        },
+                                                    }}
+                                                    maxDate={dayjs()} // Disable future dates
+                                                />
+                                            </DemoContainer>
+                                        </LocalizationProvider>
+                                    </Stack>
+                                    {/* <TextField
                                     fullWidth
                                     label="Open Time"
                                     name="open"
@@ -190,8 +219,8 @@ export const ResultDetails = ({ setShow, handleValues }) => {
                                     required
                                     value={values.open}
                                 /> */}
-                            </Grid>
-                            {/* <Grid
+                                </Grid>
+                                {/* <Grid
                                 xs={12}
                                 md={6}
                             >
@@ -221,64 +250,65 @@ export const ResultDetails = ({ setShow, handleValues }) => {
                                     </LocalizationProvider>
                                 </Stack>
                             </Grid> */}
-                            <Grid
-                                xs={12}
-                                md={6}
-                            >
-                                <TextField
-                                    fullWidth
-                                    label="Select Game Name"
-                                    name="game_name"
-                                    onChange={handleChange}
-                                    required
-                                    select
-                                    SelectProps={{ native: true }}
-                                    value={values.game_name}
+                                <Grid
+                                    xs={12}
+                                    md={6}
                                 >
-                                    {states.map((option) => (
-                                        <option
-                                            key={option.value}
-                                            value={option.value}
-                                        >
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </TextField>
-                            </Grid>
-                            <Grid
-                                xs={12}
-                                md={3}
-                            >
-                                <TextField
-                                    fullWidth
-                                    label="Select Session"
-                                    name="session"
-                                    onChange={handleChange}
-                                    required
-                                    select
-                                    SelectProps={{ native: true }}
-                                    value={values.session}
+                                    <TextField
+                                        fullWidth
+                                        label="Select Game Name"
+                                        name="game_name"
+                                        onChange={handleChange}
+                                        required
+                                        select
+                                        SelectProps={{ native: true }}
+                                        value={values.game_name}
+                                    >
+                                        {gameTitles.map((option, index) => (
+                                            <option
+                                                key={index}
+                                                value={option.value}
+                                            >
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </TextField>
+                                </Grid>
+                                <Grid
+                                    xs={12}
+                                    md={3}
                                 >
-                                    {session.map((option) => (
-                                        <option
-                                            key={option.value}
-                                            value={option.value}
-                                        >
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </TextField>
+                                    <TextField
+                                        fullWidth
+                                        label="Select Session"
+                                        name="session"
+                                        onChange={handleChange}
+                                        required
+                                        select
+                                        SelectProps={{ native: true }}
+                                        value={values.session}
+                                    >
+                                        {session.map((option) => (
+                                            <option
+                                                key={option.value}
+                                                value={option.value}
+                                            >
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </TextField>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </Box>
-                </CardContent>
-                <Divider />
-                <CardActions sx={{ justifyContent: 'flex-end' }}>
-                    <Button variant="contained" onClick={handleSubmit}>
-                        Go
-                    </Button>
-                </CardActions>
-            </Card>
-        </form>
+                        </Box>
+                    </CardContent>
+                    <Divider />
+                    <CardActions sx={{ justifyContent: 'flex-end' }}>
+                        <Button variant="contained" onClick={handleSubmit}>
+                            Go
+                        </Button>
+                    </CardActions>
+                </Card>
+            </form>
+        </>
     );
 };

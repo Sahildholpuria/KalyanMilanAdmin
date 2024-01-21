@@ -177,6 +177,7 @@ export const AuthProvider = (props) => {
   const signOut = () => {
     try {
       window.sessionStorage.setItem('authenticated', 'false');
+      window.sessionStorage.removeItem('admin');
     } catch (err) {
       console.error(err);
     }

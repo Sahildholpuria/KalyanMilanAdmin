@@ -86,7 +86,7 @@ export const GamesTable = (props) => {
                         <TableBody>
                             {paginatedItems?.length === 0 ? ( // Check if there are no matching results
                                 <TableRow>
-                                    <TableCell colSpan={5} align="center">
+                                    <TableCell colSpan={8} align="center">
                                         No user data
                                     </TableCell>
                                 </TableRow>

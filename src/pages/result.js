@@ -1,5 +1,5 @@
 // import Head from 'next/head';
-import { Box, Container, Stack, Typography, Unstable_Grid2 as Grid, Button, SvgIcon } from '@mui/material';
+import { Box, Container, Stack, Typography, Unstable_Grid2 as Grid, Button, SvgIcon, Snackbar } from '@mui/material';
 import { Layout as DashboardLayout } from '../layouts/dashboard/layout';
 import { GameProfileDetails } from '../sections/companies/game-profile-details';
 import { useCallback, useEffect, useState } from 'react';
@@ -10,8 +10,10 @@ import { DeclareResultDetails } from '../sections/results/declare-result';
 const DeclareResult = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [users, setUsers] = useState(null);
+    const [snackbarMessage, setSnackbarMessage] = useState(null);
+    // const [users, setUsers] = useState(null);
     const [show, setShow] = useState(false);
+    const [fetch, setFetch] = useState(false);
     const [values, setValues] = useState(null);
 
     const handlePageChange = useCallback(
@@ -28,7 +30,7 @@ const DeclareResult = () => {
         []
     );
     const handleValues = (values) => {
-      setValues(values);
+        setValues(values);
     }
     useEffect(() => {
         // Dynamically set the document title
@@ -39,6 +41,12 @@ const DeclareResult = () => {
             document.title = 'KalyanMatka Official'; // Set a default title if needed
         };
     }, []);
+    const handleCloseSnackbar = () => {
+        setSnackbarMessage(null);
+    };
+    const handleOpenSnackbar = (message) => {
+        setSnackbarMessage(message);
+    };
     return (
         <>
             {/* <Head>
@@ -46,6 +54,13 @@ const DeclareResult = () => {
         Account | Devias Kit
       </title>
     </Head> */}
+            <Snackbar
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                open={!!snackbarMessage}
+                autoHideDuration={3000}
+                onClose={handleCloseSnackbar}
+                message={snackbarMessage}
+            />
             <Box
                 component="main"
                 sx={{
@@ -96,7 +111,7 @@ const DeclareResult = () => {
                                     md={12}
                                     lg={12}
                                 >
-                                    <ResultDetails setShow={setShow} handleValues={handleValues}/>
+                                    <ResultDetails setShow={setShow} handleValues={handleValues} />
                                 </Grid>
                                 {show && (
                                     <Grid
@@ -104,7 +119,7 @@ const DeclareResult = () => {
                                         md={12}
                                         lg={12}
                                     >
-                                        <DeclareResultDetails />
+                                        <DeclareResultDetails game={values} setFetch={setFetch} setShow={setShow} handleOpenSnackbar={handleOpenSnackbar} />
                                     </Grid>)}
                                 <Grid
                                     xs={12}
@@ -112,8 +127,10 @@ const DeclareResult = () => {
                                     lg={12}
                                 >
                                     <ResultTable
-                                        count={users?.length}
-                                        items={users}
+                                        // count={users?.length}
+                                        // items={users}
+                                        fetch={fetch}
+                                        valuesResult={values}
                                         // handleRowSelect={handleRowSelect}
                                         // onDeselectAll={customersSelection.handleDeselectAll}
                                         // onDeselectOne={customersSelection.handleDeselectOne}
