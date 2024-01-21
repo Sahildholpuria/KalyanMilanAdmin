@@ -37,7 +37,7 @@ export const SettingsPassword = () => {
       setSnackbarMessage('Passwords do not match');
       return; // Exit the function if passwords don't match
     }
-    console.log(values, 'values');
+    // console.log(values, 'values');
     try {
       await updateAdminSettings(values);
       setSnackbarMessage('Admin settings updated successfully!');

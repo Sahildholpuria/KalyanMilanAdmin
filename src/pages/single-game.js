@@ -19,7 +19,7 @@ const Game = () => {
             fetchGameData(params.id, setUser);
         }
     }, [params.id]);
-    console.log(user, 'params')
+    // console.log(user, 'params')
     return (
         <>
             {/* <Head>

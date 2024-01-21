@@ -62,7 +62,11 @@ export const AccountProfileDetails = ({ user, id }) => {
     event.preventDefault();
     if (formModified) {
       // Perform submit logic only if the form is modified
-      console.log(values, 'values');
+      if (!values.name || !values.coins || !values.email || !values.password || !values.phone) {
+        setSnackbarMessage('All fields are required!')
+        return;
+      }
+      // console.log(values, 'values');
       try {
         await updateUser(id, values);
         setSnackbarMessage('User data updated successfully!');
@@ -149,7 +153,7 @@ export const AccountProfileDetails = ({ user, id }) => {
                     label="Password"
                     name="password"
                     onChange={handleChange}
-                    // required
+                    required
                     value={values.password}
                   />
                 </Grid>

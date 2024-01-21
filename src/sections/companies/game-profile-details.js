@@ -66,10 +66,14 @@ export const GameProfileDetails = ({ games, id }) => {
         event.preventDefault();
         if (formModified) {
             // Perform submit logic only if the form is modified
+            if (!values.close || !values.isActive || !values.open || !values.title) {
+                setSnackbarMessage('All fileds are required!')
+                return;
+            }
             // Capitalize the isActive value
             const capitalizedIsActive = values.isActive.toLowerCase() === 'yes' ? 'Yes' : 'No';
 
-            console.log(values, 'values');
+            // console.log(values, 'values');
             try {
                 // Update the isActive value in the form values
                 setValues((prevState) => ({
