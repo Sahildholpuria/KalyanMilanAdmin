@@ -248,7 +248,7 @@ export const ResultTable = (props) => {
                                             </Stack>
                                         </TableCell> */}
                                         <TableCell>
-                                            {customer.name}
+                                            {customer.name.toUpperCase()}
                                         </TableCell>
                                         <TableCell>
                                             {result_date}

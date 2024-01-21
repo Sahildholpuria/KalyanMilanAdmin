@@ -1204,7 +1204,7 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
                         });
 
                         // You can perform additional actions or update the state as needed
-                        console.log('Subtitle Updated Successfully!')
+                        // console.log('Subtitle Updated Successfully!')
                         // Trigger a fetch or update based on your requirements
                         // setFetch(true);
                     } else {
@@ -1215,7 +1215,7 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
                     console.error('Error updating subtitle: ', error);
                     handleOpenSnackbar('Error updating subtitle. Please try again.');
                 }
-                console.log('Document added with ID: ', resultRef.id);
+                // console.log('Document added with ID: ', resultRef.id);
                 // You can perform additional actions or update the state as needed
                 handleOpenSnackbar('Open Result Declared Successfully!')
                 // Trigger a fetch or update based on your requirements
@@ -1253,7 +1253,7 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
                         });
 
                         // You can perform additional actions or update the state as needed
-                        console.log('Subtitle Updated Successfully!')
+                        // console.log('Subtitle Updated Successfully!')
                         // Trigger a fetch or update based on your requirements
                         // setFetch(true);
                     } else {
@@ -1264,7 +1264,7 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
                     console.error('Error updating subtitle: ', error);
                     handleOpenSnackbar('Error updating subtitle. Please try again.');
                 }
-                console.log('Document updated successfully!');
+                // console.log('Document updated successfully!');
                 handleOpenSnackbar('Close Result Declared Successfully!');
                 // Trigger a fetch or update based on your requirements
                 setShow(false);

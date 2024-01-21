@@ -87,7 +87,7 @@ export const ResultDetails = ({ setShow, handleValues }) => {
 
             const titles = eventsSnapshot.docs.map(doc => ({
                 value: doc.data().title, // Keep original casing as label
-                label: doc.data().title.toUpperCase(), // Set value to lowercase
+                label: `${doc.data().title.toUpperCase()} (${doc.data().open} - ${doc.data().close})`, // Set value to lowercase
             }));
 
             // Update the gameTitles state by merging the existing titles with the new ones
