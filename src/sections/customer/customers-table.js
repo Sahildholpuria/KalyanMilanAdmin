@@ -35,7 +35,8 @@ export const CustomersTable = (props) => {
     handleRowSelect,
     searchQuery = '', // Accept search query as a prop
   } = props;
-  const filteredItems = items?.filter((customer) =>
+  const sortedDate = items?.sort((a, b) => b.date - a.date);
+  const filteredItems = sortedDate?.filter((customer) =>
     customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     customer.phone.toLowerCase().includes(searchQuery.toLowerCase())
     // Add more fields as needed for search
