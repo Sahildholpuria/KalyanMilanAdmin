@@ -6,7 +6,11 @@ import PuzzlePieceIcon from '@heroicons/react/24/solid/PuzzlePieceIcon';
 import ArrowsRightLeftIcon from '@heroicons/react/24/solid/ArrowsRightLeftIcon';
 import UserIcon from '@heroicons/react/24/solid/UserIcon';
 import UserPlusIcon from '@heroicons/react/24/solid/UserPlusIcon';
+import PlayIcon from '@heroicons/react/24/solid/PlayIcon';
+import CurrencyRupeeIcon from '@heroicons/react/24/solid/CurrencyRupeeIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
+import ScaleIcon from '@heroicons/react/24/solid/ScaleIcon';
+import AcademicCapIcon from '@heroicons/react/24/solid/AcademicCapIcon';
 import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
 import PresentationChartBarIcon from '@heroicons/react/24/solid/PresentationChartBarIcon';
 import { SvgIcon } from '@mui/material';
@@ -37,7 +41,30 @@ export const items = [
       <SvgIcon fontSize="small">
         <PuzzlePieceIcon />
       </SvgIcon>
-    )
+    ),
+    // Example of dropdown items
+    children: [
+      {
+        title: 'Game Name',
+        path: '/games',
+        icon: (
+          <SvgIcon fontSize="small">
+            {/* Add icon for subgame1 */}
+            <PlayIcon />
+          </SvgIcon>
+        )
+      },
+      {
+        title: 'Game Rates',
+        path: '/games/rates',
+        icon: (
+          <SvgIcon fontSize="small">
+            {/* Add icon for subgame2 */}
+            <CurrencyRupeeIcon />
+          </SvgIcon>
+        )
+      },
+    ]
   },
   {
     title: 'Withdraw Management',
@@ -45,6 +72,24 @@ export const items = [
     icon: (
       <SvgIcon fontSize="small">
         <ArrowsRightLeftIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Bid History',
+    path: '/bids',
+    icon: (
+      <SvgIcon fontSize="small">
+        <ScaleIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Winning History',
+    path: '/winning',
+    icon: (
+      <SvgIcon fontSize="small">
+        <AcademicCapIcon />
       </SvgIcon>
     )
   },

@@ -14,6 +14,7 @@ import {
 import { addDoc, collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../contexts/firebase';
 import { getFormatedDateTimeStamp } from '../../utils/get-current-datetimestamp';
+import { SendResultNotification } from '../../utils/send-result-notification';
 
 const states = [
     {
@@ -1204,6 +1205,7 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
                         });
 
                         // You can perform additional actions or update the state as needed
+                        SendResultNotification(game.game_name, game.session);
                         // console.log('Subtitle Updated Successfully!')
                         // Trigger a fetch or update based on your requirements
                         // setFetch(true);
@@ -1253,6 +1255,7 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
                         });
 
                         // You can perform additional actions or update the state as needed
+                        SendResultNotification(game.game_name, game.session);
                         // console.log('Subtitle Updated Successfully!')
                         // Trigger a fetch or update based on your requirements
                         // setFetch(true);

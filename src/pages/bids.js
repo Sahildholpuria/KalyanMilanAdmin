@@ -1,20 +1,16 @@
 // import Head from 'next/head';
-import { Box, Container, Stack, Typography, Unstable_Grid2 as Grid, Button, SvgIcon, Snackbar } from '@mui/material';
+import { Box, Container, Stack, Typography, Unstable_Grid2 as Grid, Snackbar } from '@mui/material';
 import { Layout as DashboardLayout } from '../layouts/dashboard/layout';
-import { GameProfileDetails } from '../sections/companies/game-profile-details';
 import { useCallback, useEffect, useState } from 'react';
-import { ResultTable } from '../sections/results/result-table';
-import { ResultDetails } from '../sections/results/result-details';
-import { DeclareResultDetails } from '../sections/results/declare-result';
-import { SendResultNotification } from '../utils/send-result-notification';
+import { BidDetails } from '../sections/bids/bid-details';
+import { BidTable } from '../sections/bids/bids-table';
 
-const DeclareResult = () => {
+const BidHistory = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [snackbarMessage, setSnackbarMessage] = useState(null);
     // const [users, setUsers] = useState(null);
-    const [show, setShow] = useState(false);
-    const [fetch, setFetch] = useState(false);
+    // const [show, setShow] = useState(false);
     const [values, setValues] = useState(null);
 
     const handlePageChange = useCallback(
@@ -35,7 +31,7 @@ const DeclareResult = () => {
     }
     useEffect(() => {
         // Dynamically set the document title
-        document.title = 'Result | KalyanMatka Official';
+        document.title = 'Bids | KalyanMatka Official';
 
         // Clean up the effect when the component unmounts
         return () => {
@@ -78,7 +74,7 @@ const DeclareResult = () => {
                         >
                             <Stack spacing={1}>
                                 <Typography variant="h4">
-                                    Declare Result
+                                    Bid History
                                 </Typography>
                             </Stack>
                             {/* <div>
@@ -112,31 +108,23 @@ const DeclareResult = () => {
                                     md={12}
                                     lg={12}
                                 >
-                                    <ResultDetails setShow={setShow} handleValues={handleValues} />
+                                    <BidDetails handleValues={handleValues} />
                                 </Grid>
-                                {show && (
-                                    <Grid
-                                        xs={12}
-                                        md={12}
-                                        lg={12}
-                                    >
-                                        <DeclareResultDetails game={values} setFetch={setFetch} setShow={setShow} handleOpenSnackbar={handleOpenSnackbar} />
-                                    </Grid>)}
                                 <Grid
                                     xs={12}
                                     md={12}
                                     lg={12}
                                 >
-                                    <ResultTable
+                                    <BidTable
                                         // count={users?.length}
                                         // items={users}
-                                        fetch={fetch}
                                         valuesResult={values}
                                         // handleRowSelect={handleRowSelect}
                                         // onDeselectAll={customersSelection.handleDeselectAll}
                                         // onDeselectOne={customersSelection.handleDeselectOne}
                                         onPageChange={handlePageChange}
                                         onRowsPerPageChange={handleRowsPerPageChange}
+                                        handleOpenSnackbar={handleOpenSnackbar}
                                         // onSelectAll={customersSelection.handleSelectAll}
                                         // onSelectOne={customersSelection.handleSelectOne}
                                         page={page}
@@ -154,10 +142,10 @@ const DeclareResult = () => {
     )
 };
 
-DeclareResult.getLayout = (page) => (
+BidHistory.getLayout = (page) => (
     <DashboardLayout>
         {page}
     </DashboardLayout>
 );
 
-export default DeclareResult;
+export default BidHistory;

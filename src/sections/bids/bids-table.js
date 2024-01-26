@@ -28,15 +28,15 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../../contexts/firebase';
+import nProgress from 'nprogress';
 // import { useRouter } from 'next/router';
 
-export const ResultTable = (props) => {
+export const BidTable = (props) => {
     // const router = useRouter();
     const {
         // count = 0,
         // items = [],
         valuesResult,
-        fetch = false,
         // onDeselectAll,
         // onDeselectOne,
         onPageChange = () => { },
@@ -48,116 +48,72 @@ export const ResultTable = (props) => {
         // selected = [],
         // handleRowSelect,
         searchQuery = '', // Accept search query as a prop
+        handleOpenSnackbar,
     } = props;
     const [resultData, setResultData] = useState([]);
     const [count, setCount] = useState(0);
-    const [values, setValues] = useState({
-        result_date: dayjs().format('YYYY-MM-DD'),
-    });
     const sortedDate = resultData?.sort((a, b) => b.open_date - a.open_date);
     const filteredItems = sortedDate?.filter((customer) =>
-        customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        customer.phone.toLowerCase().includes(searchQuery.toLowerCase())
+        customer.user_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        customer.session.toLowerCase().includes(searchQuery.toLowerCase())
         // Add more fields as needed for search
     );
     // Apply pagination to the filtered results
     const start = page * rowsPerPage;
     const end = start + rowsPerPage;
     const paginatedItems = filteredItems?.slice(start, end);
-    // const selectedSome = (selected.length > 0) && (selected.length < items.length);
-    // const selectedAll = (items.length > 0) && (selected.length === items.length);
+
     const fetchData = async () => {
         try {
+            nProgress.start();
             // Replace this with the actual logic to fetch data from your source
             // For example, if you're using Firestore
-            const formattedDate = new Date(values.result_date).toDateString();
-            const q = query(collection(db, 'Result'), where('result_date', '==', formattedDate));
+            const formattedDate = new Date(valuesResult.date).toDateString();
+            const gameType = valuesResult.game_type !== 'All Type';
+            const q = gameType ? query(collection(db, 'User_Events'), where('date', '==', formattedDate), where('event', '==', valuesResult.game_name), where('game', '==', valuesResult.game_type)) : query(collection(db, 'User_Events'), where('date', '==', formattedDate), where('event', '==', valuesResult.game_name));
             await onSnapshot(q, (querySnapshot) => {
-                setResultData(querySnapshot.docs.map(doc => ({
-                    id: doc.ref._key.path.segments.slice(-1)[0],
-                    // avatar: '',
-                    name: doc.data().game_name,
-                    result_date: new Date(doc.data().result_date).toDateString(),
-                    open_date: new Date(doc.data().open_date),
-                    close_date: doc.data().close_date ? new Date(doc.data().close_date) : 'N/A',
-                    open: doc.data().open,
-                    close: doc.data().close,
-                })));
-                setCount(querySnapshot.size);
+                if (querySnapshot.empty) {
+                    setResultData([]);
+                    handleOpenSnackbar('No Bid history available!')
+                } else {
+                    setResultData(querySnapshot.docs.map(doc => ({
+                        id: doc.ref._key.path.segments.slice(-1)[0],
+                        // avatar: '',
+                        user_name: doc.data().name,
+                        game_name: doc.data().event,
+                        game_type: doc.data().game,
+                        session: doc.data().session ? doc.data().session : 'N/A',
+                        date: new Date(doc.data().date),
+                        opendigit: doc.data().opendigit ? doc.data().opendigit : 'N/A',
+                        closedigit: doc.data().closedigit ? doc.data().closedigit : 'N/A',
+                        openpanna: doc.data().openpanna ? doc.data().openpanna : 'N/A',
+                        closepanna: doc.data().closepanna ? doc.data().closepanna : 'N/A',
+                        points: doc.data().points,
+                    })));
+                    setCount(querySnapshot.size);
+                }
             })
         } catch (error) {
             console.error('Error fetching result data:', error);
+        } finally {
+            setTimeout(() => {
+                nProgress.done();
+            }, 1000);
         }
     };
     useEffect(() => {
-        // Fetch data based on result_date
-        fetchData();
-    }, [values.result_date, fetch]);
-    useEffect(() => {
-        if(valuesResult?.result_date || fetch){
-            setValues((prevState) => ({
-                ...prevState,
-                result_date: valuesResult?.result_date,
-            }));
+        if (valuesResult?.date) {
+            // Fetch data based on date
+            fetchData();
         }
-    }, [valuesResult?.result_date, fetch])
-    
+    }, [valuesResult]);
+
     return (
         <Card>
             <CardHeader
                 // subheader="The information can be edited"
-                title="Game Result History"
+                title="Bid History List"
             />
-            <Grid
-                xs={12}
-                md={6}
-                lg={6}
-            >
-                <CardContent sx={{ p: 6 }}>
-                    <Box sx={{ m: -1.5 }}>
-                        <Grid
-                            container
-                            spacing={3}
-                        >
-                            <Grid
-                                xs={12}
-                                md={6}
-                                lg={6}
-                            >
-                                <Stack sx={{
-                                    '& .css-4jnixx-MuiStack-root': {
-                                        padding: '2px'
-                                    }
-                                }}>
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <DemoContainer components={['DatePicker']}>
-                                            <DatePicker
-                                                label="Select Result Date"
-                                                value={dayjs(values.result_date)}
-                                                onChange={(newValue) => {
-                                                    setValues((prevState) => ({
-                                                        ...prevState,
-                                                        result_date: newValue.format('YYYY-MM-DD'),
-                                                    }));
-                                                }}
-                                                textField={(props) => (
-                                                    <TextField fullWidth label="Result Date" {...props} sx={{ width: '100%' }} />
-                                                )}
-                                                slotProps={{
-                                                    textField: {
-                                                        helperText: 'MM/DD/YYYY',
-                                                    },
-                                                }}
-                                                maxDate={dayjs()} // Disable future dates
-                                            />
-                                        </DemoContainer>
-                                    </LocalizationProvider>
-                                </Stack>
-                            </Grid>
-                        </Grid>
-                    </Box>
-                </CardContent>
-            </Grid>
             <Scrollbar sx={{ '.simplebar-placeholder': { display: 'none !important' } }}>
                 <Box sx={{ minWidth: 800 }}>
                     <Table>
@@ -177,40 +133,50 @@ export const ResultTable = (props) => {
                   />
                 </TableCell> */}
                                 <TableCell>
-                                    #
+                                    User Name
                                 </TableCell>
                                 <TableCell>
                                     Game Name
                                 </TableCell>
                                 <TableCell>
-                                    Result Date
+                                    Game Type
                                 </TableCell>
                                 <TableCell>
-                                    Open Declare Date
-                                </TableCell>
-                                <TableCell>
-                                    Close Declare Date
+                                    Session
                                 </TableCell>
                                 <TableCell>
                                     Open Panna
                                 </TableCell>
                                 <TableCell>
+                                    Open Digit
+                                </TableCell>
+                                <TableCell>
                                     Close Panna
+                                </TableCell>
+                                <TableCell>
+                                    Close Digit
+                                </TableCell>
+                                <TableCell>
+                                    Points
+                                </TableCell>
+                                <TableCell>
+                                    Date
                                 </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {paginatedItems?.length === 0 ? ( // Check if there are no matching results
                                 <TableRow>
-                                    <TableCell colSpan={8} align="center">
+                                    <TableCell colSpan={10} align="center">
                                         No user data
                                     </TableCell>
                                 </TableRow>
                             ) : (paginatedItems?.map((customer, index) => {
                                 // const isSelected = selected.includes(customer.id);
-                                const result_date = format(new Date(customer.result_date), 'dd MMM yyyy');
-                                const open_date = customer.open_date ? format(new Date(customer.open_date), 'dd MMM yyyy hh:mm a') : 'N/A';
-                                const close_date = customer.close_date !== 'N/A' ? format(new Date(customer.close_date), 'dd MMM yyyy hh:mm a') : 'N/A';
+                                console.log(customer.date)
+                                const date = format(customer.date, 'dd/MM/yyyy');
+                                // const open_date = customer.open_date ? format(new Date(customer.open_date), 'dd MMM yyyy hh:mm a') : 'N/A';
+                                // const close_date = customer.close_date !== 'N/A' ? format(new Date(customer.close_date), 'dd MMM yyyy hh:mm a') : 'N/A';
 
                                 return (
                                     <TableRow
@@ -231,9 +197,6 @@ export const ResultTable = (props) => {
                         }}
                       />
                     </TableCell> */}
-                                        <TableCell>
-                                            {index + 1 + page * rowsPerPage}
-                                        </TableCell>
                                         {/* <TableCell>
                                             <Stack
                                                 alignItems="center"
@@ -249,22 +212,34 @@ export const ResultTable = (props) => {
                                             </Stack>
                                         </TableCell> */}
                                         <TableCell>
-                                            {customer.name.toUpperCase()}
+                                            {customer.user_name}
                                         </TableCell>
                                         <TableCell>
-                                            {result_date}
+                                            {customer.game_name.toUpperCase()}
                                         </TableCell>
                                         <TableCell>
-                                            {open_date}
+                                            {customer.game_type}
                                         </TableCell>
                                         <TableCell>
-                                            {close_date}
+                                            {customer.session}
                                         </TableCell>
                                         <TableCell>
-                                            {customer.open}
+                                            {customer.openpanna}
                                         </TableCell>
                                         <TableCell>
-                                            {customer.close}
+                                            {customer.opendigit}
+                                        </TableCell>
+                                        <TableCell>
+                                            {customer.closepanna}
+                                        </TableCell>
+                                        <TableCell>
+                                            {customer.closedigit}
+                                        </TableCell>
+                                        <TableCell>
+                                            {customer.points}
+                                        </TableCell>
+                                        <TableCell>
+                                            {date}
                                         </TableCell>
                                     </TableRow>
                                 );
@@ -286,7 +261,7 @@ export const ResultTable = (props) => {
     );
 };
 
-ResultTable.propTypes = {
+BidTable.propTypes = {
     count: PropTypes.number,
     items: PropTypes.array,
     onDeselectAll: PropTypes.func,

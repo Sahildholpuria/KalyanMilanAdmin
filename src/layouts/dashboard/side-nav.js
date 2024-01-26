@@ -122,6 +122,7 @@ export const SideNav = (props) => {
                   key={item.title}
                   path={item.path}
                   title={item.title}
+                  children={item.children}
                 />
               );
             })}
