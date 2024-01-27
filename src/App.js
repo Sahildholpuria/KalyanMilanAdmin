@@ -12,7 +12,7 @@ import User from './pages/single-user';
 import Game from './pages/single-game';
 import DeclareResult from './pages/result';
 import BidHistory from './pages/bids';
-import WinHistory from './pages/winning';
+// import WinHistory from './pages/winning';
 
 function App() {
   const location = useLocation();
