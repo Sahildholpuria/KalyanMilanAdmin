@@ -37,7 +37,7 @@ function App() {
               <Route path="/games/:id" element={<Game />} />
               <Route path="/withdraw" element={<WalletManagement />} />
               <Route path="/bids" element={<BidHistory />} />
-              <Route path="/winning" element={<WinHistory />} />
+              {/* <Route path="/winning" element={<WinHistory />} /> */}
               <Route path="/result" element={<DeclareResult />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="*" element={<ErrorPage />} />
