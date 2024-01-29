@@ -13,6 +13,7 @@ import Game from './pages/single-game';
 import DeclareResult from './pages/result';
 import BidHistory from './pages/bids';
 import WinHistory from './pages/winning';
+import GameRates from './pages/gamerates';
 
 function App() {
   const location = useLocation();
@@ -34,6 +35,7 @@ function App() {
               <Route path="/users" element={<UserManagement />} />
               <Route path="/users/:id" element={<User />} />
               <Route path="/games" element={<GameManagement />} />
+              <Route path="/games/rates" element={<GameRates />} />
               <Route path="/games/:id" element={<Game />} />
               <Route path="/withdraw" element={<WalletManagement />} />
               <Route path="/bids" element={<BidHistory />} />

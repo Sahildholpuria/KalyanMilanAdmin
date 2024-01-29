@@ -1,40 +1,27 @@
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import {
-    Avatar,
+    Backdrop,
     Box,
     Button,
     Card,
-    CardContent,
     CardHeader,
-    Checkbox,
-    Grid,
-    Stack,
-    Tab,
+    CircularProgress,
     Table,
     TableBody,
     TableCell,
     TableHead,
     TablePagination,
     TableRow,
-    TextField,
-    Typography
 } from '@mui/material';
 import { Scrollbar } from '../../components/scrollbar';
-import { getInitials } from '../../utils/get-initials';
-import { useCallback, useEffect, useState } from 'react';
-import dayjs from 'dayjs';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { collection, doc, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../contexts/firebase';
 import nProgress from 'nprogress';
 import { EditBidDialog } from '../../utils/bids-edit-dialog';
-// import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 export const BidTable = (props) => {
-    // const router = useRouter();
     const {
         // count = 0,
         // items = [],
@@ -60,6 +47,7 @@ export const BidTable = (props) => {
         close_digit: '',
     });
     const [openDialog, setOpenDialog] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [count, setCount] = useState(0);
     const sortedDate = resultData?.sort((a, b) => b.open_date - a.open_date);
@@ -114,6 +102,8 @@ export const BidTable = (props) => {
     // Function to handle the common action (in this case, console.log)
     const handleCommonAction = async () => {
         try {
+            handleCloseDialog();
+            setLoading(true);
             // Replace "N/A" with ""
             const updatedValues = {
                 openpanna: values.open_panna === 'N/A' ? '' : values.open_panna,
@@ -133,11 +123,11 @@ export const BidTable = (props) => {
             handleOpenSnackbar(`Bid updated successfully!`);
 
             // Close the dialog
-            handleCloseDialog();
         } catch (error) {
             handleOpenSnackbar(`Error updating bid!`);
             console.error('Error updating bid:', error);
         }
+        setLoading(false);
     };
     useEffect(() => {
         if (valuesResult?.date) {
@@ -333,6 +323,13 @@ export const BidTable = (props) => {
                 button1={'Update'}
                 button2={'Cancel'}
             />
+            <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={loading}
+                // onClick={handleClose}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
         </Card>
     );
 };
