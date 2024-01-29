@@ -32,7 +32,7 @@ export const SendRandomNotification = async (title, message) => {
         const notification = {
             title: title,
             body: message,
-            icon: 'assets/images/logo.png',
+            icon: 'ic_notification',
         };
 
         let payloadTokens;
@@ -87,7 +87,7 @@ export const SendResultNotification = async (title, session) => {
         const notification = {
             title: 'Result Declared',
             body: `${title.toUpperCase()} result for ${session} has been declared`,
-            icon: 'assets/images/logo.png',
+            icon: 'ic_notification',
         };
 
         const data = {

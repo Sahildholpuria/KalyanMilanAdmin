@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import {
     Avatar,
     Box,
+    Button,
     Card,
     CardContent,
     CardHeader,
@@ -26,9 +27,10 @@ import dayjs from 'dayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { collection, doc, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../contexts/firebase';
 import nProgress from 'nprogress';
+import { EditBidDialog } from '../../utils/bids-edit-dialog';
 // import { useRouter } from 'next/router';
 
 export const BidTable = (props) => {
@@ -51,17 +53,25 @@ export const BidTable = (props) => {
         handleOpenSnackbar,
     } = props;
     const [resultData, setResultData] = useState([]);
+    const [values, setValues] = useState({
+        open_panna: '',
+        open_digit: '',
+        close_panna: '',
+        close_digit: '',
+    });
+    const [openDialog, setOpenDialog] = useState(false);
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [count, setCount] = useState(0);
     const sortedDate = resultData?.sort((a, b) => b.open_date - a.open_date);
-    const filteredItems = sortedDate?.filter((customer) =>
-        customer.user_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        customer.session.toLowerCase().includes(searchQuery.toLowerCase())
-        // Add more fields as needed for search
-    );
+    // const filteredItems = sortedDate?.filter((customer) =>
+    //     customer.user_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    //     customer.session.toLowerCase().includes(searchQuery.toLowerCase())
+    //     // Add more fields as needed for search
+    // );
     // Apply pagination to the filtered results
     const start = page * rowsPerPage;
     const end = start + rowsPerPage;
-    const paginatedItems = filteredItems?.slice(start, end);
+    const paginatedItems = sortedDate?.slice(start, end);
 
     const fetchData = async () => {
         try {
@@ -101,13 +111,58 @@ export const BidTable = (props) => {
             }, 1000);
         }
     };
+    // Function to handle the common action (in this case, console.log)
+    const handleCommonAction = async () => {
+        try {
+            // Replace "N/A" with ""
+            const updatedValues = {
+                openpanna: values.open_panna === 'N/A' ? '' : values.open_panna,
+                opendigit: values.open_digit === 'N/A' ? '' : values.open_digit,
+                closepanna: values.close_panna === 'N/A' ? '' : values.close_panna,
+                closedigit: values.close_digit === 'N/A' ? '' : values.close_digit,
+            };
+
+
+            // Update the Firestore document with the updated values
+            const bidDocRef = doc(db, 'User_Events', selectedCustomer.id);
+
+            await updateDoc(bidDocRef, updatedValues);
+
+            // Log success message
+            console.log('Document updated successfully!');
+            handleOpenSnackbar(`Bid updated successfully!`);
+
+            // Close the dialog
+            handleCloseDialog();
+        } catch (error) {
+            handleOpenSnackbar(`Error updating bid!`);
+            console.error('Error updating bid:', error);
+        }
+    };
     useEffect(() => {
         if (valuesResult?.date) {
             // Fetch data based on date
             fetchData();
         }
     }, [valuesResult]);
-
+    // Function to handle opening the dialog
+    const handleOpenDialog = (customer) => {
+        setSelectedCustomer(customer);
+        setValues((prevState)=>({
+            ...prevState,
+            // updated_bid: bid, 
+            open_panna: customer?.openpanna,
+            open_digit: customer?.opendigit,
+            close_panna: customer?.closepanna,
+            close_digit: customer?.closedigit,
+        }))
+        setOpenDialog(true);
+    };
+    // Function to handle closing the dialog
+    const handleCloseDialog = () => {
+        setSelectedCustomer(null);
+        setOpenDialog(false);
+    };
     return (
         <Card>
             <CardHeader
@@ -162,6 +217,9 @@ export const BidTable = (props) => {
                                 <TableCell>
                                     Date
                                 </TableCell>
+                                <TableCell>
+                                    Action
+                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -173,7 +231,6 @@ export const BidTable = (props) => {
                                 </TableRow>
                             ) : (paginatedItems?.map((customer, index) => {
                                 // const isSelected = selected.includes(customer.id);
-                                console.log(customer.date)
                                 const date = format(customer.date, 'dd/MM/yyyy');
                                 // const open_date = customer.open_date ? format(new Date(customer.open_date), 'dd MMM yyyy hh:mm a') : 'N/A';
                                 // const close_date = customer.close_date !== 'N/A' ? format(new Date(customer.close_date), 'dd MMM yyyy hh:mm a') : 'N/A';
@@ -241,6 +298,14 @@ export const BidTable = (props) => {
                                         <TableCell>
                                             {date}
                                         </TableCell>
+                                        <TableCell>
+                                            <Button
+                                                variant="outlined"
+                                                onClick={() => handleOpenDialog(customer)}
+                                            >
+                                                Edit
+                                            </Button>
+                                        </TableCell>
                                     </TableRow>
                                 );
                             }))}
@@ -256,6 +321,17 @@ export const BidTable = (props) => {
                 page={page}
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={[5, 10, 25]}
+            />
+            {/* Alert Dialog for changing status */}
+            <EditBidDialog
+                values={values}
+                setValues={setValues}
+                openDialog={openDialog}
+                selectedCustomer={selectedCustomer}
+                handleCloseDialog={handleCloseDialog}
+                handleCommonAction={handleCommonAction}
+                button1={'Update'}
+                button2={'Cancel'}
             />
         </Card>
     );

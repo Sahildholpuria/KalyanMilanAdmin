@@ -85,8 +85,26 @@ export const items = [
     )
   },
   {
+    title: 'Bid Revert',
+    path: '/bid',
+    icon: (
+      <SvgIcon fontSize="small">
+        <ScaleIcon />
+      </SvgIcon>
+    )
+  },
+  {
     title: 'Winning History',
     path: '/winning',
+    icon: (
+      <SvgIcon fontSize="small">
+        <AcademicCapIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Winning Prediction',
+    path: '/prediction',
     icon: (
       <SvgIcon fontSize="small">
         <AcademicCapIcon />
@@ -99,6 +117,15 @@ export const items = [
     icon: (
       <SvgIcon fontSize="small">
         <LockClosedIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Send Notification',
+    path: '/send',
+    icon: (
+      <SvgIcon fontSize="small">
+        <CogIcon />
       </SvgIcon>
     )
   },
