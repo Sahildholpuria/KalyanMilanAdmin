@@ -149,7 +149,7 @@ export const SideNavItem = (props) => {
                   </ListItemIcon>
                 )}
                 <ListItemText primary={child.title} sx={{
-                  '& .css-1aujd7s-MuiTypography-root': {
+                  '& ..css-1r5ssmh': {
                     color: 'neutral.400',
                     flexGrow: 1,
                     fontFamily: (theme) => theme.typography.fontFamily,
