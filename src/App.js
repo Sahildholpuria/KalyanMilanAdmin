@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import Home from './pages/index';
 import Login from './pages/auth/login';
 import { LoginLayout } from './layouts/auth/layout';
@@ -14,6 +14,7 @@ import DeclareResult from './pages/result';
 import BidHistory from './pages/bids';
 import WinHistory from './pages/winning';
 import GameRates from './pages/gamerates';
+import Notification from './pages/notification';
 
 function App() {
   const location = useLocation();
@@ -41,6 +42,7 @@ function App() {
               <Route path="/bids" element={<BidHistory />} />
               <Route path="/winning" element={<WinHistory />} />
               <Route path="/result" element={<DeclareResult />} />
+              <Route path="/send" element={<Notification />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="*" element={<ErrorPage />} />
             </Routes>

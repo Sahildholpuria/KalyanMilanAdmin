@@ -1,21 +1,19 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-// import Head from 'next/head';
-import { subDays, subHours } from 'date-fns';
-import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
+import { useEffect } from 'react';
 import { Box, Container, Stack, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from '../layouts/dashboard/layout';
-import { GameRatesDetails } from '../sections/companies/game-rates-details';
+import { SendNotification } from '../sections/settings/send-notification';
 
-const GameRates = () => {
+const Notification = () => {
     useEffect(() => {
         // Dynamically set the document title
-        document.title = 'Game | KalyanMatka Official';
+        document.title = 'Notification | KalyanMatka Official';
 
         // Clean up the effect when the component unmounts
         return () => {
             document.title = 'KalyanMatka Official'; // Set a default title if needed
         };
     }, []);
+
     return (
         <>
             <Box
@@ -34,11 +32,11 @@ const GameRates = () => {
                         >
                             <Stack spacing={1}>
                                 <Typography variant="h4">
-                                    Game Rates
+                                    Send Notification
                                 </Typography>
                             </Stack>
                         </Stack>
-                        <GameRatesDetails />
+                        <SendNotification />
                     </Stack>
                 </Container>
             </Box>
@@ -46,10 +44,10 @@ const GameRates = () => {
     );
 };
 
-GameRates.getLayout = (page) => (
+Notification.getLayout = (page) => (
     <DashboardLayout>
         {page}
     </DashboardLayout>
 );
 
-export default GameRates;
+export default Notification;
