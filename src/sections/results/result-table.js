@@ -2,11 +2,14 @@ import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import {
     Avatar,
+    Backdrop,
     Box,
+    Button,
     Card,
     CardContent,
     CardHeader,
     Checkbox,
+    CircularProgress,
     Grid,
     Stack,
     Tab,
@@ -26,8 +29,10 @@ import dayjs from 'dayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../contexts/firebase';
+import { ResultActionDialog } from '../../utils/result-action-dialog';
+import { RemoveWinningHistory } from '../../utils/winning-points';
 // import { useRouter } from 'next/router';
 
 export const ResultTable = (props) => {
@@ -48,8 +53,12 @@ export const ResultTable = (props) => {
         // selected = [],
         // handleRowSelect,
         searchQuery = '', // Accept search query as a prop
+        handleOpenSnackbar,
     } = props;
     const [resultData, setResultData] = useState([]);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [count, setCount] = useState(0);
     const [values, setValues] = useState({
         result_date: dayjs().format('YYYY-MM-DD'),
@@ -66,6 +75,48 @@ export const ResultTable = (props) => {
     const paginatedItems = filteredItems?.slice(start, end);
     // const selectedSome = (selected.length > 0) && (selected.length < items.length);
     // const selectedAll = (items.length > 0) && (selected.length === items.length);
+    const handleOpenDialog = (customer) => {
+        setSelectedCustomer(customer);
+        setOpenDialog(true);
+    };
+    // Function to handle closing the dialog
+    const handleCloseDialog = () => {
+        setSelectedCustomer(null);
+        setOpenDialog(false);
+    };
+    const handleAction = async () => {
+        try {
+            handleCloseDialog();
+            setLoading(true);
+            // Delete document from the 'Result' collection
+            await deleteDoc(doc(db, 'Result', selectedCustomer.id));
+            const date = new Date();
+            const currentDate = date.toDateString();
+            if(selectedCustomer.result_date === currentDate){
+                // Update subtitle in the 'Events' collection
+                const eventsQuery = query(collection(db, 'Events'), where('title', '==', selectedCustomer.name));
+                const eventsSnapshot = await getDocs(eventsQuery);
+                
+                if (!eventsSnapshot.empty) {
+                    const eventDoc = eventsSnapshot.docs[0];
+                    const eventId = eventDoc.ref._key.path.segments.slice(-1)[0];
+                    
+                    await updateDoc(doc(db, 'Events', eventId), {
+                        subtitle: '***-**-***',
+                    });
+                }
+            }
+            RemoveWinningHistory(selectedCustomer)
+            handleOpenSnackbar('Result Deleted Successfully');
+            // Close the dialog after successful deletion and update
+        } catch (error) {
+            console.error('Error performing delete and update:', error);
+            // Handle errors or show an error message to the user
+            handleOpenSnackbar('Error deleting result!');
+        }
+        setLoading(false);
+    }
+
     const fetchData = async () => {
         try {
             // Replace this with the actual logic to fetch data from your source
@@ -197,6 +248,9 @@ export const ResultTable = (props) => {
                                 <TableCell>
                                     Close Panna
                                 </TableCell>
+                                <TableCell>
+                                    Action
+                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -266,6 +320,16 @@ export const ResultTable = (props) => {
                                         <TableCell>
                                             {customer.close}
                                         </TableCell>
+                                        <TableCell>
+                                            <Button
+                                                variant="outlined"
+                                                sx={{color: 'error.main'}}
+                                                onClick={() => handleOpenDialog(customer)}
+                                            >
+                                                Delete
+                                            </Button>
+
+                                        </TableCell>
                                     </TableRow>
                                 );
                             }))}
@@ -282,6 +346,22 @@ export const ResultTable = (props) => {
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={[5, 10, 25]}
             />
+            {/* Alert Dialog for changing status */}
+            <ResultActionDialog
+                openDialog={openDialog}
+                handleCloseDialog={handleCloseDialog}
+                handleCommonAction={handleAction}
+                content={'Do you want to delete this result?'}
+                button1={'Confirm'}
+                button2={'Cancel'}
+            />
+            <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={loading}
+            // onClick={handleClose}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
         </Card>
     );
 };

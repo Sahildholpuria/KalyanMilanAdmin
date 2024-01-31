@@ -19,28 +19,6 @@ import dayjs from 'dayjs';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../contexts/firebase';
 
-const states = [
-    {
-        value: '',
-        label: ''
-    },
-    {
-        value: 'alabama',
-        label: 'Alabama'
-    },
-    {
-        value: 'new-york',
-        label: 'New York'
-    },
-    {
-        value: 'san-francisco',
-        label: 'San Francisco'
-    },
-    {
-        value: 'los-angeles',
-        label: 'Los Angeles'
-    }
-];
 const session = [
     {
         value: '',
@@ -196,6 +174,7 @@ export const ResultDetails = ({ setShow, handleValues }) => {
                                                             ...prevState,
                                                             result_date: newValue.format('YYYY-MM-DD'),
                                                         }));
+                                                        setShow(false);
                                                     }}
                                                     textField={(props) => (
                                                         <TextField fullWidth label="Result Date" {...props} sx={{ width: '100%' }} />

@@ -26,7 +26,7 @@ const removeInvalidTokens = async (invalidTokenIds) => {
 export const SendRandomNotification = async (title, message) => {
     try {
         const fcmTokens = await getTokens();
-        console.log(fcmTokens);
+        // console.log(fcmTokens);
         const serverKey = 'AAAAJgjI6Tw:APA91bEmoVC74RA48DPHRP_x7asQ-MksbtGchKsCpUhnO3n53_c5b2Uzl3Ihg8RKq8FeidUA02iILmExnCc5sA1aaN8kxjrABVV4Gg0xrReGyjh6QMJSIMt50hDCTjB_h95qHhyOvGNy';
 
         const notification = {
@@ -81,7 +81,7 @@ export const SendRandomNotification = async (title, message) => {
 export const SendResultNotification = async (title, session) => {
     try {
         const fcmTokens = await getTokens();
-        console.log(fcmTokens);
+        // console.log(fcmTokens);
         const serverKey = 'AAAAJgjI6Tw:APA91bEmoVC74RA48DPHRP_x7asQ-MksbtGchKsCpUhnO3n53_c5b2Uzl3Ihg8RKq8FeidUA02iILmExnCc5sA1aaN8kxjrABVV4Gg0xrReGyjh6QMJSIMt50hDCTjB_h95qHhyOvGNy';
 
         const notification = {

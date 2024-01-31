@@ -132,6 +132,7 @@ const DeclareResult = () => {
                                         // items={users}
                                         fetch={fetch}
                                         valuesResult={values}
+                                        handleOpenSnackbar={handleOpenSnackbar}
                                         // handleRowSelect={handleRowSelect}
                                         // onDeselectAll={customersSelection.handleDeselectAll}
                                         // onDeselectOne={customersSelection.handleDeselectOne}

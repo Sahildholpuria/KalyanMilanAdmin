@@ -834,12 +834,26 @@ export const EditBidDialog = ({ values, setValues, openDialog, handleCloseDialog
     const doubleDropDown = selectedCustomer?.game_type === 'Half Sangam' ? halfSangam : selectedCustomer?.game_type === 'Full Sangam' ? fullSangam : [{ label: '', value: '' }];
     const handleChange = useCallback(
         (event) => {
-            setValues((prevState) => ({
-                ...prevState,
-                [event.target.name]: event.target.value
-            }));
+            const selectedValue = event.target.value;
+            // If game_type is 'Jodi Sigit', split the value into two digits
+            if (selectedCustomer?.game_type === 'Jodi Digit') {
+                const selectedDigits = selectedValue.toString();
+                const openDigit = selectedDigits[0];
+                const closeDigit = selectedDigits[1];
+                    setValues((prevState) => ({
+                        ...prevState,
+                        open_digit: openDigit,
+                        close_digit: closeDigit,
+                    }));
+            } else {
+                // For other game types, update the selected field directly
+                setValues((prevState) => ({
+                    ...prevState,
+                    [event.target.name]: selectedValue,
+                }));
+            }
         },
-        []
+        [selectedCustomer]
     );
 
     return (
