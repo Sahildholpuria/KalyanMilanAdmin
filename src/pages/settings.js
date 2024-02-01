@@ -1,10 +1,12 @@
 // import Head from 'next/head';
 import { Box, Container, Stack, Typography } from '@mui/material';
-import { SettingsNotifications } from '../sections/settings/settings-notifications';
 import { SettingsPassword } from '../sections/settings/settings-password';
 import { Layout as DashboardLayout } from '../layouts/dashboard/layout';
 import { SettingDetails } from '../sections/settings/settings-details';
 import { useEffect } from 'react';
+import { SettingApp } from '../sections/settings/settings-app';
+import { SupportDetails } from '../sections/settings/support-details';
+import { Maintainence } from '../sections/settings/setting-mentainance';
 
 const Settings = () => {
   useEffect(() => {
@@ -36,8 +38,10 @@ const Settings = () => {
             Settings
           </Typography>
           <SettingDetails />
-          {/* <SettingsNotifications /> */}
           <SettingsPassword />
+          <SettingApp />
+          <SupportDetails />
+          <Maintainence />
         </Stack>
       </Container>
     </Box>

@@ -1215,10 +1215,10 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
             let resultQueryEvents;
             if(sessionType){
                 // Fetch data from 'User_Events' collection where conditions match
-                resultQueryEvents = query(collection(db, 'User_Events'),
+                resultQueryEvents =  query(collection(db, 'User_Events'),
                     where('event', '==', game.game_name),
                     where('date', '==', resultDate),
-                    where('session', '==', sessionType)
+                    where('session', '==', game.session === 'open' ? 'Open' : '')
                 );
             } else {
                 // Fetch data from 'User_Events' collection where conditions match
@@ -1232,7 +1232,7 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
 
             if (!resultSnapshotEvents.empty) {
                 const resultData = resultSnapshotEvents.docs.map((doc) => doc.data());
-                console.log(resultData)
+                // console.log(resultData)
                 if (game.session === 'open') {
                     const filteredDigit = resultData.filter(item => item.session === 'Open' && item.opendigit === "4");
                     const filteredPanna = resultData.filter(item => item.session === 'Open' && item.openpanna === values.panna);
@@ -1262,7 +1262,7 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
 
                         // Extract opendigit and openpanna from the 'open' result
                         const [openpanna, opendigit] = open.split('-');
-                        console.log(openpanna, opendigit);
+
                         // Filter data based on opendigit, openpanna, closedigit, closepanna
                         const filteredData = resultData.filter(item =>
                             (item.opendigit === opendigit ||
@@ -1270,10 +1270,27 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
                             (item.closedigit === values.digit ||
                             item.closepanna === values.panna)
                         );
+                        // Additional filter conditions based on game
+                        const gameFilterData = resultData.filter(item => {
+                            const gameName = item.game;
 
-                        // Process the filteredData as needed
-                        console.log(filteredData, 'filterData');
-                        const winningResults = filteredData.map((data) => {
+                            switch (gameName) {
+                                case 'Single Digit':
+                                    return item.closedigit === values.digit;
+                                case 'Single Panna':
+                                    return item.closepanna === values.panna;
+                                case 'Double Panna':
+                                    return item.closepanna === values.panna;
+                                case 'Triple Panna':
+                                    return item.closepanna === values.panna;
+                                default:
+                                    return true; // Default condition
+                            }
+                        });
+
+                        const mergedData = [...gameFilterData, ...filteredData];
+
+                        const winningResults = mergedData.map((data) => {
                             const wininngPoint = calculateWinningPoints(gameRates, data.game, parseFloat(data.points));
 
                             const winningHistoryData = {
