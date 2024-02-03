@@ -17,6 +17,8 @@ import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import nProgress from 'nprogress';
 import { AdminProfile } from '../sections/account/admin-profile';
 import { useAuth } from '../hooks/use-auth';
+import { OverviewTotalBid } from '../sections/overview/overview-bids';
+import { MarketBidDetails } from '../sections/overview/market-bid-details';
 
 const now = new Date();
 
@@ -26,6 +28,7 @@ const Home = () => {
   const [gamesCount, setGamesCount] = useState(0);
   const [profitCount, setProfitCount] = useState(0);
   const [withdrawReqCount, setWithdrawReqCount] = useState(0);
+  const [totalBids, setTotalBids] = useState(0);
   const adminData = auth.admin;
   useEffect(() => {
     // Dynamically set the document title
@@ -45,6 +48,20 @@ const Home = () => {
           onSnapshot(q, (querySnapshot) => {
             const count = querySnapshot?.docs[0]?.data()?.earnings;
             setCountFunction(count);
+          });
+        } else if (collectionName === 'User_Events') {
+          const currentDate = new Date().toDateString();
+          const q = query(collection(db, collectionName), where('date', '==', currentDate));
+
+          onSnapshot(q, (querySnapshot) => {
+            let totalPoints = 0;
+
+            querySnapshot.forEach((doc) => {
+              const points = Number(doc.data().points);
+              totalPoints += points;
+            });
+
+            setCountFunction(totalPoints);
           });
         } else {
           const q = query(collection(db, collectionName));
@@ -67,6 +84,7 @@ const Home = () => {
     fetchDocumentCount('Events', setGamesCount);
     fetchDocumentCount('AddMoney', setProfitCount);
     fetchDocumentCount('Withdraw_List', setWithdrawReqCount);
+    fetchDocumentCount('User_Events', setTotalBids);
   }, []);
   return (
     <>
@@ -87,7 +105,7 @@ const Home = () => {
             xs={12}
             sm={6}
             lg={6}
-            sx={{marginBottom: '20px', textAlign: 'center'}}
+            sx={{ marginBottom: '20px', textAlign: 'center' }}
           >
             <Typography variant='h4'>Welcome to Kalyan Matkka Offical!</Typography>
           </Grid>
@@ -95,7 +113,7 @@ const Home = () => {
             xs={12}
             sm={6}
             lg={6}
-            sx={{marginBottom: '20px', textAlign: 'center'}}
+            sx={{ marginBottom: '20px', textAlign: 'center' }}
           >
             <Typography variant='h5' color='text.primary'>Admin dashboard</Typography>
           </Grid>
@@ -103,9 +121,9 @@ const Home = () => {
             xs={12}
             sm={6}
             lg={6}
-            sx={{marginBottom: '20px'}}
+            sx={{ marginBottom: '20px' }}
           >
-            <AdminProfile user={adminData[0]}/>
+            <AdminProfile user={adminData[0]} />
           </Grid>
           <Grid
             container
@@ -114,47 +132,57 @@ const Home = () => {
             <Grid
               xs={12}
               sm={6}
-              lg={3}
+              lg={6}
             >
               <OverviewTotalCustomers
                 // difference={16}
                 // positive={false}
-                sx={{ height: '100%', cursor: 'pointer' }}
+                sx={{ height: '100%', cursor: 'pointer', backgroundColor: '#E5E7EB' }}
                 value={formatUserCount(usersCount)}
               />
             </Grid>
             <Grid
               xs={12}
               sm={6}
-              lg={3}
+              lg={6}
             >
               <OverviewBudget
                 // difference={12}
                 // positive
-                sx={{ height: '100%', cursor: 'pointer' }}
+                sx={{ height: '100%', cursor: 'pointer', backgroundColor: '#E5E7EB' }}
                 value={formatUserCount(gamesCount)}
               />
             </Grid>
             <Grid
               xs={12}
               sm={6}
-              lg={3}
+              lg={6}
             >
               <OverviewTotalProfit
-                sx={{ height: '100%' }}
+                sx={{ height: '100%', backgroundColor: '#E5E7EB' }}
                 value={formatUserCount(profitCount)}
               />
             </Grid>
             <Grid
               xs={12}
               sm={6}
-              lg={3}
+              lg={6}
             >
               <OverviewTasksProgress
                 // difference={12}
                 // positive
-                sx={{ height: '100%', cursor: 'pointer' }}
+                sx={{ height: '100%', cursor: 'pointer', backgroundColor: '#E5E7EB' }}
                 value={formatUserCount(withdrawReqCount)}
+              />
+            </Grid>
+            <Grid
+              xs={12}
+              sm={6}
+              lg={6}
+            >
+              <OverviewTotalBid
+                sx={{ height: '100%', backgroundColor: '#E5E7EB' }}
+                value={formatUserCount(totalBids)}
               />
             </Grid>
             {/* <Grid
@@ -298,6 +326,9 @@ const Home = () => {
               sx={{ height: '100%' }}
             />
           </Grid> */}
+          </Grid>
+          <Grid xs={12} md={6} lg={6} sm={12} sx={{mt: 3}}>
+            <MarketBidDetails />
           </Grid>
         </Container>
       </Box>

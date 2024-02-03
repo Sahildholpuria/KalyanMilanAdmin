@@ -7,6 +7,6 @@ export const formatUserCount = (userCount) => {
         return (userCount / 1000000).toFixed(1) + 'M';
     } else {
         // Display as is (less than 1000)
-        return userCount.toString();
+        return userCount?.toString();
     }
 }

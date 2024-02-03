@@ -7,7 +7,9 @@ import {
     CardContent,
     Divider,
     Grid,
-    Typography
+    Typography,
+    useMediaQuery,
+    useTheme
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import { format } from 'date-fns';
@@ -26,6 +28,8 @@ import logo from '../../components/profile-img.png';
 // };
 
 export const AdminProfile = ({ user }) => {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const formatDate = (dateString) => {
         try {
             const date = new Date(dateString);
@@ -38,13 +42,13 @@ export const AdminProfile = ({ user }) => {
     return (
         <Card sx={{ backgroundColor: '#403e57' }}>
             <CardContent sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Grid xs={12} md={6} sx={{width: '50%'}}>
+                <Grid xs={12} md={6} sx={{width: isMobile ? '100%' : '50%'}}>
                     <Box
                         sx={{
                             alignItems: 'center',
                             display: 'flex',
                             flexDirection: 'column',
-                            width: '50%'
+                            width: isMobile ? '100%' : '50%',
                         }}
                     >
                         <Avatar
@@ -52,7 +56,7 @@ export const AdminProfile = ({ user }) => {
                             sx={{
                                 height: 100,
                                 mb: 2,
-                                width: 100
+                                width: 100,
                             }}
                         >
                             {getInitials(user?.name)}
@@ -64,7 +68,7 @@ export const AdminProfile = ({ user }) => {
                             {user?.name}
                         </Typography>
                         <Typography
-                            color="text.secondary"
+                            color="text.primary"
                             variant="h6"
                         >
                             {user?.email}
@@ -83,7 +87,7 @@ export const AdminProfile = ({ user }) => {
                     </Typography> */}
                     </Box>
                 </Grid>
-                <Grid xs={12} md={6} sx={{width: '50%'}}>
+                <Grid xs={12} md={6} sx={{ width: '50%', display: isMobile ? 'none' : 'block' }}>
                     <img src={logo} alt='profile' style={{maxWidth: '100%', height: 'auto'}} />
                 </Grid>
             </CardContent>
