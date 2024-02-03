@@ -97,7 +97,7 @@ const Home = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          py: 8
+          py: 4
         }}
       >
         <Container maxWidth="xl">
@@ -132,7 +132,7 @@ const Home = () => {
             <Grid
               xs={12}
               sm={6}
-              lg={6}
+              lg={3}
             >
               <OverviewTotalCustomers
                 // difference={16}
@@ -144,7 +144,7 @@ const Home = () => {
             <Grid
               xs={12}
               sm={6}
-              lg={6}
+              lg={3}
             >
               <OverviewBudget
                 // difference={12}
@@ -156,7 +156,7 @@ const Home = () => {
             <Grid
               xs={12}
               sm={6}
-              lg={6}
+              lg={3}
             >
               <OverviewTotalProfit
                 sx={{ height: '100%', backgroundColor: '#E5E7EB' }}
@@ -166,7 +166,7 @@ const Home = () => {
             <Grid
               xs={12}
               sm={6}
-              lg={6}
+              lg={3}
             >
               <OverviewTasksProgress
                 // difference={12}
@@ -178,7 +178,7 @@ const Home = () => {
             <Grid
               xs={12}
               sm={6}
-              lg={6}
+              lg={3}
             >
               <OverviewTotalBid
                 sx={{ height: '100%', backgroundColor: '#E5E7EB' }}
