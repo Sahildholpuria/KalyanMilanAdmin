@@ -105,22 +105,6 @@ const Home = () => {
             xs={12}
             sm={6}
             lg={6}
-            sx={{ marginBottom: '20px', textAlign: 'center' }}
-          >
-            <Typography variant='h4'>Welcome to Kalyan Matkka Offical!</Typography>
-          </Grid>
-          <Grid
-            xs={12}
-            sm={6}
-            lg={6}
-            sx={{ marginBottom: '20px', textAlign: 'center' }}
-          >
-            <Typography variant='h5' color='text.primary'>Admin dashboard</Typography>
-          </Grid>
-          <Grid
-            xs={12}
-            sm={6}
-            lg={6}
             sx={{ marginBottom: '20px' }}
           >
             <AdminProfile user={adminData[0]} />
