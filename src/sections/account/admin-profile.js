@@ -43,12 +43,28 @@ export const AdminProfile = ({ user }) => {
         <Card sx={{ backgroundColor: '#403e57' }}>
             <CardContent sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Grid xs={12} md={6} sx={{width: isMobile ? '100%' : '50%'}}>
+                    <Grid
+                        xs={12}
+                        sm={6}
+                        lg={6}
+                        sx={{ marginBottom: '20px', textAlign: 'center' }}
+                    >
+                        <Typography variant='h5'>Welcome to Kalyan Matkka Offical!</Typography>
+                    </Grid>
+                    <Grid
+                        xs={12}
+                        sm={6}
+                        lg={6}
+                        sx={{ marginBottom: '20px', textAlign: 'center' }}
+                    >
+                        <Typography variant='h5' color='text.primary'>Admin dashboard</Typography>
+                    </Grid>
                     <Box
                         sx={{
                             alignItems: 'center',
                             display: 'flex',
                             flexDirection: 'column',
-                            width: isMobile ? '100%' : '50%',
+                            width: isMobile ? '100%' : '100%',
                         }}
                     >
                         <Avatar
