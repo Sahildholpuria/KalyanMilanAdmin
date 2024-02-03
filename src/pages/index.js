@@ -63,10 +63,10 @@ const Home = () => {
     };
 
     // Assuming you have collections named 'Users', 'Events', 'admin', 'Withdraw_List'
-    // fetchDocumentCount('Users', setUsersCount);
-    // fetchDocumentCount('Events', setGamesCount);
-    // fetchDocumentCount('AddMoney', setProfitCount);
-    // fetchDocumentCount('Withdraw_List', setWithdrawReqCount);
+    fetchDocumentCount('Users', setUsersCount);
+    fetchDocumentCount('Events', setGamesCount);
+    fetchDocumentCount('AddMoney', setProfitCount);
+    fetchDocumentCount('Withdraw_List', setWithdrawReqCount);
   }, []);
   return (
     <>
