@@ -80,7 +80,7 @@ export const SendNotification = () => {
                 noValidate
                 onSubmit={handleSubmit}
             >
-                <Card>
+                <Card sx={{border: '1px solid'}}>
                     <CardHeader
                         subheader="You can send notification from here"
                         title="Notification"

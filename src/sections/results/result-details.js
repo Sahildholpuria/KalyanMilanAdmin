@@ -115,7 +115,7 @@ export const ResultDetails = ({ setShow, handleValues }) => {
                 noValidate
                 onSubmit={handleSubmit}
             >
-                <Card>
+                <Card sx={{border: '1px solid'}}>
                     <CardHeader
                         // subheader="The information can be edited"
                         title="Select Game"

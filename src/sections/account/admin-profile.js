@@ -49,7 +49,7 @@ export const AdminProfile = ({ user }) => {
                         lg={6}
                         sx={{ marginBottom: '20px', textAlign: 'center' }}
                     >
-                        <Typography variant='h5'>Welcome to Kalyan Matkka Offical!</Typography>
+                        <Typography variant='h5' color='white'>Welcome to Kalyan Matkka Offical!</Typography>
                     </Grid>
                     <Grid
                         xs={12}
@@ -57,7 +57,7 @@ export const AdminProfile = ({ user }) => {
                         lg={6}
                         sx={{ marginBottom: '20px', textAlign: 'center' }}
                     >
-                        <Typography variant='h5' color='text.primary'>Admin dashboard</Typography>
+                        <Typography variant='h5' color='white'>Admin dashboard</Typography>
                     </Grid>
                     <Box
                         sx={{

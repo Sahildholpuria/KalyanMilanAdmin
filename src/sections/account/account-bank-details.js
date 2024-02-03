@@ -89,7 +89,7 @@ export const AccountBankDetails = ({ user }) => {
         //     noValidate
         //     onSubmit={handleSubmit}
         // >
-        <Card>
+        <Card sx={{border: '1px solid'}}>
             <CardHeader
                 // subheader="The information can be edited"
                 title="Bank Details"

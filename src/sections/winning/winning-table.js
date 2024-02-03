@@ -154,7 +154,7 @@ export const WinTable = (props) => {
     // };
     console.log(resultData)
     return (
-        <Card>
+        <Card sx={{border: '1px solid'}}>
             <CardHeader
                 // subheader="The information can be edited"
                 title="Winning History List"

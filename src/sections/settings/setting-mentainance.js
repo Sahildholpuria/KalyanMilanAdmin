@@ -99,7 +99,7 @@ export const Maintainence = () => {
                 noValidate
                 onSubmit={handleSubmit}
             >
-                <Card>
+                <Card sx={{border: '1px solid'}}>
                     <CardHeader
                         subheader="You can edit App Maintainence settings here"
                         title="App Maintainence"

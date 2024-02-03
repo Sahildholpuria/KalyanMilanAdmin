@@ -130,7 +130,7 @@ export const GameRatesDetails = () => {
                 noValidate
                 onSubmit={handleSubmit}
             >
-                <Card>
+                <Card sx={{border: '1px solid'}}>
                     <CardHeader
                         subheader="You can edit game rates here"
                         title="Add Game Rates"

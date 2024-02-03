@@ -102,7 +102,7 @@ export const WithdrawTable = (props) => {
         }
     };
     return (
-        <Card>
+        <Card sx={{border: '1px solid'}}>
             <Scrollbar sx={{ '.simplebar-placeholder': { display: 'none !important' } }}>
                 <Box sx={{ minWidth: 800 }}>
                     <Table>

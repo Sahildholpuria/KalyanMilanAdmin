@@ -19,6 +19,7 @@ import { AdminProfile } from '../sections/account/admin-profile';
 import { useAuth } from '../hooks/use-auth';
 import { OverviewTotalBid } from '../sections/overview/overview-bids';
 import { MarketBidDetails } from '../sections/overview/market-bid-details';
+import { SingleAnkDetails } from '../sections/overview/single-ank-details';
 
 const now = new Date();
 
@@ -313,6 +314,9 @@ const Home = () => {
           </Grid>
           <Grid xs={12} md={6} lg={6} sm={12} sx={{mt: 3}}>
             <MarketBidDetails />
+          </Grid>
+          <Grid xs={12} md={6} lg={6} sm={12} sx={{mt: 3}}>
+            <SingleAnkDetails />
           </Grid>
         </Container>
       </Box>

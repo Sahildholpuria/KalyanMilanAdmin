@@ -95,7 +95,7 @@ export const SupportDetails = () => {
                 noValidate
                 onSubmit={handleSubmit}
             >
-                <Card>
+                <Card sx={{border: '1px solid'}}>
                     <CardHeader
                         subheader="You can edit Support settings here"
                         title="Add Support"

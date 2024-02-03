@@ -154,7 +154,7 @@ export const BidTable = (props) => {
         setOpenDialog(false);
     };
     return (
-        <Card>
+        <Card sx={{border: '1px solid'}}>
             <CardHeader
                 // subheader="The information can be edited"
                 title="Bid History List"

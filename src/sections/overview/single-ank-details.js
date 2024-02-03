@@ -34,10 +34,9 @@ const session = [
     },
 ];
 
-export const WinningDetails = ({ setShow, handleValues }) => {
+export const SingleAnkDetails = () => {
     const [snackbarMessage, setSnackbarMessage] = useState(null);
     const [values, setValues] = useState({
-        result_date: dayjs().format('YYYY-MM-DD'),
         game_name: '',
         // subtitle: '***-**-***',
         // password: 'demo@123',
@@ -80,10 +79,13 @@ export const WinningDetails = ({ setShow, handleValues }) => {
                 ...prevState,
                 [event.target.name]: event.target.value
             }));
-            setShow(false);
         },
         []
     );
+    const handleValues = () => {
+      
+    }
+    
     const handleSubmit = (event) => {
         event.preventDefault();
         // Other form submission logic
@@ -92,8 +94,7 @@ export const WinningDetails = ({ setShow, handleValues }) => {
             return;
         }
         // If the form is successfully submitted, call the callback function
-        setShow(true);
-        handleValues(values);
+        handleValues();
     };
     useEffect(() => {
         fetchGameTitles();
@@ -154,7 +155,7 @@ export const WinningDetails = ({ setShow, handleValues }) => {
                                     value={values.isPlay}
                                 />
                             </Grid> */}
-                                <Grid
+                                {/* <Grid
                                     xs={12}
                                     md={6}
                                     lg={6}
@@ -174,7 +175,6 @@ export const WinningDetails = ({ setShow, handleValues }) => {
                                                             ...prevState,
                                                             result_date: newValue.format('YYYY-MM-DD'),
                                                         }));
-                                                        setShow(false);
                                                     }}
                                                     textField={(props) => (
                                                         <TextField fullWidth label="Result Date" {...props} sx={{ width: '100%' }} />
@@ -188,7 +188,7 @@ export const WinningDetails = ({ setShow, handleValues }) => {
                                                 />
                                             </DemoContainer>
                                         </LocalizationProvider>
-                                    </Stack>
+                                    </Stack> */}
                                     {/* <TextField
                                     fullWidth
                                     label="Open Time"
@@ -198,7 +198,7 @@ export const WinningDetails = ({ setShow, handleValues }) => {
                                     required
                                     value={values.open}
                                 /> */}
-                                </Grid>
+                                {/* </Grid> */}
                                 {/* <Grid
                                 xs={12}
                                 md={6}

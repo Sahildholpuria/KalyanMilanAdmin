@@ -65,7 +65,7 @@ export const SettingsPassword = () => {
         noValidate
         onSubmit={handleSubmit}
       >
-        <Card>
+        <Card sx={{border: '1px solid'}}>
           <CardHeader
             subheader="Update password"
             title="Password"

@@ -97,7 +97,7 @@ export const SettingDetails = () => {
                 noValidate
                 onSubmit={handleSubmit}
             >
-                <Card>
+                <Card sx={{border: '1px solid'}}>
                     <CardHeader
                         subheader="You can edit App settings here"
                         title="Edit App"

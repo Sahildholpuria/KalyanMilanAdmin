@@ -47,7 +47,7 @@ export const GamesTable = (props) => {
     // const selectedAll = (items.length > 0) && (selected.length === items.length);
 
     return (
-        <Card>
+        <Card sx={{border: '1px solid'}}>
             <Scrollbar sx={{ '.simplebar-placeholder': { display: 'none !important' } }}>
                 <Box sx={{ minWidth: 800 }}>
                     <Table>
