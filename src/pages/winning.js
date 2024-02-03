@@ -2,15 +2,15 @@
 import { Box, Container, Stack, Typography, Unstable_Grid2 as Grid, Snackbar } from '@mui/material';
 import { Layout as DashboardLayout } from '../layouts/dashboard/layout';
 import { useCallback, useEffect, useState } from 'react';
-import { BidDetails } from '../sections/bids/bid-details';
-import { BidTable } from '../sections/bids/bids-table';
+import { WinningDetails } from '../sections/winning/winning-details';
+import { WinTable } from '../sections/winning/winning-table';
 
 const WinHistory = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [snackbarMessage, setSnackbarMessage] = useState(null);
     // const [users, setUsers] = useState(null);
-    // const [show, setShow] = useState(false);
+    const [show, setShow] = useState(false);
     const [values, setValues] = useState(null);
 
     const handlePageChange = useCallback(
@@ -74,7 +74,7 @@ const WinHistory = () => {
                         >
                             <Stack spacing={1}>
                                 <Typography variant="h4">
-                                    Bid History
+                                    Winning History
                                 </Typography>
                             </Stack>
                             {/* <div>
@@ -108,14 +108,14 @@ const WinHistory = () => {
                                     md={12}
                                     lg={12}
                                 >
-                                    <BidDetails handleValues={handleValues} />
+                                    <WinningDetails handleValues={handleValues} setShow={setShow}/>
                                 </Grid>
                                 <Grid
                                     xs={12}
                                     md={12}
                                     lg={12}
                                 >
-                                    <BidTable
+                                    <WinTable
                                         // count={users?.length}
                                         // items={users}
                                         valuesResult={values}
@@ -129,6 +129,7 @@ const WinHistory = () => {
                                         // onSelectOne={customersSelection.handleSelectOne}
                                         page={page}
                                         rowsPerPage={rowsPerPage}
+                                        show={show}
                                     // selected={customersSelection.selected}
                                     // searchQuery={searchQuery} // Pass the search query as a prop
                                     />

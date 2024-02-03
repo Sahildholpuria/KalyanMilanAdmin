@@ -1138,24 +1138,25 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
     const [openDialog, setOpenDialog] = useState(false);
     const [showButton, setShowButton] = useState(false);
     const [gameRates, setGameRates] = useState({
-            singleDigitValue1: '',
-            singleDigitValue2: '',
-            jodiDigitValue1: '',
-            jodiDigitValue2: '',
-            singlePannaValue1: '',
-            singlePannaValue2: '',
-            doublePannaValue1: '',
-            doublePannaValue2: '',
-            triplePannaValue1: '',
-            triplePannaValue2: '',
-            halfSangamValue1: '',
-            halfSangamValue2: '',
-            fullSangamValue1: '',
-            fullSangamValue2: '',
+        singleDigitValue1: '',
+        singleDigitValue2: '',
+        jodiDigitValue1: '',
+        jodiDigitValue2: '',
+        singlePannaValue1: '',
+        singlePannaValue2: '',
+        doublePannaValue1: '',
+        doublePannaValue2: '',
+        triplePannaValue1: '',
+        triplePannaValue2: '',
+        halfSangamValue1: '',
+        halfSangamValue2: '',
+        fullSangamValue1: '',
+        fullSangamValue2: '',
     })
     const [tableData, setTableData] = useState([]);
     const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [wonData, setWonData] = useState([]);
 
     const handleChange = useCallback(
         (event) => {
@@ -1177,6 +1178,7 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
                 }));
             }
             setShowButton(false);
+            setTableData([]);
         },
         []
     );
@@ -1213,9 +1215,9 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
 
             const sessionType = game.session === 'open';
             let resultQueryEvents;
-            if(sessionType){
+            if (sessionType) {
                 // Fetch data from 'User_Events' collection where conditions match
-                resultQueryEvents =  query(collection(db, 'User_Events'),
+                resultQueryEvents = query(collection(db, 'User_Events'),
                     where('event', '==', game.game_name),
                     where('date', '==', resultDate),
                     where('session', '==', game.session === 'open' ? 'Open' : '')
@@ -1253,7 +1255,17 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
                         };
                         return winningHistoryData;
                     });
+                    const updatedMergedData = mergedData.map((data) => {
+                        const wininngPoint = calculateWinningPoints(gameRates, data.game, parseFloat(data.points));
 
+                        const updatedData = {
+                            ...data,
+                            won: wininngPoint, // Assuming you want to store the won value with 2 decimal places
+                        };
+
+                        return updatedData;
+                    });
+                    setWonData(updatedMergedData);
                     setTableData(winningResults);
                 } else {
                     if (!resultSnapshot.empty) {
@@ -1266,9 +1278,9 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
                         // Filter data based on opendigit, openpanna, closedigit, closepanna
                         const filteredData = resultData.filter(item =>
                             (item.opendigit === opendigit ||
-                            item.openpanna === openpanna) &&
+                                item.openpanna === openpanna) &&
                             (item.closedigit === values.digit ||
-                            item.closepanna === values.panna)
+                                item.closepanna === values.panna)
                         );
                         // Additional filter conditions based on game
                         const gameFilterData = resultData.filter(item => {
@@ -1284,7 +1296,7 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
                                 case 'Triple Panna':
                                     return item.closepanna === values.panna;
                                 default:
-                                    return true; // Default condition
+                                    return null; // Default condition
                             }
                         });
 
@@ -1304,7 +1316,18 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
                                 date: data.date,
                             };
                             return winningHistoryData;
-                        });  
+                        });
+                        const updatedMergedData = mergedData.map((data) => {
+                            const wininngPoint = calculateWinningPoints(gameRates, data.game, parseFloat(data.points));
+
+                            const updatedData = {
+                                ...data,
+                                won: wininngPoint.toFixed(2), // Assuming you want to store the won value with 2 decimal places
+                            };
+
+                            return updatedData;
+                        });
+                        setWonData(updatedMergedData);
                         setTableData(winningResults);
                     } else {
                         // Handle case when no open result data is found
@@ -1324,6 +1347,7 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
     };
 
     const handleSubmit = async (event) => {
+        debugger;
         event.preventDefault();
         let resultDate = new Date(game.result_date).toDateString();
 
@@ -1347,28 +1371,31 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
                     // timestamp: serverTimestamp(),
                 });
                 try {
-                    const subtitle = `${openValue}${closeValue}`;
-                    // Update the 'subtitle' column in the 'Events' table
-                    const eventsQuery = query(collection(db, 'Events'), where('title', '==', game.game_name));
-                    const eventsSnapshot = await getDocs(eventsQuery);
+                    const currentDate = new Date().toDateString();
+                    if (resultDate === currentDate) {
+                        const subtitle = `${openValue}${closeValue}`;
+                        // Update the 'subtitle' column in the 'Events' table
+                        const eventsQuery = query(collection(db, 'Events'), where('title', '==', game.game_name));
+                        const eventsSnapshot = await getDocs(eventsQuery);
 
-                    if (!eventsSnapshot.empty) {
-                        eventsSnapshot.forEach(async (doc) => {
-                            // Update the 'subtitle' field of the document
-                            await updateDoc(doc.ref, {
-                                subtitle: subtitle,  // Replace with your new subtitle value
+                        if (!eventsSnapshot.empty) {
+                            eventsSnapshot.forEach(async (doc) => {
+                                // Update the 'subtitle' field of the document
+                                await updateDoc(doc.ref, {
+                                    subtitle: subtitle,  // Replace with your new subtitle value
+                                });
                             });
-                        });
-                        AddWinningHistory(tableData);
-                        // You can perform additional actions or update the state as needed
-                        SendResultNotification(game.game_name, game.session);
-                        // console.log('Subtitle Updated Successfully!')
-                        // Trigger a fetch or update based on your requirements
-                        // setFetch(true);
-                    } else {
-                        // Document not found, show error message in snackbar
-                        handleOpenSnackbar('Event not found!');
+                            // console.log('Subtitle Updated Successfully!')
+                            // Trigger a fetch or update based on your requirements
+                            // setFetch(true);
+                        } else {
+                            // Document not found, show error message in snackbar
+                            handleOpenSnackbar('Event not found!');
+                        }
                     }
+                    AddWinningHistory(tableData, wonData);
+                    // You can perform additional actions or update the state as needed
+                    SendResultNotification(game.game_name, game.session);
                 } catch (error) {
                     console.error('Error updating subtitle: ', error);
                     handleOpenSnackbar('Error updating subtitle. Please try again.');
@@ -1398,29 +1425,32 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
                     close: closeValue,
                 });
                 try {
-                    openValue = result.docs[0].data().open;
-                    const subtitle = `${openValue}${closeValue}`;
-                    // Update the 'subtitle' column in the 'Events' table
-                    const eventsQuery = query(collection(db, 'Events'), where('title', '==', game.game_name));
-                    const eventsSnapshot = await getDocs(eventsQuery);
+                    const currentDate = new Date().toDateString();
+                    if (resultDate === currentDate) {
+                        openValue = result.docs[0].data().open;
+                        const subtitle = `${openValue}${closeValue}`;
+                        // Update the 'subtitle' column in the 'Events' table
+                        const eventsQuery = query(collection(db, 'Events'), where('title', '==', game.game_name));
+                        const eventsSnapshot = await getDocs(eventsQuery);
 
-                    if (!eventsSnapshot.empty) {
-                        eventsSnapshot.forEach(async (doc) => {
-                            // Update the 'subtitle' field of the document
-                            await updateDoc(doc.ref, {
-                                subtitle: subtitle,  // Replace with your new subtitle value
+                        if (!eventsSnapshot.empty) {
+                            eventsSnapshot.forEach(async (doc) => {
+                                // Update the 'subtitle' field of the document
+                                await updateDoc(doc.ref, {
+                                    subtitle: subtitle,  // Replace with your new subtitle value
+                                });
                             });
-                        });
-
-                        // You can perform additional actions or update the state as needed
-                        SendResultNotification(game.game_name, game.session);
-                        // console.log('Subtitle Updated Successfully!')
-                        // Trigger a fetch or update based on your requirements
-                        // setFetch(true);
-                    } else {
-                        // Document not found, show error message in snackbar
-                        handleOpenSnackbar('Event not found!');
+                            // console.log('Subtitle Updated Successfully!')
+                            // Trigger a fetch or update based on your requirements
+                            // setFetch(true);
+                        } else {
+                            // Document not found, show error message in snackbar
+                            handleOpenSnackbar('Event not found!');
+                        }
                     }
+                    AddWinningHistory(tableData, wonData);
+                    // You can perform additional actions or update the state as needed
+                    SendResultNotification(game.game_name, game.session);
                 } catch (error) {
                     console.error('Error updating subtitle: ', error);
                     handleOpenSnackbar('Error updating subtitle. Please try again.');
@@ -1444,7 +1474,7 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
         try {
             const q = query(collection(db, 'admin'), where('name', '==', 'GameRates'));
             const querySnapshot = await getDocs(q);
-    
+
             if (!querySnapshot.empty) {
                 const adminDoc = querySnapshot.docs[0].data();
                 setGameRates({
@@ -1468,9 +1498,9 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
             console.log('Error fetching game rates.')
         }
     }
-    
+
     useEffect(() => {
-      fetchGameRates();
+        fetchGameRates();
     }, [])
 
     return (

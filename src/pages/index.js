@@ -1,6 +1,6 @@
 // import Head from 'next/head';
 import { subDays, subHours } from 'date-fns';
-import { Box, Container, Unstable_Grid2 as Grid } from '@mui/material';
+import { Box, Container, Unstable_Grid2 as Grid, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from '../layouts/dashboard/layout';
 import { OverviewBudget } from '../sections/overview/overview-budget';
 import { OverviewLatestOrders } from '../sections/overview/overview-latest-orders';
@@ -15,14 +15,18 @@ import { formatUserCount } from '../utils/format-count';
 import { db } from '../contexts/firebase';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import nProgress from 'nprogress';
+import { AdminProfile } from '../sections/account/admin-profile';
+import { useAuth } from '../hooks/use-auth';
 
 const now = new Date();
 
 const Home = () => {
+  const auth = useAuth();
   const [usersCount, setUsersCount] = useState(0);
   const [gamesCount, setGamesCount] = useState(0);
   const [profitCount, setProfitCount] = useState(0);
   const [withdrawReqCount, setWithdrawReqCount] = useState(0);
+  const adminData = auth.admin;
   useEffect(() => {
     // Dynamically set the document title
     document.title = 'Home | KalyanMatka Official';
@@ -36,13 +40,13 @@ const Home = () => {
     const fetchDocumentCount = async (collectionName, setCountFunction) => {
       try {
         nProgress.start();
-        if (collectionName === 'AddMoney'){
+        if (collectionName === 'AddMoney') {
           const q = query(collection(db, collectionName), where('name', '==', 'admin'));
           onSnapshot(q, (querySnapshot) => {
             const count = querySnapshot?.docs[0]?.data()?.earnings;
             setCountFunction(count);
           });
-        }else{
+        } else {
           const q = query(collection(db, collectionName));
           onSnapshot(q, (querySnapshot) => {
             const count = querySnapshot?.size;
@@ -51,7 +55,7 @@ const Home = () => {
         }
       } catch (error) {
         console.error(`Error fetching count for ${collectionName}`, error);
-      }finally{
+      } finally {
         setTimeout(() => {
           nProgress.done();
         }, 1000);
@@ -59,10 +63,10 @@ const Home = () => {
     };
 
     // Assuming you have collections named 'Users', 'Events', 'admin', 'Withdraw_List'
-      fetchDocumentCount('Users', setUsersCount);
-      fetchDocumentCount('Events', setGamesCount);
-      fetchDocumentCount('AddMoney', setProfitCount);
-      fetchDocumentCount('Withdraw_List', setWithdrawReqCount);
+    // fetchDocumentCount('Users', setUsersCount);
+    // fetchDocumentCount('Events', setGamesCount);
+    // fetchDocumentCount('AddMoney', setProfitCount);
+    // fetchDocumentCount('Withdraw_List', setWithdrawReqCount);
   }, []);
   return (
     <>
@@ -80,21 +84,33 @@ const Home = () => {
       >
         <Container maxWidth="xl">
           <Grid
+            xs={12}
+            sm={6}
+            lg={6}
+            sx={{marginBottom: '20px', textAlign: 'center'}}
+          >
+            <Typography variant='h4'>Welcome to Kalyan Matkka Offical!</Typography>
+          </Grid>
+          <Grid
+            xs={12}
+            sm={6}
+            lg={6}
+            sx={{marginBottom: '20px', textAlign: 'center'}}
+          >
+            <Typography variant='h5' color='text.primary'>Admin dashboard</Typography>
+          </Grid>
+          <Grid
+            xs={12}
+            sm={6}
+            lg={6}
+            sx={{marginBottom: '20px'}}
+          >
+            <AdminProfile user={adminData[0]}/>
+          </Grid>
+          <Grid
             container
             spacing={3}
           >
-            {/* <Grid
-            xs={12}
-            sm={6}
-            lg={3}
-          >
-            <OverviewBudget
-              // difference={12}
-              // positive
-              sx={{ height: '100%' }}
-              value={formatUserCount(2500)}
-            />
-          </Grid> */}
             <Grid
               xs={12}
               sm={6}

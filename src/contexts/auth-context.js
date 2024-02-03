@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { collection, query, onSnapshot } from "firebase/firestore"
+import { collection, query, onSnapshot, where } from "firebase/firestore"
 import { db } from './firebase'
 
 const HANDLERS = {
@@ -67,7 +67,7 @@ export const AuthProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const initialized = useRef(false);
   const handleAdmin = async () => {
-    const q = query(collection(db, 'admin'));
+    const q = query(collection(db, 'admin'), where('name', '==', 'admin'));
 
     await onSnapshot(q, (querySnapshot) => {
       setAdmin(querySnapshot.docs.map(doc => ({

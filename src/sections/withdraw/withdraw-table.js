@@ -25,6 +25,8 @@ import { useState } from 'react';
 import { ActionDialog } from '../../utils/action-dialog';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../contexts/firebase';
+import { useNavigate } from 'react-router-dom';
+import { fetchUserDataByPhone, fetchUserId } from '../../utils/get-single-user';
 // import { useRouter } from 'next/router';
 
 export const WithdrawTable = (props) => {
@@ -45,6 +47,7 @@ export const WithdrawTable = (props) => {
         searchQuery = '',
         handleOpenSnackbar, // Accept search query as a prop
     } = props;
+    const navigate = useNavigate();
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const sortedDate = items?.sort((a, b) => b.date - a.date);
@@ -69,6 +72,11 @@ export const WithdrawTable = (props) => {
         setSelectedCustomer(null);
         setOpenDialog(false);
     };
+    const handleRowSelect = async (phone) => {
+        const id = await fetchUserId(phone);
+        console.log(id);
+        navigate(`/users/${id}`);
+    }
     // Function to handle the common action (in this case, console.log)
     const handleCommonAction = async (action) => {
         try {
@@ -155,7 +163,7 @@ export const WithdrawTable = (props) => {
                                         hover
                                         key={customer.id}
                                     // selected={isSelected}
-                                    // onClick={() => handleRowSelect(customer.id)}
+                                        onClick={() => handleRowSelect(customer.phone)}
                                     >
                                         {/* <TableCell padding="checkbox">
                       <Checkbox
@@ -205,6 +213,7 @@ export const WithdrawTable = (props) => {
                                             <Button
                                                 variant="outlined"
                                                 onClick={() => handleOpenDialog(customer)}
+                                                disabled={customer.status !== 'pending'}
                                             >
                                                 Action
                                             </Button>

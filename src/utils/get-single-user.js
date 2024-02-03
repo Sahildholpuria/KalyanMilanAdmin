@@ -1,4 +1,4 @@
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, getDoc, onSnapshot, query, updateDoc, where } from "firebase/firestore";
 import { db } from "../contexts/firebase";
 
 export const fetchUserData = async (id, setUser) => {
@@ -15,7 +15,31 @@ export const fetchUserData = async (id, setUser) => {
         console.error('Error fetching user data:', error);
     }
 };
+export const fetchUserId = async (phone) => {
+    try {
+        const q = query(collection(db, 'Users'), where('phone', '==', phone));
+        return new Promise((resolve, reject) => {
+            const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                if (!querySnapshot.empty) {
+                    const ref = querySnapshot.docs[0].ref;
+                    const userId = ref._key.path.segments.slice(-1)[0];
+                    resolve(userId);
+                } else {
+                    console.log('Document not found');
+                    resolve(null); // Or you can reject with an error if needed
+                }
+            }, (error) => {
+                console.error('Error fetching user data:', error);
+                reject(error);
+            });
 
+            // Make sure to unsubscribe when the promise resolves or rejects
+            return () => unsubscribe();
+        });
+    } catch (error) {
+    console.error('Error fetching user data:', error);
+    }
+};
 export const updateUser = async (userId, updatedData) => {
     try {
         // Reference to the user document in Firestore

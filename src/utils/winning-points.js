@@ -1,4 +1,4 @@
-import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, deleteField, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { db } from "../contexts/firebase";
 
 // Calculate winning points based on game type and points
@@ -24,13 +24,13 @@ export const calculateWinningPoints = (gameRates, game, points) => {
 };
 
 // Function to Add values in Firestore
-export const AddWinningHistory = async (tableData) => {
+export const AddWinningHistory = async (tableData, wonData) => {
     try {
         // Loop through tableData to add documents to 'winningHistory' collection
         for (const data of tableData) {
             await addDoc(collection(db, 'winningHistory'), data);
         }
-
+        console.log(wonData);
         // Loop through tableData to update user's coins
         for (const data of tableData) {
             // Fetch the user with the specified phone number
@@ -51,6 +51,29 @@ export const AddWinningHistory = async (tableData) => {
                 await updateDoc(doc(db, 'Users', userId), {
                     coins: updatedCoins,
                 });
+            }
+        }
+        // Loop through wonData to update documents in 'User_Events' collection
+        for (const data of wonData) {
+            // Fetch the document in 'User_Events' based on the data
+            const userEventsQuery = query(collection(db, 'User_Events'),
+                where('event', '==', data.event),
+                where('date', '==', data.date),
+                where('name', '==', data.name),
+                where('session', '==', data.session)
+            );
+
+            const userEventsSnapshot = await getDocs(userEventsQuery);
+
+            if (!userEventsSnapshot.empty) {
+                console.log(data.won)
+                // Update the document in 'User_Events' with the won amount
+                const userEventsDocRef = userEventsSnapshot.docs[0].ref;
+                await updateDoc(userEventsDocRef, {
+                    won: Number(data.won),
+                });
+            } else {
+                // Handle case when no document is found
             }
         }
     } catch (error) {
@@ -91,7 +114,18 @@ export const RemoveWinningHistory = async (selectedCustomer) => {
             // Delete the winning history document
             await deleteDoc(doc(db, 'winningHistory', docSnapshot.id));
         }
+        // Fetch user events data where date matches resultDate
+        const userEventsQuery = query(collection(db, 'User_Events'), where('date', '==', selectedCustomer.result_date));
+        const userEventsSnapshot = await getDocs(userEventsQuery);
 
+        // Loop through user events data to remove won points
+        for (const docSnapshot of userEventsSnapshot.docs) {
+            // Update the document in 'User_Events' to remove the 'won' column
+            const userEventsDocRef = docSnapshot.ref;
+            await updateDoc(userEventsDocRef, {
+                won: deleteField(),
+            });
+        }
     } catch (error) {
         console.error('Error Add Data:', error);
     }
