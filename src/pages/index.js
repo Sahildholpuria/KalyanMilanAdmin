@@ -85,11 +85,11 @@ const Home = () => {
     const ank = Array.from({ length: 10 }, (_, ank) => ({ ank, totalPoints: 0, totalBids: 0, color: getAnkColor(ank), }))
     setAnkData(ank);
     // Assuming you have collections named 'Users', 'Events', 'admin', 'Withdraw_List'
-    // fetchDocumentCount('Users', setUsersCount);
-    // fetchDocumentCount('Events', setGamesCount);
-    // fetchDocumentCount('AddMoney', setProfitCount);
-    // fetchDocumentCount('Withdraw_List', setWithdrawReqCount);
-    // fetchDocumentCount('User_Events', setTotalBids);
+    fetchDocumentCount('Users', setUsersCount);
+    fetchDocumentCount('Events', setGamesCount);
+    fetchDocumentCount('AddMoney', setProfitCount);
+    fetchDocumentCount('Withdraw_List', setWithdrawReqCount);
+    fetchDocumentCount('User_Events', setTotalBids);
   }, []);
   return (
     <>
