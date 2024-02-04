@@ -122,7 +122,7 @@ export const SettingApp = () => {
                 noValidate
                 onSubmit={handleSubmit}
             >
-                <Card sx={{border: '1px solid'}}>
+                <Card sx={{border: '1px solid #556ee6'}}>
                     <CardHeader
                         subheader="You can edit values settings here"
                         title="Add Values"

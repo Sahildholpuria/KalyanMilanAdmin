@@ -221,6 +221,9 @@ const UserManagement = () => {
           coins: doc.data().coins,
           date: new Date(doc.data().date),
           phone: doc.data().phone,
+          Betting: doc.data().Betting,
+          Transfer: doc.data().Transfer,
+          Active: doc.data().Active,
         })))
       })
     } catch (error) {

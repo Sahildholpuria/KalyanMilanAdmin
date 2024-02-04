@@ -154,7 +154,7 @@ export const ResultTable = (props) => {
     }, [valuesResult?.result_date, fetch])
     
     return (
-        <Card sx={{border: '1px solid'}}>
+        <Card sx={{border: '1px solid #556ee6'}}>
             <CardHeader
                 // subheader="The information can be edited"
                 title="Game Result History"

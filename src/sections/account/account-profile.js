@@ -34,7 +34,7 @@ export const AccountProfile = ({ user }) => {
     }
   };
   return (
-    <Card sx={{border: '1px solid'}}>
+    <Card sx={{border: '1px solid #556ee6'}}>
       <CardContent>
         <Box
           sx={{

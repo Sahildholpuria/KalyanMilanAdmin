@@ -16,8 +16,10 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { Stack } from '@mui/system';
 import dayjs from 'dayjs';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../../contexts/firebase';
+import { format } from 'date-fns';
+import nProgress from 'nprogress';
 
 const session = [
     {
@@ -25,28 +27,23 @@ const session = [
         label: ''
     },
     {
-        value: 'open',
+        value: 'Open',
         label: 'Open'
     },
     {
-        value: 'close',
+        value: 'Close',
         label: 'Close'
     },
 ];
 
-export const SingleAnkDetails = () => {
+export const SingleAnkDetails = ({ ankData, setAnkData }) => {
     const [snackbarMessage, setSnackbarMessage] = useState(null);
     const [values, setValues] = useState({
         game_name: '',
-        // subtitle: '***-**-***',
-        // password: 'demo@123',
         session: '',
-        // close: '10:45 PM',
-        // coins: 1000,
-        // phone: '8209555243',
-        // state: 'los-angeles',
-        // country: 'USA'
     });
+    const date = new Date();
+    const currentDateFormatted = format(date, 'dd MMM yyyy');
     // State to hold game titles
     const [gameTitles, setGameTitles] = useState([
         {
@@ -83,9 +80,36 @@ export const SingleAnkDetails = () => {
         []
     );
     const handleValues = () => {
-      
+        try {
+            nProgress.start();
+            const currentDate = new Date().toDateString();
+            const q = query(collection(db, 'User_Events'), where('game', '==', 'Single Digit'), where('session', '==', values.session), where('date', '==', currentDate));
+
+            onSnapshot(q, (querySnapshot) => {
+
+                // Process the query snapshot
+                querySnapshot.docs.forEach((doc) => {
+                    const data = doc.data();
+                    const digit = values.session === 'Open' ? Number(data?.opendigit) : Number(data?.closedigit);
+                    const ank = digit;
+                    
+                    // Accumulate total points and total bids for each Ank
+                    ankData[ank].totalPoints += Number(data.points);
+                    ankData[ank].totalBids += 1;
+                });
+
+                // Set the calculated data
+                setAnkData(ankData);
+            });
+        } catch (error) {
+            console.error(`Error fetching count for ${'User_Events'}`, error);
+        } finally {
+            setTimeout(() => {
+                nProgress.done();
+            }, 1000);
+        }
     }
-    
+
     const handleSubmit = (event) => {
         event.preventDefault();
         // Other form submission logic
@@ -116,10 +140,10 @@ export const SingleAnkDetails = () => {
                 noValidate
                 onSubmit={handleSubmit}
             >
-                <Card sx={{border: '1px solid'}}>
+                <Card sx={{ border: '1px solid #556ee6' }}>
                     <CardHeader
                         // subheader="The information can be edited"
-                        title="Select Game"
+                        title={`Total Bids On Single Ank Of Date ${currentDateFormatted}`}
                     />
                     <CardContent sx={{ pt: 0 }}>
                         <Box sx={{ m: -1.5 }}>
@@ -189,7 +213,7 @@ export const SingleAnkDetails = () => {
                                             </DemoContainer>
                                         </LocalizationProvider>
                                     </Stack> */}
-                                    {/* <TextField
+                                {/* <TextField
                                     fullWidth
                                     label="Open Time"
                                     name="open"

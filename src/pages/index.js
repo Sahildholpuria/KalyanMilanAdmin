@@ -20,6 +20,8 @@ import { useAuth } from '../hooks/use-auth';
 import { OverviewTotalBid } from '../sections/overview/overview-bids';
 import { MarketBidDetails } from '../sections/overview/market-bid-details';
 import { SingleAnkDetails } from '../sections/overview/single-ank-details';
+import { OverviewSingleAnk } from '../sections/overview/single-ank-card';
+import { getAnkColor } from '../utils/ank-colors';
 
 const now = new Date();
 
@@ -31,6 +33,7 @@ const Home = () => {
   const [withdrawReqCount, setWithdrawReqCount] = useState(0);
   const [totalBids, setTotalBids] = useState(0);
   const adminData = auth.admin;
+  const [ankData, setAnkData] = useState([]);
   useEffect(() => {
     // Dynamically set the document title
     document.title = 'Home | KalyanMatka Official';
@@ -79,13 +82,14 @@ const Home = () => {
         }, 1000);
       }
     };
-
+    const ank = Array.from({ length: 10 }, (_, ank) => ({ ank, totalPoints: 0, totalBids: 0, color: getAnkColor(ank), }))
+    setAnkData(ank);
     // Assuming you have collections named 'Users', 'Events', 'admin', 'Withdraw_List'
-    fetchDocumentCount('Users', setUsersCount);
-    fetchDocumentCount('Events', setGamesCount);
-    fetchDocumentCount('AddMoney', setProfitCount);
-    fetchDocumentCount('Withdraw_List', setWithdrawReqCount);
-    fetchDocumentCount('User_Events', setTotalBids);
+    // fetchDocumentCount('Users', setUsersCount);
+    // fetchDocumentCount('Events', setGamesCount);
+    // fetchDocumentCount('AddMoney', setProfitCount);
+    // fetchDocumentCount('Withdraw_List', setWithdrawReqCount);
+    // fetchDocumentCount('User_Events', setTotalBids);
   }, []);
   return (
     <>
@@ -122,7 +126,7 @@ const Home = () => {
               <OverviewTotalCustomers
                 // difference={16}
                 // positive={false}
-                sx={{ height: '100%', cursor: 'pointer', backgroundColor: '#E5E7EB' }}
+                sx={{ height: '100%', cursor: 'pointer', border: '1px solid #556ee6' }}
                 value={formatUserCount(usersCount)}
               />
             </Grid>
@@ -134,7 +138,7 @@ const Home = () => {
               <OverviewBudget
                 // difference={12}
                 // positive
-                sx={{ height: '100%', cursor: 'pointer', backgroundColor: '#E5E7EB' }}
+                sx={{ height: '100%', cursor: 'pointer', border: '1px solid #556ee6' }}
                 value={formatUserCount(gamesCount)}
               />
             </Grid>
@@ -144,7 +148,7 @@ const Home = () => {
               lg={3}
             >
               <OverviewTotalProfit
-                sx={{ height: '100%', backgroundColor: '#E5E7EB' }}
+                sx={{ height: '100%', border: '1px solid #556ee6' }}
                 value={formatUserCount(profitCount)}
               />
             </Grid>
@@ -156,7 +160,7 @@ const Home = () => {
               <OverviewTasksProgress
                 // difference={12}
                 // positive
-                sx={{ height: '100%', cursor: 'pointer', backgroundColor: '#E5E7EB' }}
+                sx={{ height: '100%', cursor: 'pointer', border: '1px solid #556ee6' }}
                 value={formatUserCount(withdrawReqCount)}
               />
             </Grid>
@@ -166,7 +170,7 @@ const Home = () => {
               lg={3}
             >
               <OverviewTotalBid
-                sx={{ height: '100%', backgroundColor: '#E5E7EB' }}
+                sx={{ height: '100%', border: '1px solid #556ee6' }}
                 value={formatUserCount(totalBids)}
               />
             </Grid>
@@ -312,11 +316,33 @@ const Home = () => {
             />
           </Grid> */}
           </Grid>
-          <Grid xs={12} md={6} lg={6} sm={12} sx={{mt: 3}}>
+          <Grid xs={12} md={6} lg={6} sm={12} sx={{ mt: 3 }}>
             <MarketBidDetails />
           </Grid>
-          <Grid xs={12} md={6} lg={6} sm={12} sx={{mt: 3}}>
-            <SingleAnkDetails />
+          <Grid xs={12} md={6} lg={6} sm={12} sx={{ mt: 3 }}>
+            <SingleAnkDetails ankData={ankData} setAnkData={setAnkData} />
+          </Grid>
+          <Grid
+            container
+            spacing={3}
+            sx={{ mt: 2 }}
+          >
+            {ankData && ankData.map((data) => <Grid
+              xs={12}
+              sm={6}
+              lg={3}
+              md={3}
+              key={data.ank}
+            >
+              <OverviewSingleAnk
+                // difference={16}
+                // positive={false}
+                color={data.color}
+                sx={{ height: '100%', cursor: 'pointer', border: `1px solid ${data.color}` }}
+                value={data}
+              />
+            </Grid>
+            )}
           </Grid>
         </Container>
       </Box>

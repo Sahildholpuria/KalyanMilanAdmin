@@ -119,7 +119,7 @@ export const AccountProfileDetails = ({ user, id }) => {
         noValidate
         onSubmit={handleSubmit}
       >
-        <Card sx={{border: '1px solid'}}>
+        <Card sx={{border: '1px solid #556ee6'}}>
           <CardHeader
             subheader="The information can be edited"
             title="Profile"

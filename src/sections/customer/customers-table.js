@@ -49,7 +49,7 @@ export const CustomersTable = (props) => {
   // const selectedAll = (items.length > 0) && (selected.length === items.length);
 
   return (
-    <Card sx={{border: '1px solid'}}>
+    <Card sx={{border: '1px solid #556ee6'}}>
       <Scrollbar sx={{ '.simplebar-placeholder': { display: 'none !important' } }}>
         <Box sx={{ minWidth: 800 }}>
           <Table>
@@ -85,6 +85,15 @@ export const CustomersTable = (props) => {
                 </TableCell>
                 <TableCell>
                   Coins
+                </TableCell>
+                <TableCell>
+                  Betting
+                </TableCell>
+                <TableCell>
+                  Transfer
+                </TableCell>
+                <TableCell>
+                  Action
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -147,6 +156,15 @@ export const CustomersTable = (props) => {
                     </TableCell>
                     <TableCell>
                       {customer.coins}
+                    </TableCell>
+                    <TableCell>
+                      {customer?.Betting ? 'Yes': 'No'}
+                    </TableCell>
+                    <TableCell>
+                      {customer?.Transfer ? 'Yes': 'No'}
+                    </TableCell>
+                    <TableCell>
+                      {customer?.Active ? 'Yes': 'No'}
                     </TableCell>
                   </TableRow>
                 );
