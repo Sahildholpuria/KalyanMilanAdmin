@@ -10,7 +10,7 @@ export const OverviewSingleAnk = (props) => {
     const { difference, positive = false, sx, value, color } = props;
     const navigate = useNavigate();
     return (
-        <Card sx={sx} onClick={() => navigate('/users')}>
+        <Card sx={sx}>
             <CardContent sx={{ padding: 0, paddingBottom: '0 !important' }}>
                 <Stack
                     alignItems="center"

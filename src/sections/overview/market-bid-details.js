@@ -107,15 +107,15 @@ export const MarketBidDetails = () => {
             nProgress.start();
             const currentDate = new Date().toDateString();
             const q = query(collection(db, 'User_Events'), where('date', '==', currentDate), where('event', '==', values.game_name));
-    
+
             onSnapshot(q, (querySnapshot) => {
                 let totalPoints = 0;
-    
+
                 querySnapshot.forEach((doc) => {
                     const points = Number(doc.data().points);
                     totalPoints += points;
                 });
-    
+
                 setTotalBids(totalPoints);
             });
             nProgress.done();
@@ -123,7 +123,7 @@ export const MarketBidDetails = () => {
             setSnackbarMessage('Error fetching Market Bids')
         }
     }
-    
+
     // const handleSubmit = (event) => {
     //     event.preventDefault();
     //     // Other form submission logic
@@ -141,9 +141,9 @@ export const MarketBidDetails = () => {
         setSnackbarMessage(null);
     };
     useEffect(() => {
-      handleValues();
+        handleValues();
     }, [values.game_name])
-    
+
     return (
         <>
             <Snackbar
@@ -156,10 +156,11 @@ export const MarketBidDetails = () => {
             <form
                 autoComplete="off"
                 noValidate
-                // onSubmit={handleSubmit}
+            // onSubmit={handleSubmit}
             >
-                <Card sx={{ border: '1px solid #556ee6'}}>
+                <Card sx={{ border: '1px solid #556ee6' }}>
                     <CardHeader
+                        sx={{ color: 'info.dark' }}
                         // subheader="The information can be edited"
                         title="Market Bid Details"
                     />
@@ -298,7 +299,7 @@ export const MarketBidDetails = () => {
                                 <Grid
                                     xs={12}
                                     md={6}
-                                    sx={{textAlign: 'end'}}
+                                    sx={{ textAlign: 'end' }}
                                 >
                                     <Typography
                                         color="text.secondary"

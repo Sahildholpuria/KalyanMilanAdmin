@@ -4,6 +4,7 @@ import { subDays, subHours } from 'date-fns';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
 import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
+import EyeIcon from '@heroicons/react/24/solid/EyeIcon';
 import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
 import { useSelection } from '../hooks/use-selection';
 import { Layout as DashboardLayout } from '../layouts/dashboard/layout';
@@ -13,6 +14,7 @@ import { applyPagination } from '../utils/apply-pagination';
 import { useNavigate } from 'react-router-dom';
 import { collection, onSnapshot, query } from 'firebase/firestore';
 import { db } from '../contexts/firebase';
+import { getRandomAvatar } from '../utils/get-initials';
 
 const now = new Date();
 
@@ -215,7 +217,7 @@ const UserManagement = () => {
       await onSnapshot(q, (querySnapshot) => {
         setUsers(querySnapshot.docs.map(doc => ({
           id: doc.ref._key.path.segments.slice(-1)[0],
-          avatar: '',
+          avatar: getRandomAvatar(),
           name: doc.data().name,
           email: doc.data().email,
           coins: doc.data().coins,
@@ -295,18 +297,19 @@ const UserManagement = () => {
                   </Button>
                 </Stack> */}
               </Stack>
-              {/* <div>
+              <div>
                 <Button
                   startIcon={(
                     <SvgIcon fontSize="small">
-                      <PlusIcon />
+                      <EyeIcon />
                     </SvgIcon>
                   )}
                   variant="contained"
+                  onClick={() => navigate('/unapproved')}
                 >
-                  Add
+                  Un-Approved Users List
                 </Button>
-              </div> */}
+              </div>
             </Stack>
             <CustomersSearch onSearch={handleSearch} />
             <CustomersTable

@@ -2,10 +2,17 @@ import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import {
     Avatar,
+    Backdrop,
     Box,
     Button,
     Card,
+    CardHeader,
     Checkbox,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     Stack,
     Table,
     TableBody,
@@ -17,10 +24,15 @@ import {
 } from '@mui/material';
 import { Scrollbar } from '../../components/scrollbar';
 import { getInitials } from '../../utils/get-initials';
-import { updateEventField } from '../../utils/get-single-user';
+import { useState } from 'react';
+import { ActionDialog } from '../../utils/action-dialog';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../../contexts/firebase';
+import { useNavigate } from 'react-router-dom';
+import { fetchUserDataByPhone, fetchUserId } from '../../utils/get-single-user';
 // import { useRouter } from 'next/router';
 
-export const GamesTable = (props) => {
+export const SingleUserWithdrawTable = (props) => {
     // const router = useRouter();
     const {
         count = 0,
@@ -34,30 +46,70 @@ export const GamesTable = (props) => {
         page = 0,
         rowsPerPage = 0,
         // selected = [],
-        handleRowSelect,
-        searchQuery = '', // Accept search query as a prop
+        // handleRowSelect,
+        // searchQuery = '',
+        // handleOpenSnackbar, // Accept search query as a prop
     } = props;
-    const filteredItems = items?.filter((customer) =>
-        customer.title.toLowerCase().includes(searchQuery.toLowerCase())
-        // Add more fields as needed for search
-    );
+    // const navigate = useNavigate();
+    const [openDialog, setOpenDialog] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
+    const sortedDate = items?.sort((a, b) => b.date - a.date);
+    // const filteredItems = sortedDate?.filter((customer) =>
+    //     customer.method.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    //     customer.amount.includes(searchQuery.toLowerCase())
+    //     // Add more fields as needed for search
+    // );
     // Apply pagination to the filtered results
     const start = page * rowsPerPage;
     const end = start + rowsPerPage;
-    const paginatedItems = filteredItems?.slice(start, end);
+    const paginatedItems = sortedDate?.slice(start, end);
     // const selectedSome = (selected.length > 0) && (selected.length < items.length);
     // const selectedAll = (items.length > 0) && (selected.length === items.length);
-    const handleFieldUpdate = async (customerId, field, value) => {
-        try {
-            await updateEventField(customerId, field, value);
-        } catch (error) {
-            console.error('Error updating customer field:', error);
-            // Optionally, handle the error (e.g., show a notification to the user)
-        }
+    // Function to handle opening the dialog
+    const handleOpenDialog = (customer) => {
+        setSelectedCustomer(customer);
+        setOpenDialog(true);
     };
+    // Function to handle closing the dialog
+    const handleCloseDialog = () => {
+        setSelectedCustomer(null);
+        setOpenDialog(false);
+    };
+    // const handleRowSelect = async (phone) => {
+    //     const id = await fetchUserId(phone);
+    //     console.log(id);
+    //     navigate(`/users/${id}`);
+    // }
+    // Function to handle the common action (in this case, console.log)
+    const handleCommonAction = async (action) => {
+        try {
+            setLoading(true);
+            // Update the status in the Firebase document
+            const withdrawDocRef = doc(db, 'Withdraw_List', selectedCustomer.id);
 
+            // Determine the status based on the action
+            const newStatus = action === 'Approve' ? 'Approved' : 'Rejected';
+
+            // Update the document with the new status
+            await updateDoc(withdrawDocRef, {
+                status: newStatus,
+            });
+
+            // Log success message
+            console.log(`Withdraw request ${newStatus} successfully!`);
+            // handleOpenSnackbar(`Withdraw request ${newStatus} successfully!`)
+            // Close the dialog
+            handleCloseDialog();
+        } catch (error) {
+            // handleOpenSnackbar('Error updating withdraw request');
+            console.error('Error updating withdraw request:', error);
+        }
+        setLoading(false);
+    };
     return (
         <Card sx={{ border: '1px solid #556ee6' }}>
+            <CardHeader sx={{ color: 'info.dark' }} title={'Withdraw Fund Request List'}/>
             <Scrollbar sx={{ '.simplebar-placeholder': { display: 'none !important' } }}>
                 <Box sx={{ minWidth: 800 }}>
                     <Table>
@@ -79,17 +131,23 @@ export const GamesTable = (props) => {
                                 <TableCell>
                                     #
                                 </TableCell>
-                                <TableCell>
-                                    Game Name
+                                {/* <TableCell>
+                                    Name
                                 </TableCell>
                                 <TableCell>
-                                    Open Timing
+                                    Mobile
+                                </TableCell> */}
+                                <TableCell>
+                                    Date
                                 </TableCell>
                                 <TableCell>
-                                    Close Timing
+                                    Method
                                 </TableCell>
                                 <TableCell>
-                                    Active
+                                    Amount
+                                </TableCell>
+                                <TableCell>
+                                    Status
                                 </TableCell>
                                 <TableCell>
                                     Action
@@ -105,14 +163,14 @@ export const GamesTable = (props) => {
                                 </TableRow>
                             ) : (paginatedItems?.map((customer, index) => {
                                 // const isSelected = selected.includes(customer.id);
-                                // const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
-
+                                const createdAt = format(customer?.date, 'dd MMM yyyy hh:mm a');
+                                const statusColor = customer.status === 'pending' ? 'warning.main' : customer.status === 'Approved' ? 'success.main' : 'error.main';
                                 return (
                                     <TableRow
                                         hover
                                         key={customer.id}
-                                    // selected={isSelected}
-                                    // onClick={() => handleRowSelect(customer.id)}
+                                        // selected={isSelected}
+                                        // onClick={() => handleRowSelect(customer.phone)}
                                     >
                                         {/* <TableCell padding="checkbox">
                       <Checkbox
@@ -129,44 +187,42 @@ export const GamesTable = (props) => {
                                         <TableCell>
                                             {index + 1 + page * rowsPerPage}
                                         </TableCell>
-                                        <TableCell>
+                                        {/* <TableCell>
                                             <Stack
                                                 alignItems="center"
                                                 direction="row"
                                                 spacing={2}
                                             >
-                                                {/* <Avatar src={customer.avatar}>
+                                                <Avatar src={customer.avatar}>
                                                     {getInitials(customer.name)}
-                                                </Avatar> */}
+                                                </Avatar>
                                                 <Typography variant="subtitle2">
-                                                    {customer.title.toUpperCase()}
+                                                    {customer.name}
                                                 </Typography>
                                             </Stack>
                                         </TableCell>
                                         <TableCell>
-                                            {customer.open}
+                                            {customer.phone}
+                                        </TableCell> */}
+                                        <TableCell>
+                                            {createdAt}
                                         </TableCell>
                                         <TableCell>
-                                            {customer.close}
+                                            {customer.method}
+                                        </TableCell>
+                                        <TableCell>
+                                            {customer.amount}
+                                        </TableCell>
+                                        <TableCell sx={{ color: statusColor, textTransform: 'capitalize' }}>
+                                            {customer.status}
                                         </TableCell>
                                         <TableCell>
                                             <Button
                                                 variant="outlined"
-                                                color={customer.isActive === "Yes" ? 'success' : 'error'}
-                                                sx={{ lineHeight: 1, fontSize: '0.85rem' }}
-                                                onClick={() => handleFieldUpdate(customer.id, 'isActive', customer.isActive === "Yes" ? "No" : "Yes")}
+                                                onClick={() => handleOpenDialog(customer)}
+                                                disabled={customer.status !== 'pending'}
                                             >
-                                                {customer.isActive === "Yes" ? 'Yes' : 'No'}
-                                            </Button>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button
-                                                variant="outlined"
-                                                color={'info'}
-                                                sx={{ lineHeight: 1, fontSize: '0.85rem' }}
-                                                onClick={() => handleRowSelect(customer.id)}
-                                            >
-                                                Edit
+                                                Action
                                             </Button>
                                         </TableCell>
                                     </TableRow>
@@ -185,11 +241,27 @@ export const GamesTable = (props) => {
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={[5, 10, 25]}
             />
+            {/* Alert Dialog for changing status */}
+            <ActionDialog
+                openDialog={openDialog}
+                handleCloseDialog={handleCloseDialog}
+                handleCommonAction={handleCommonAction}
+                content={'Do you want to approve or reject the withdraw request?'}
+                button1={'Approve'}
+                button2={'Reject'}
+            />
+            <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={loading}
+            // onClick={handleClose}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
         </Card>
     );
 };
 
-GamesTable.propTypes = {
+SingleUserWithdrawTable.propTypes = {
     count: PropTypes.number,
     items: PropTypes.array,
     onDeselectAll: PropTypes.func,

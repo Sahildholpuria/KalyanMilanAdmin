@@ -91,6 +91,7 @@ export const AccountBankDetails = ({ user }) => {
         // >
         <Card sx={{border: '1px solid #556ee6'}}>
             <CardHeader
+                sx={{ color: 'info.dark' }}
                 // subheader="The information can be edited"
                 title="Bank Details"
             />

@@ -49,7 +49,7 @@ export const AdminProfile = ({ user }) => {
                         lg={6}
                         sx={{ marginBottom: '20px', textAlign: 'center' }}
                     >
-                        <Typography variant='h5' color='white'>Welcome to Kalyan Matkka Offical!</Typography>
+                        <Typography variant='h5' color='info.main'>Welcome to Kalyan Matkka Offical!</Typography>
                     </Grid>
                     <Grid
                         xs={12}
@@ -57,7 +57,7 @@ export const AdminProfile = ({ user }) => {
                         lg={6}
                         sx={{ marginBottom: '20px', textAlign: 'center' }}
                     >
-                        <Typography variant='h5' color='white'>Admin dashboard</Typography>
+                        <Typography variant='h5' color='info.main'>Admin dashboard</Typography>
                     </Grid>
                     <Box
                         sx={{
@@ -80,11 +80,12 @@ export const AdminProfile = ({ user }) => {
                         <Typography
                             gutterBottom
                             variant="h3"
+                            color='success.main'
                         >
                             {user?.name}
                         </Typography>
                         <Typography
-                            color="text.primary"
+                            color="warning.main"
                             variant="h6"
                         >
                             {user?.email}

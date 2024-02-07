@@ -24,6 +24,7 @@ import { format } from 'date-fns';
 // };
 
 export const AccountProfile = ({ user }) => {
+  console.log(user)
   const formatDate = (dateString) => {
     try {
       const date = new Date(dateString);
@@ -34,7 +35,7 @@ export const AccountProfile = ({ user }) => {
     }
   };
   return (
-    <Card sx={{border: '1px solid #556ee6'}}>
+    <Card sx={{ backgroundColor: '#403e57' }}>
       <CardContent>
         <Box
           sx={{
@@ -56,23 +57,24 @@ export const AccountProfile = ({ user }) => {
           <Typography
             gutterBottom
             variant="h5"
+            color='success.main'
           >
             {user?.name}
           </Typography>
           <Typography
-            color="text.secondary"
+            color="warning.light"
             variant="body2"
           >
             {user?.email}
           </Typography>
           <Typography
-            color="text.secondary"
+            color="warning.main"
             variant="body2"
           >
             {formatDate(user?.date)}
           </Typography>
           <Typography
-            color="text.primary"
+            color="success.light"
             variant="body2"
           >
             Available Balance : {user?.coins}

@@ -338,7 +338,7 @@ const Home = () => {
                 // difference={16}
                 // positive={false}
                 color={data.color}
-                sx={{ height: '100%', cursor: 'pointer', border: `1px solid ${data.color}` }}
+                sx={{ height: '100%', border: `1px solid ${data.color}` }}
                 value={data}
               />
             </Grid>

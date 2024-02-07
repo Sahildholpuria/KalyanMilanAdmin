@@ -1,5 +1,6 @@
 import { collection, doc, getDoc, onSnapshot, query, updateDoc, where } from "firebase/firestore";
 import { db } from "../contexts/firebase";
+import { getRandomAvatar } from "./get-initials";
 
 export const fetchUserData = async (id, setUser) => {
     try {
@@ -7,7 +8,10 @@ export const fetchUserData = async (id, setUser) => {
         const userDocSnapshot = await getDoc(userDocRef);
 
         if (userDocSnapshot.exists()) {
-            setUser(userDocSnapshot.data());
+            setUser({
+                ...userDocSnapshot.data(),
+                avatar: getRandomAvatar(), // Assign a random avatar to the avatar property
+            });
         } else {
             console.log('Document not found');
         }
@@ -52,5 +56,25 @@ export const updateUser = async (userId, updatedData) => {
     } catch (error) {
         console.error('Error updating user data:', error);
         throw error; // Propagate the error for handling in the calling component
+    }
+};
+export const updateCustomerField = async (customerId, field, value) => {
+    try {
+        const userRef = doc(db, 'Users', customerId);
+        await updateDoc(userRef, { [field]: value });
+        console.log(`Customer field '${field}' updated successfully for user '${customerId}'.`);
+    } catch (error) {
+        console.error('Error updating customer field:', error);
+        throw error; // Optionally, handle the error in your component
+    }
+};
+export const updateEventField = async (customerId, field, value) => {
+    try {
+        const userRef = doc(db, 'Events', customerId);
+        await updateDoc(userRef, { [field]: value });
+        console.log(`Customer field '${field}' updated successfully for user '${customerId}'.`);
+    } catch (error) {
+        console.error('Error updating customer field:', error);
+        throw error; // Optionally, handle the error in your component
     }
 };

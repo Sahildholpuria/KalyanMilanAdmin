@@ -15,6 +15,7 @@ import BidHistory from './pages/bids';
 import WinHistory from './pages/winning';
 import GameRates from './pages/gamerates';
 import Notification from './pages/notification';
+import UnApproved from './pages/unapproved';
 
 function App() {
   const location = useLocation();
@@ -34,6 +35,7 @@ function App() {
               {/* <Route path="/" element={<Navigate replace to="/home" />} /> */}
               <Route path="/home" element={<Home />} />
               <Route path="/users" element={<UserManagement />} />
+              <Route path="/unapproved" element={<UnApproved />} />
               <Route path="/users/:id" element={<User />} />
               <Route path="/games" element={<GameManagement />} />
               <Route path="/games/rates" element={<GameRates />} />

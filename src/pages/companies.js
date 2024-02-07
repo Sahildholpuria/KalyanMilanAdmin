@@ -10,7 +10,10 @@ import {
   Stack,
   SvgIcon,
   Typography,
-  Unstable_Grid2 as Grid
+  Unstable_Grid2 as Grid,
+  Backdrop,
+  CircularProgress,
+  Snackbar
 } from '@mui/material';
 import { Layout as DashboardLayout } from '../layouts/dashboard/layout';
 import { CompanyCard } from '../sections/companies/company-card';
@@ -19,212 +22,30 @@ import { subDays, subHours } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 import { GamesTable } from '../sections/companies/games-table';
-import { collection, onSnapshot, query } from 'firebase/firestore';
+import { addDoc, collection, onSnapshot, query } from 'firebase/firestore';
 import { db } from '../contexts/firebase';
+import AddGameDialog from '../utils/add-game-dialog';
+import dayjs from 'dayjs';
 
-const now = new Date();
 
-// const companies = [
-//   {
-//     id: '2569ce0d517a7f06d3ea1f24',
-//     createdAt: '27/03/2019',
-//     description: 'Dropbox is a file hosting service that offers cloud storage, file synchronization, a personal cloud.',
-//     logo: '/assets/logos/logo-dropbox.png',
-//     title: 'Dropbox',
-//     downloads: '594'
-//   },
-//   {
-//     id: 'ed2b900870ceba72d203ec15',
-//     createdAt: '31/03/2019',
-//     description: 'Medium is an online publishing platform developed by Evan Williams, and launched in August 2012.',
-//     logo: '/assets/logos/logo-medium.png',
-//     title: 'Medium Corporation',
-//     downloads: '625'
-//   },
-//   {
-//     id: 'a033e38768c82fca90df3db7',
-//     createdAt: '03/04/2019',
-//     description: 'Slack is a cloud-based set of team collaboration tools and services, founded by Stewart Butterfield.',
-//     logo: '/assets/logos/logo-slack.png',
-//     title: 'Slack',
-//     downloads: '857'
-//   },
-//   {
-//     id: '1efecb2bf6a51def9869ab0f',
-//     createdAt: '04/04/2019',
-//     description: 'Lyft is an on-demand transportation company based in San Francisco, California.',
-//     logo: '/assets/logos/logo-lyft.png',
-//     title: 'Lyft',
-//     downloads: '406'
-//   },
-//   {
-//     id: '1ed68149f65fbc6089b5fd07',
-//     createdAt: '04/04/2019',
-//     description: 'GitHub is a web-based hosting service for version control of code using Git.',
-//     logo: '/assets/logos/logo-github.png',
-//     title: 'GitHub',
-//     downloads: '835'
-//   },
-//   {
-//     id: '5dab321376eff6177407e887',
-//     createdAt: '04/04/2019',
-//     description: 'Squarespace provides software as a service for website building and hosting. Headquartered in NYC.',
-//     logo: '/assets/logos/logo-squarespace.png',
-//     title: 'Squarespace',
-//     downloads: '835'
-//   }
-// ];
-const data = [
-  {
-    id: '5e887ac47eed253091be10cb',
-    address: {
-      city: 'Cleveland',
-      country: 'USA',
-      state: 'Ohio',
-      street: '2849 Fulton Street'
-    },
-    avatar: '/assets/avatars/avatar-carson-darrin.png',
-    createdAt: subDays(subHours(now, 7), 1).getTime(),
-    email: 'carson.darrin@devias.io',
-    name: 'Carson Darrin',
-    phone: '304-428-3097'
-  },
-  {
-    id: '5e887b209c28ac3dd97f6db5',
-    address: {
-      city: 'Atlanta',
-      country: 'USA',
-      state: 'Georgia',
-      street: '1865  Pleasant Hill Road'
-    },
-    avatar: '/assets/avatars/avatar-fran-perez.png',
-    createdAt: subDays(subHours(now, 1), 2).getTime(),
-    email: 'fran.perez@devias.io',
-    name: 'Fran Perez',
-    phone: '712-351-5711'
-  },
-  {
-    id: '5e887b7602bdbc4dbb234b27',
-    address: {
-      city: 'North Canton',
-      country: 'USA',
-      state: 'Ohio',
-      street: '4894  Lakeland Park Drive'
-    },
-    avatar: '/assets/avatars/avatar-jie-yan-song.png',
-    createdAt: subDays(subHours(now, 4), 2).getTime(),
-    email: 'jie.yan.song@devias.io',
-    name: 'Jie Yan Song',
-    phone: '770-635-2682'
-  },
-  {
-    id: '5e86809283e28b96d2d38537',
-    address: {
-      city: 'Madrid',
-      country: 'Spain',
-      name: 'Anika Visser',
-      street: '4158  Hedge Street'
-    },
-    avatar: '/assets/avatars/avatar-anika-visser.png',
-    createdAt: subDays(subHours(now, 11), 2).getTime(),
-    email: 'anika.visser@devias.io',
-    name: 'Anika Visser',
-    phone: '908-691-3242'
-  },
-  {
-    id: '5e86805e2bafd54f66cc95c3',
-    address: {
-      city: 'San Diego',
-      country: 'USA',
-      state: 'California',
-      street: '75247'
-    },
-    avatar: '/assets/avatars/avatar-miron-vitold.png',
-    createdAt: subDays(subHours(now, 7), 3).getTime(),
-    email: 'miron.vitold@devias.io',
-    name: 'Miron Vitold',
-    phone: '972-333-4106'
-  },
-  {
-    id: '5e887a1fbefd7938eea9c981',
-    address: {
-      city: 'Berkeley',
-      country: 'USA',
-      state: 'California',
-      street: '317 Angus Road'
-    },
-    avatar: '/assets/avatars/avatar-penjani-inyene.png',
-    createdAt: subDays(subHours(now, 5), 4).getTime(),
-    email: 'penjani.inyene@devias.io',
-    name: 'Penjani Inyene',
-    phone: '858-602-3409'
-  },
-  {
-    id: '5e887d0b3d090c1b8f162003',
-    address: {
-      city: 'Carson City',
-      country: 'USA',
-      state: 'Nevada',
-      street: '2188  Armbrester Drive'
-    },
-    avatar: '/assets/avatars/avatar-omar-darboe.png',
-    createdAt: subDays(subHours(now, 15), 4).getTime(),
-    email: 'omar.darobe@devias.io',
-    name: 'Omar Darobe',
-    phone: '415-907-2647'
-  },
-  {
-    id: '5e88792be2d4cfb4bf0971d9',
-    address: {
-      city: 'Los Angeles',
-      country: 'USA',
-      state: 'California',
-      street: '1798  Hickory Ridge Drive'
-    },
-    avatar: '/assets/avatars/avatar-siegbert-gottfried.png',
-    createdAt: subDays(subHours(now, 2), 5).getTime(),
-    email: 'siegbert.gottfried@devias.io',
-    name: 'Siegbert Gottfried',
-    phone: '702-661-1654'
-  },
-  {
-    id: '5e8877da9a65442b11551975',
-    address: {
-      city: 'Murray',
-      country: 'USA',
-      state: 'Utah',
-      street: '3934  Wildrose Lane'
-    },
-    avatar: '/assets/avatars/avatar-iulia-albu.png',
-    createdAt: subDays(subHours(now, 8), 6).getTime(),
-    email: 'iulia.albu@devias.io',
-    name: 'Iulia Albu',
-    phone: '313-812-8947'
-  },
-  {
-    id: '5e8680e60cba5019c5ca6fda',
-    address: {
-      city: 'Salt Lake City',
-      country: 'USA',
-      state: 'Utah',
-      street: '368 Lamberts Branch Road'
-    },
-    avatar: '/assets/avatars/avatar-nasimiyu-danai.png',
-    createdAt: subDays(subHours(now, 1), 9).getTime(),
-    email: 'nasimiyu.danai@devias.io',
-    name: 'Nasimiyu Danai',
-    phone: '801-301-7894'
-  }
-];
 const GameManagement = () => {
+  const currentDate = dayjs();
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [users, setUsers] = useState(null);
-  // const customers = useCustomers(page, rowsPerPage);
-  // const customersIds = useCustomerIds(customers);
-  // const customersSelection = useSelection(customersIds);
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState(null);
+  const [values, setValues] = useState({
+    title: '',
+    isActive: '',
+    open: '',
+    close: '',
+    isPlay: "Yes",
+    subtitle: "***-**-***",
+  });
 
   const handlePageChange = useCallback(
     (event, value) => {
@@ -265,9 +86,53 @@ const GameManagement = () => {
       console.log(error, 'error')
     }
   }
+  // Function to handle closing the dialog
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+  const handleReset = () => {
+    let time = currentDate.format('hh:mm A');
+    setValues((prevState)=>({
+      ...prevState,
+      title: '',
+      isActive: '',
+      open: time,
+      close: time,
+    }))
+  }
+  
   useEffect(() => {
+    let time = currentDate.format('hh:mm A');
     handleUsers();
+    setValues((prevState)=>({
+      ...prevState,
+      open: time,
+      close: time,
+    }))
   }, [])
+  const handleCommonAction = async () => {
+    try {
+      if(!values.title || !values.open || !values.close || !values.isActive){
+        handleOpenSnackbar('All fields are required!')
+        return;
+      }
+      handleCloseDialog();
+      setLoading(true);
+      // Add the data to the Events table in Firebase
+      await addDoc(collection(db, 'Events'), values);
+
+      // Log success message
+      console.log('Event added successfully!');
+      handleOpenSnackbar('Event added successfully!');
+
+      // Close the dialog
+      handleCloseDialog();
+    } catch (error) {
+      handleOpenSnackbar(`Error updating bid!`);
+      console.error('Error updating bid:', error);
+    }
+    setLoading(false);
+  };
   useEffect(() => {
     // Dynamically set the document title
     document.title = 'Games | KalyanMatka Official';
@@ -277,6 +142,12 @@ const GameManagement = () => {
       document.title = 'KalyanMatka Official'; // Set a default title if needed
     };
   }, []);
+  const handleCloseSnackbar = () => {
+    setSnackbarMessage(null);
+  };
+  const handleOpenSnackbar = (message) => {
+    setSnackbarMessage(message);
+  };
   return (
     <>
       {/* <Head>
@@ -284,6 +155,13 @@ const GameManagement = () => {
           Customers | KalyanMatka Official
         </title>
       </Head> */}
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        open={!!snackbarMessage}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        message={snackbarMessage}
+      />
       <Box
         component="main"
         sx={{
@@ -329,7 +207,7 @@ const GameManagement = () => {
                   </Button>
                 </Stack> */}
               </Stack>
-              {/* <div>
+              <div>
                 <Button
                   startIcon={(
                     <SvgIcon fontSize="small">
@@ -337,10 +215,11 @@ const GameManagement = () => {
                     </SvgIcon>
                   )}
                   variant="contained"
+                  onClick={() => setOpenDialog(true)}
                 >
-                  Add
+                  Add Game
                 </Button>
-              </div> */}
+              </div>
             </Stack>
             <CompaniesSearch onSearch={handleSearch} />
             <GamesTable
@@ -361,6 +240,25 @@ const GameManagement = () => {
           </Stack>
         </Container>
       </Box>
+      {/* Alert Dialog for changing status */}
+      <AddGameDialog
+        values={values}
+        setValues={setValues}
+        openDialog={openDialog}
+        // selectedCustomer={selectedCustomer}
+        handleCloseDialog={handleCloseDialog}
+        handleCommonAction={handleCommonAction}
+        handleReset={handleReset}
+        button1={'Submit'}
+        button2={'Reset'}
+      />
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      // onClick={handleClose}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </>
   );
 };

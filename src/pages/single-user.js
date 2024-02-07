@@ -7,12 +7,87 @@ import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import ArrowUturnLeftIcon from '@heroicons/react/24/solid/ArrowUturnLeftIcon';
 import { AccountBankDetails } from '../sections/account/account-bank-details';
 import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { fetchUserData } from '../utils/get-single-user';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { db } from '../contexts/firebase';
+import { SingleUserWithdrawTable } from '../sections/withdraw/single-user-withdraw-table';
+import { SingleUserBidTable } from '../sections/bids/single-user-bid-table';
+import { getRandomAvatar } from '../utils/get-initials';
+import { SingleUserWinTable } from '../sections/winning/single-user-winning-table';
 
 const User = () => {
     const params = useParams();
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [bidpage, setBidPage] = useState(0);
+    const [bidrowsPerPage, setBidRowsPerPage] = useState(5);
+    const [winpage, setWinPage] = useState(0);
+    const [winrowsPerPage, setWinRowsPerPage] = useState(5);
     const [user, setUser] = useState(null);
+    const [items, setItems] = useState([]);
+    const handlePageChange = useCallback(
+        (event, value) => {
+            setPage(value);
+        },
+        []
+    );
+
+    const handleRowsPerPageChange = useCallback(
+        (event) => {
+            setRowsPerPage(event.target.value);
+        },
+        []
+    );
+    const handleBidPageChange = useCallback(
+        (event, value) => {
+            setBidPage(value);
+        },
+        []
+    );
+
+    const handleBidRowsPerPageChange = useCallback(
+        (event) => {
+            setBidRowsPerPage(event.target.value);
+        },
+        []
+    );
+    const handleWinPageChange = useCallback(
+        (event, value) => {
+            setWinPage(value);
+        },
+        []
+    );
+
+    const handleWinRowsPerPageChange = useCallback(
+        (event) => {
+            setWinRowsPerPage(event.target.value);
+        },
+        []
+    );
+    const handleUsers = async () => {
+        try {
+            const q = query(collection(db, 'Withdraw_List'), where('phone', '==', user?.phone));
+            await onSnapshot(q, (querySnapshot) => {
+                setItems(querySnapshot.docs.map(doc => ({
+                    id: doc.ref._key.path.segments.slice(-1)[0],
+                    name: doc.data().name,
+                    phone: doc.data().phone,
+                    date: new Date(doc.data().time),
+                    method: doc.data().method,
+                    amount: doc.data().amount,
+                    status: doc.data().status,
+                })))
+            })
+        } catch (error) {
+            console.log(error, 'error')
+        }
+    }
+    useEffect(() => {
+        if (user) {
+            handleUsers();
+        }
+    }, [user])
     useEffect(() => {
         if (params.id) {
             fetchUserData(params.id, setUser);
@@ -69,14 +144,14 @@ const User = () => {
                                     md={6}
                                     lg={4}
                                 >
-                                    <AccountProfile user={user}/>
+                                    <AccountProfile user={user} />
                                 </Grid>
                                 <Grid
                                     xs={12}
                                     md={6}
                                     lg={8}
                                 >
-                                    <AccountProfileDetails user={user} id={params?.id}/>
+                                    <AccountProfileDetails user={user} id={params?.id} />
                                 </Grid>
                             </Grid>
                         </div>
@@ -90,10 +165,52 @@ const User = () => {
                                     md={12}
                                     lg={12}
                                 >
-                                    <AccountBankDetails user={user}/>
+                                    <AccountBankDetails user={user} />
                                 </Grid>
                             </Grid>
                         </div>
+                        <SingleUserWithdrawTable
+                            items={items}
+                            count={items?.length}
+                            onPageChange={handlePageChange}
+                            onRowsPerPageChange={handleRowsPerPageChange}
+                            page={page}
+                            rowsPerPage={rowsPerPage}
+                        />
+                        <SingleUserBidTable
+                            // count={users?.length}
+                            // items={users}
+                            valuesResult={user}
+                            // handleRowSelect={handleRowSelect}
+                            // onDeselectAll={customersSelection.handleDeselectAll}
+                            // onDeselectOne={customersSelection.handleDeselectOne}
+                            onPageChange={handleBidPageChange}
+                            onRowsPerPageChange={handleBidRowsPerPageChange}
+                            // handleOpenSnackbar={handleOpenSnackbar}
+                            // onSelectAll={customersSelection.handleSelectAll}
+                            // onSelectOne={customersSelection.handleSelectOne}
+                            page={bidpage}
+                            rowsPerPage={bidrowsPerPage}
+                        // selected={customersSelection.selected}
+                        // searchQuery={searchQuery} // Pass the search query as a prop
+                        />
+                        <SingleUserWinTable
+                            // count={users?.length}
+                            // items={users}
+                            valuesResult={user}
+                            // handleRowSelect={handleRowSelect}
+                            // onDeselectAll={customersSelection.handleDeselectAll}
+                            // onDeselectOne={customersSelection.handleDeselectOne}
+                            onPageChange={handleWinPageChange}
+                            onRowsPerPageChange={handleWinRowsPerPageChange}
+                            // handleOpenSnackbar={handleOpenSnackbar}
+                            // onSelectAll={customersSelection.handleSelectAll}
+                            // onSelectOne={customersSelection.handleSelectOne}
+                            page={winpage}
+                            rowsPerPage={winrowsPerPage}
+                        // selected={customersSelection.selected}
+                        // searchQuery={searchQuery} // Pass the search query as a prop
+                        />
                     </Stack>
                 </Container>
             </Box>
