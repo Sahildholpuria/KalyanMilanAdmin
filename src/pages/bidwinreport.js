@@ -112,13 +112,13 @@ const BidWinReport = () => {
                                 >
                                     <BidWinDetails handleValues={handleValues} setShow={setShow} />
                                 </Grid>
-                                <Grid
+                                {show && <Grid
                                     xs={12}
                                     md={12}
                                     lg={12}
                                 >
                                     <BidWinCard values={values} handleOpenSnackbar={handleOpenSnackbar}/>
-                                </Grid>
+                                </Grid>}
                             </Grid>
                         </div>
                     </Stack>
