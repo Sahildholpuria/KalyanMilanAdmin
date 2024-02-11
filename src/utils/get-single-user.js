@@ -78,3 +78,27 @@ export const updateEventField = async (customerId, field, value) => {
         throw error; // Optionally, handle the error in your component
     }
 };
+export const updateUserCoins = async (values) => {
+    try {
+        // Fetch the document from the Users collection where userName matches the phone number
+        const userDocRef = doc(db, 'Users', values.user_name);
+        const userDocSnapshot = await getDoc(userDocRef);
+
+        if (userDocSnapshot.exists()) {
+            // Retrieve the current value of the coins field
+            const currentCoins = userDocSnapshot.data().coins;
+
+            // Calculate the new value of coins by adding the amount to the current value
+            const newCoins = currentCoins + Number(values.amount);
+
+            // Update the document in the Users collection with the new value of coins
+            await updateDoc(userDocRef, { coins: newCoins });
+
+            console.log(`Coins updated successfully for user ${values.user_name}`);
+        } else {
+            console.log(`User ${values.user_name} not found`);
+        }
+    } catch (error) {
+        console.error('Error updating user coins:', error);
+    }
+};

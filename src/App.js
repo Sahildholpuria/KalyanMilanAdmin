@@ -16,6 +16,10 @@ import WinHistory from './pages/winning';
 import GameRates from './pages/gamerates';
 import Notification from './pages/notification';
 import UnApproved from './pages/unapproved';
+import AddFund from './pages/addfund';
+import PreWinner from './pages/prewinner';
+import BidWinReport from './pages/bidwinreport';
+import BidRevert from './pages/bidrevert';
 
 function App() {
   const location = useLocation();
@@ -41,8 +45,12 @@ function App() {
               <Route path="/games/rates" element={<GameRates />} />
               <Route path="/games/:id" element={<Game />} />
               <Route path="/withdraw" element={<WalletManagement />} />
+              <Route path="/addfund" element={<AddFund />} />
               <Route path="/bids" element={<BidHistory />} />
+              <Route path="/bid" element={<BidRevert />} />
+              <Route path="/bidwin" element={<BidWinReport />} />
               <Route path="/winning" element={<WinHistory />} />
+              <Route path="/prewinner" element={<PreWinner />} />
               <Route path="/result" element={<DeclareResult />} />
               <Route path="/send" element={<Notification />} />
               <Route path="/settings" element={<Settings />} />

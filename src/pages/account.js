@@ -115,7 +115,7 @@ const WalletManagement = () => {
             >
               <Stack spacing={1}>
                 <Typography variant="h4">
-                  Withdraw Management
+                  Withdraw History Report
                 </Typography>
                 {/* <Stack
                   alignItems="center"

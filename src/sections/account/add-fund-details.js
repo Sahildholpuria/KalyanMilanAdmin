@@ -18,6 +18,7 @@ import { Stack } from '@mui/system';
 import dayjs from 'dayjs';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../contexts/firebase';
+import { updateUserCoins } from '../../utils/get-single-user';
 
 const session = [
     {
@@ -34,19 +35,11 @@ const session = [
     },
 ];
 
-export const ResultDetails = ({ setShow, handleValues }) => {
+export const AddFundDetails = ({ setLoading }) => {
     const [snackbarMessage, setSnackbarMessage] = useState(null);
     const [values, setValues] = useState({
-        result_date: dayjs().format('YYYY-MM-DD'),
-        game_name: '',
-        // subtitle: '***-**-***',
-        // password: 'demo@123',
-        session: '',
-        // close: '10:45 PM',
-        // coins: 1000,
-        // phone: '8209555243',
-        // state: 'los-angeles',
-        // country: 'USA'
+        user_name: '',
+        amount: '',
     });
     // State to hold game titles
     const [gameTitles, setGameTitles] = useState([
@@ -60,12 +53,13 @@ export const ResultDetails = ({ setShow, handleValues }) => {
         try {
             // Replace this with the actual logic to fetch game titles from Firebase
             // For example, if you're using Firestore
-            const eventsCollection = collection(db, 'Events');
+            console.log('running')
+            const eventsCollection = collection(db, 'Users');
             const eventsSnapshot = await getDocs(eventsCollection);
 
             const titles = eventsSnapshot.docs.map(doc => ({
-                value: doc.data().title, // Keep original casing as label
-                label: `${doc.data().title.toUpperCase()} (${doc.data().open} - ${doc.data().close})`, // Set value to lowercase
+                value: doc.ref._key.path.segments.slice(-1)[0], // Keep original casing as label
+                label: `${doc.data().name} (${doc.data().phone})`, // Set value to lowercase
             }));
 
             // Update the gameTitles state by merging the existing titles with the new ones
@@ -84,20 +78,23 @@ export const ResultDetails = ({ setShow, handleValues }) => {
                 ...prevState,
                 [event.target.name]: event.target.value
             }));
-            setShow(false);
         },
         []
     );
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         // Other form submission logic
-        if (!values.game_name || !values.session) {
+        if (!values.user_name || !values.amount) {
             setSnackbarMessage('Please Fill all fields!');
             return;
         }
         // If the form is successfully submitted, call the callback function
-        setShow(true);
-        handleValues(values);
+        try {
+            await updateUserCoins(values);
+            setSnackbarMessage('Amount added successfully!')
+        } catch (error) {
+            setSnackbarMessage('Error adding Amount!')
+        }
     };
     useEffect(() => {
         fetchGameTitles();
@@ -105,6 +102,7 @@ export const ResultDetails = ({ setShow, handleValues }) => {
     const handleCloseSnackbar = () => {
         setSnackbarMessage(null);
     };
+
     return (
         <>
             <Snackbar
@@ -119,16 +117,19 @@ export const ResultDetails = ({ setShow, handleValues }) => {
                 noValidate
                 onSubmit={handleSubmit}
             >
-                <Card sx={{border: '1px solid #556ee6'}}>
+                <Card sx={{ border: '1px solid #556ee6' }}>
                     <CardHeader
+                        sx={{ color: 'info.dark', textAlign: 'center' }}
                         // subheader="The information can be edited"
-                        title="Select Game"
+                        title="Add Balance In User Wallet"
                     />
-                    <CardContent sx={{ pt: 0 }}>
+                    <CardContent sx={{ pt: 1 }}>
                         <Box sx={{ m: -1.5 }}>
                             <Grid
                                 container
                                 spacing={3}
+                                flexDirection='column'
+                                alignItems='center'
                             >
                                 {/* <Grid
                                 xs={12}
@@ -158,7 +159,7 @@ export const ResultDetails = ({ setShow, handleValues }) => {
                                     value={values.isPlay}
                                 />
                             </Grid> */}
-                                <Grid
+                                {/* <Grid
                                     xs={12}
                                     md={6}
                                     lg={6}
@@ -192,8 +193,8 @@ export const ResultDetails = ({ setShow, handleValues }) => {
                                                 />
                                             </DemoContainer>
                                         </LocalizationProvider>
-                                    </Stack>
-                                    {/* <TextField
+                                    </Stack> */}
+                                {/* <TextField
                                     fullWidth
                                     label="Open Time"
                                     name="open"
@@ -202,7 +203,7 @@ export const ResultDetails = ({ setShow, handleValues }) => {
                                     required
                                     value={values.open}
                                 /> */}
-                                </Grid>
+                                {/* </Grid> */}
                                 {/* <Grid
                                 xs={12}
                                 md={6}
@@ -239,13 +240,13 @@ export const ResultDetails = ({ setShow, handleValues }) => {
                                 >
                                     <TextField
                                         fullWidth
-                                        label="Select Game Name"
-                                        name="game_name"
+                                        label="Select User"
+                                        name="user_name"
                                         onChange={handleChange}
                                         required
                                         select
                                         SelectProps={{ native: true }}
-                                        value={values.game_name}
+                                        value={values.user_name}
                                     >
                                         {gameTitles.map((option, index) => (
                                             <option
@@ -259,27 +260,18 @@ export const ResultDetails = ({ setShow, handleValues }) => {
                                 </Grid>
                                 <Grid
                                     xs={12}
-                                    md={3}
+                                    md={6}
                                 >
                                     <TextField
                                         fullWidth
-                                        label="Select Session"
-                                        name="session"
+                                        // helperText="Please specify the first name"
+                                        label="Enter Amount"
+                                        name="amount"
                                         onChange={handleChange}
+                                        type='number'
                                         required
-                                        select
-                                        SelectProps={{ native: true }}
-                                        value={values.session}
-                                    >
-                                        {session.map((option) => (
-                                            <option
-                                                key={option.value}
-                                                value={option.value}
-                                            >
-                                                {option.label}
-                                            </option>
-                                        ))}
-                                    </TextField>
+                                        value={values.amount}
+                                    />
                                 </Grid>
                             </Grid>
                         </Box>
@@ -287,7 +279,7 @@ export const ResultDetails = ({ setShow, handleValues }) => {
                     <Divider />
                     <CardActions sx={{ justifyContent: 'flex-end' }}>
                         <Button variant="contained" onClick={handleSubmit}>
-                            Go
+                            Submit
                         </Button>
                     </CardActions>
                 </Card>

@@ -19,34 +19,11 @@ import dayjs from 'dayjs';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../contexts/firebase';
 
-const session = [
-    {
-        value: '',
-        label: ''
-    },
-    {
-        value: 'open',
-        label: 'Open'
-    },
-    {
-        value: 'close',
-        label: 'Close'
-    },
-];
-
-export const ResultDetails = ({ setShow, handleValues }) => {
+export const BidRevertDetails = ({ setShow, handleValues }) => {
     const [snackbarMessage, setSnackbarMessage] = useState(null);
     const [values, setValues] = useState({
         result_date: dayjs().format('YYYY-MM-DD'),
         game_name: '',
-        // subtitle: '***-**-***',
-        // password: 'demo@123',
-        session: '',
-        // close: '10:45 PM',
-        // coins: 1000,
-        // phone: '8209555243',
-        // state: 'los-angeles',
-        // country: 'USA'
     });
     // State to hold game titles
     const [gameTitles, setGameTitles] = useState([
@@ -65,7 +42,7 @@ export const ResultDetails = ({ setShow, handleValues }) => {
 
             const titles = eventsSnapshot.docs.map(doc => ({
                 value: doc.data().title, // Keep original casing as label
-                label: `${doc.data().title.toUpperCase()} (${doc.data().open} - ${doc.data().close})`, // Set value to lowercase
+                label: `${doc.data().title.toUpperCase()}`, // Set value to lowercase
             }));
 
             // Update the gameTitles state by merging the existing titles with the new ones
@@ -91,7 +68,7 @@ export const ResultDetails = ({ setShow, handleValues }) => {
     const handleSubmit = (event) => {
         event.preventDefault();
         // Other form submission logic
-        if (!values.game_name || !values.session) {
+        if (!values.game_name) {
             setSnackbarMessage('Please Fill all fields!');
             return;
         }
@@ -119,10 +96,10 @@ export const ResultDetails = ({ setShow, handleValues }) => {
                 noValidate
                 onSubmit={handleSubmit}
             >
-                <Card sx={{border: '1px solid #556ee6'}}>
+                <Card sx={{ border: '1px solid #556ee6' }}>
                     <CardHeader
                         // subheader="The information can be edited"
-                        title="Select Game"
+                        // title="Bid Revert"
                     />
                     <CardContent sx={{ pt: 0 }}>
                         <Box sx={{ m: -1.5 }}>
@@ -257,7 +234,7 @@ export const ResultDetails = ({ setShow, handleValues }) => {
                                         ))}
                                     </TextField>
                                 </Grid>
-                                <Grid
+                                {/* <Grid
                                     xs={12}
                                     md={3}
                                 >
@@ -280,14 +257,14 @@ export const ResultDetails = ({ setShow, handleValues }) => {
                                             </option>
                                         ))}
                                     </TextField>
-                                </Grid>
+                                </Grid> */}
                             </Grid>
                         </Box>
                     </CardContent>
                     <Divider />
                     <CardActions sx={{ justifyContent: 'flex-end' }}>
                         <Button variant="contained" onClick={handleSubmit}>
-                            Go
+                            Submit
                         </Button>
                     </CardActions>
                 </Card>

@@ -65,7 +65,11 @@ export const SingleAnkDetails = ({ ankData, setAnkData }) => {
             }));
 
             // Update the gameTitles state by merging the existing titles with the new ones
-            setGameTitles((prevTitles) => [...prevTitles, ...titles]);
+            setGameTitles([{
+                value: '',
+                label: '',
+            },
+            ...titles]);
         } catch (error) {
             console.error('Error fetching game titles:', error);
         }

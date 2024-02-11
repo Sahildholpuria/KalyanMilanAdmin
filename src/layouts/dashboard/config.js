@@ -12,8 +12,11 @@ import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import ScaleIcon from '@heroicons/react/24/solid/ScaleIcon';
 import AcademicCapIcon from '@heroicons/react/24/solid/AcademicCapIcon';
 import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
+import NewspaperIcon from '@heroicons/react/24/solid/NewspaperIcon';
 import PresentationChartBarIcon from '@heroicons/react/24/solid/PresentationChartBarIcon';
+import WalletIcon from '@heroicons/react/24/solid/WalletIcon';
 import { SvgIcon } from '@mui/material';
+import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 
 export const items = [
   {
@@ -67,44 +70,121 @@ export const items = [
     ]
   },
   {
-    title: 'Withdraw Management',
+    title: 'Report Management',
+    path: '/report',
+    icon: (
+      <SvgIcon fontSize="small">
+        <NewspaperIcon />
+      </SvgIcon>
+    ),
+    // Example of dropdown items
+    children: [
+      {
+        title: 'Bid History',
+        path: '/bids',
+        icon: (
+          <SvgIcon fontSize="small">
+            {/* Add icon for subgame1 */}
+            <ScaleIcon />
+          </SvgIcon>
+        )
+      },
+      {
+        title: 'Bid Win History',
+        path: '/bidwin',
+        icon: (
+          <SvgIcon fontSize="small">
+            {/* Add icon for subgame1 */}
+            <ScaleIcon />
+          </SvgIcon>
+        )
+      },
+      {
+        title: 'Winning History',
+        path: '/winning',
+        icon: (
+          <SvgIcon fontSize="small">
+            {/* Add icon for subgame2 */}
+            <AcademicCapIcon />
+          </SvgIcon>
+        )
+      },
+    ]
+  },
+  {
+    title: 'Wallet Management',
     path: '/withdraw',
     icon: (
       <SvgIcon fontSize="small">
-        <ArrowsRightLeftIcon />
+        <WalletIcon />
       </SvgIcon>
-    )
+    ),
+    // Example of dropdown items
+    children: [
+      {
+        title: 'Add Fund',
+        path: '/addfund',
+        icon: (
+          <SvgIcon fontSize="small">
+            {/* Add icon for subgame1 */}
+            <PlusIcon />
+          </SvgIcon>
+        )
+      },
+      {
+        title: 'Withdraw Request',
+        path: '/withdraw',
+        icon: (
+          <SvgIcon fontSize="small">
+            {/* Add icon for subgame1 */}
+            <ArrowsRightLeftIcon />
+          </SvgIcon>
+        )
+      },
+      {
+        title: 'Bid Revert',
+        path: '/bid',
+        icon: (
+          <SvgIcon fontSize="small">
+            {/* Add icon for subgame2 */}
+            <ScaleIcon />
+          </SvgIcon>
+        )
+      },
+    ]
   },
-  {
-    title: 'Bid History',
-    path: '/bids',
-    icon: (
-      <SvgIcon fontSize="small">
-        <ScaleIcon />
-      </SvgIcon>
-    )
-  },
-  {
-    title: 'Bid Revert',
-    path: '/bid',
-    icon: (
-      <SvgIcon fontSize="small">
-        <ScaleIcon />
-      </SvgIcon>
-    )
-  },
-  {
-    title: 'Winning History',
-    path: '/winning',
-    icon: (
-      <SvgIcon fontSize="small">
-        <AcademicCapIcon />
-      </SvgIcon>
-    )
-  },
+  // {
+  //   title: 'Withdraw Management',
+  //   path: '/withdraw',
+  //   icon: (
+  //     <SvgIcon fontSize="small">
+  //       <ArrowsRightLeftIcon />
+  //     </SvgIcon>
+  //   )
+  // },
+  // {
+  //   title: 'Bid History',
+  //   path: '/bids',
+  //   icon: (
+  //     <SvgIcon fontSize="small">
+  //       <ScaleIcon />
+  //     </SvgIcon>
+  //   )
+  // },
+  // 
+  // },
+  // {
+  //   title: 'Winning History',
+  //   path: '/winning',
+  //   icon: (
+  //     <SvgIcon fontSize="small">
+  //       <AcademicCapIcon />
+  //     </SvgIcon>
+  //   )
+  // },
   {
     title: 'Winning Prediction',
-    path: '/prediction',
+    path: '/prewinning',
     icon: (
       <SvgIcon fontSize="small">
         <AcademicCapIcon />
