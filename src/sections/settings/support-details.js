@@ -21,6 +21,7 @@ export const SupportDetails = () => {
     const [values, setValues] = useState({
         phone_number: '',
         whatsapp: '',
+        telegram: '',
     });
 
     const handleChange = useCallback(
@@ -39,11 +40,11 @@ export const SupportDetails = () => {
         event.preventDefault();
         if (formModified) {
             // Perform submit logic only if the form is modified
-            if (!values.phone_number || !values.whatsapp) {
+            if (!values.phone_number || !values.whatsapp || !values.telegram) {
                 setSnackbarMessage('All fields are required!')
                 return;
             }
-            if (Number(values.phone_number) > 10 || Number(values.whatsapp) > 10){
+            if (values.phone_number.length > 10 || values.whatsapp.length > 10){
                 setSnackbarMessage('Number must be 10 digit!')
                 return;
             }
@@ -68,6 +69,7 @@ export const SupportDetails = () => {
                 setValues({
                     phone_number: adminData.phone_number || '',
                     whatsapp: adminData.whatsapp || '',
+                    telegram: adminData?.telegram || '',
                 });
             })
         } catch (error) {
@@ -132,6 +134,20 @@ export const SupportDetails = () => {
                                         onChange={handleChange}
                                         required
                                         value={values.whatsapp}
+                                    />
+                                </Grid>
+                                <Grid
+                                    xs={12}
+                                    md={6}
+                                >
+                                    <TextField
+                                        fullWidth
+                                        // helperText="Please specify the first name"
+                                        label="Telegram Link"
+                                        name="telegram"
+                                        onChange={handleChange}
+                                        required
+                                        value={values.telegram}
                                     />
                                 </Grid>
                             </Grid>
