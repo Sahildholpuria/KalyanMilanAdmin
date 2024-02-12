@@ -31,6 +31,7 @@ export const SettingApp = () => {
         welcome_bonus: '',
         withdraw_close_time: '',
         withdraw_open_time: '',
+        gst: '',
     });
 
     const handleChange = useCallback(
@@ -65,7 +66,7 @@ export const SettingApp = () => {
         event.preventDefault();
         if (formModified) {
             // Perform submit logic only if the form is modified
-            if (!values.min_add_amount || !values.max_add_amount || !values.min_withdraw_amount || !values.max_withdraw_amount || !values.withdraw_open_time || !values.withdraw_close_time) {
+            if (!values.min_add_amount || !values.max_add_amount || !values.min_withdraw_amount || !values.max_withdraw_amount || !values.withdraw_open_time || !values.withdraw_close_time || !values.gst) {
                 setSnackbarMessage('All fields are required!')
                 return;
             }
@@ -95,6 +96,7 @@ export const SettingApp = () => {
                     welcome_bonus: adminData.welcome_bonus || 0,
                     withdraw_close_time: adminData.withdraw_close_time || '',
                     withdraw_open_time: adminData.withdraw_open_time || '',
+                    gst: adminData.gst || '',
                 });
             })
         } catch (error) {
@@ -262,6 +264,20 @@ export const SettingApp = () => {
                                             </DemoContainer>
                                         </LocalizationProvider>
                                     </Stack>
+                                </Grid>
+                                <Grid
+                                    xs={12}
+                                    md={6}
+                                >
+                                    <TextField
+                                        helperText='Please enter Full text here'
+                                        fullWidth
+                                        label="GST Message"
+                                        name="gst"
+                                        onChange={handleChange}
+                                        required
+                                        value={values.gst}
+                                    />
                                 </Grid>
                             </Grid>
                         </Box>
