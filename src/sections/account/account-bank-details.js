@@ -45,6 +45,7 @@ export const AccountBankDetails = ({ user }) => {
         phonepe: '',
         googlepay: '',
         paytm: '',
+        bank: {},
     });
 
     // const handleChange = useCallback(
@@ -73,6 +74,7 @@ export const AccountBankDetails = ({ user }) => {
                     phonepe: user?.phonepe,
                     googlepay: user?.googlepay,
                     paytm: user?.paytm,
+                    bank: user?.bank_details
                 }));
             } catch (error) {
                 console.log(error, 'error')
@@ -104,6 +106,91 @@ export const AccountBankDetails = ({ user }) => {
                             marginLeft: 10,
                         }}
                     >
+                        <Grid
+                            xs={12}
+                            md={6}
+                        >
+                            <Typography
+                                // gutterBottom
+                                variant="subtitle1"
+                            >
+                                A/c Holder Name :
+                            </Typography>
+                            <Typography
+                                color='text.secondary'
+                                variant='subtitle2'
+                            >
+                                {values.bank ? values.bank?.acc_name : 'N/A'}
+                            </Typography>
+                        </Grid>
+                        <Grid
+                            xs={12}
+                            md={6}
+                        >
+                            <Typography
+                                // gutterBottom
+                                variant="subtitle1"
+                            >
+                                A/c Number :
+                            </Typography>
+                            <Typography
+                                color='text.secondary'
+                                variant='subtitle2'
+                            >
+                                {values.bank ? values.bank?.acc_number : 'N/A'}
+                            </Typography>
+                        </Grid>
+                        <Grid
+                            xs={12}
+                            md={6}
+                        >
+                            <Typography
+                                // gutterBottom
+                                variant="subtitle1"
+                            >
+                                Bank Name :
+                            </Typography>
+                            <Typography
+                                color='text.secondary'
+                                variant='subtitle2'
+                            >
+                                {values.bank ? values.bank?.bank_name : 'N/A'}
+                            </Typography>
+                        </Grid>
+                        <Grid
+                            xs={12}
+                            md={6}
+                        >
+                            <Typography
+                                // gutterBottom
+                                variant="subtitle1"
+                            >
+                                Branch Address :
+                            </Typography>
+                            <Typography
+                                color='text.secondary'
+                                variant='subtitle2'
+                            >
+                                {values.bank ? values.bank?.bank_add : 'N/A'}
+                            </Typography>
+                        </Grid>
+                        <Grid
+                            xs={12}
+                            md={6}
+                        >
+                            <Typography
+                                // gutterBottom
+                                variant="subtitle1"
+                            >
+                                IFSC Code :
+                            </Typography>
+                            <Typography
+                                color='text.secondary'
+                                variant='subtitle2'
+                            >
+                                {values.bank ? values.bank?.ifsc : 'N/A'}
+                            </Typography>
+                        </Grid>
                         <Grid
                             xs={12}
                             md={6}

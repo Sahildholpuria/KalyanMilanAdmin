@@ -7,46 +7,44 @@ import { ResultTable } from '../sections/results/result-table';
 import { ResultDetails } from '../sections/results/result-details';
 import { DeclareResultDetails } from '../sections/results/declare-result';
 import { SendResultNotification } from '../utils/send-result-notification';
+import { PreWinDetails } from '../sections/winning/pre-winner-details';
+import { PreWinnerTable } from '../sections/winning/pre-winner-table';
+import WalletIcon from '@heroicons/react/24/solid/WalletIcon';
+import ScaleIcon from '@heroicons/react/24/solid/ScaleIcon';
 
 const PreWinner = () => {
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
     const [snackbarMessage, setSnackbarMessage] = useState(null);
-    // const [users, setUsers] = useState(null);
-    const [show, setShow] = useState(false);
-    const [fetch, setFetch] = useState(false);
-    const [values, setValues] = useState(null);
-
-    const handlePageChange = useCallback(
-        (event, value) => {
-            setPage(value);
-        },
-        []
-    );
-
-    const handleRowsPerPageChange = useCallback(
-        (event) => {
-            setRowsPerPage(event.target.value);
-        },
-        []
-    );
+    const [tableData, setTableData] = useState([]);
     const handleValues = (values) => {
-        setValues(values);
+        setTableData(values);
     }
+    const calculateTotalAmounts = () => {
+        let totalBidAmount = 0;
+        let totalWinningAmount = 0;
+
+        tableData.forEach((item) => {
+            totalBidAmount += parseInt(item.points, 10) || 0;
+            totalWinningAmount += parseInt(item.won, 10) || 0;
+        });
+
+        return { totalBidAmount, totalWinningAmount };
+    };
+
+    const total = tableData.length > 0 && calculateTotalAmounts();
     useEffect(() => {
         // Dynamically set the document title
-        document.title = 'Result | KalyanMatka Official';
+        document.title = 'PreWinner | KalyanMatka Official';
 
         // Clean up the effect when the component unmounts
         return () => {
             document.title = 'KalyanMatka Official'; // Set a default title if needed
         };
     }, []);
-    const handleCloseSnackbar = () => {
-        setSnackbarMessage(null);
-    };
     const handleOpenSnackbar = (message) => {
         setSnackbarMessage(message);
+    };
+    const handleCloseSnackbar = () => {
+        setSnackbarMessage(null);
     };
     return (
         <>
@@ -78,7 +76,7 @@ const PreWinner = () => {
                         >
                             <Stack spacing={1}>
                                 <Typography variant="h4">
-                                    Declare Result
+                                    Winning Prediction
                                 </Typography>
                             </Stack>
                             {/* <div>
@@ -112,9 +110,9 @@ const PreWinner = () => {
                                     md={12}
                                     lg={12}
                                 >
-                                    <ResultDetails setShow={setShow} handleValues={handleValues} />
+                                    <PreWinDetails handleValues={handleValues} />
                                 </Grid>
-                                {show && (
+                                {/* {show && (
                                     <Grid
                                         xs={12}
                                         md={12}
@@ -145,6 +143,38 @@ const PreWinner = () => {
                                     // selected={customersSelection.selected}
                                     // searchQuery={searchQuery} // Pass the search query as a prop
                                     />
+                                </Grid> */}
+                                <Grid
+                                    xs={12}
+                                    md={12}
+                                    lg={12}
+                                >
+                                    <Stack spacing={3}>
+                                        <Stack
+                                            direction="row"
+                                            justifyContent="space-between"
+                                            spacing={4}
+                                        >
+                                            <Stack spacing={1} sx={{ flexDirection: 'row', alignItems: 'flex-end', gap: 1 }}>
+                                                <SvgIcon fontSize="small" mt={1}>
+                                                    {/* Add icon for subgame2 */}
+                                                    <ScaleIcon />
+                                                </SvgIcon>
+                                                <Typography variant="h6">
+                                                    Total Bid Amount : {total?.totalBidAmount ? total.totalBidAmount : 0}
+                                                </Typography>
+                                            </Stack>
+                                            <Stack spacing={1} sx={{ flexDirection: 'row', alignItems: 'flex-end', gap: 1 }}>
+                                                <SvgIcon fontSize="small">
+                                                    <WalletIcon />
+                                                </SvgIcon>
+                                                <Typography variant="h6">
+                                                    Total Winning Amount : {total?.totalWinningAmount ? total.totalWinningAmount : 0}
+                                                </Typography>
+                                            </Stack>
+                                        </Stack>
+                                    </Stack>
+                                    <PreWinnerTable valuesResult={tableData} handleOpenSnackbar={handleOpenSnackbar} setTableData={setTableData} />
                                 </Grid>
                             </Grid>
                         </div>

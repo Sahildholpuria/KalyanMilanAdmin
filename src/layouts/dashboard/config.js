@@ -184,7 +184,7 @@ export const items = [
   // },
   {
     title: 'Winning Prediction',
-    path: '/prewinning',
+    path: '/prewinner',
     icon: (
       <SvgIcon fontSize="small">
         <AcademicCapIcon />

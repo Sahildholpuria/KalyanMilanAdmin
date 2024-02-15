@@ -94,9 +94,7 @@ export const BidTable = (props) => {
         } catch (error) {
             console.error('Error fetching result data:', error);
         } finally {
-            setTimeout(() => {
-                nProgress.done();
-            }, 1000);
+            nProgress.done();
         }
     };
     // Function to handle the common action (in this case, console.log)
@@ -138,7 +136,7 @@ export const BidTable = (props) => {
     // Function to handle opening the dialog
     const handleOpenDialog = (customer) => {
         setSelectedCustomer(customer);
-        setValues((prevState)=>({
+        setValues((prevState) => ({
             ...prevState,
             // updated_bid: bid, 
             open_panna: customer?.openpanna,
@@ -154,7 +152,7 @@ export const BidTable = (props) => {
         setOpenDialog(false);
     };
     return (
-        <Card sx={{border: '1px solid #556ee6'}}>
+        <Card sx={{ border: '1px solid #556ee6' }}>
             <CardHeader
                 // subheader="The information can be edited"
                 title="Bid History List"
@@ -326,7 +324,7 @@ export const BidTable = (props) => {
             <Backdrop
                 sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
                 open={loading}
-                // onClick={handleClose}
+            // onClick={handleClose}
             >
                 <CircularProgress color="inherit" />
             </Backdrop>

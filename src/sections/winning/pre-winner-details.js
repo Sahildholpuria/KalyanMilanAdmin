@@ -13,13 +13,29 @@ import {
     Backdrop,
     CircularProgress
 } from '@mui/material';
-import { addDoc, collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
+import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { Stack } from '@mui/system';
+import dayjs from 'dayjs';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../contexts/firebase';
-import { getFormatedDateTimeStamp } from '../../utils/get-current-datetimestamp';
-import { SendResultNotification } from '../../utils/send-result-notification';
-import { ResultShowWinner } from '../../utils/result-show-winner';
-import { AddWinningHistory, calculateWinningPoints } from '../../utils/winning-points';
+import { calculateWinningPoints } from '../../utils/winning-points';
 
+const session = [
+    {
+        value: '',
+        label: ''
+    },
+    {
+        value: 'open',
+        label: 'Open'
+    },
+    {
+        value: 'close',
+        label: 'Close'
+    },
+];
 const states = [
     {
         value: '',
@@ -1129,14 +1145,32 @@ const data = {
     "990": 8,
     "999": 7,
 }
-export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackbar }) => {
+export const PreWinDetails = ({ handleValues }) => {
     const [snackbarMessage, setSnackbarMessage] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [values, setValues] = useState({
-        panna: '',
-        digit: '',
+        result_date: dayjs().format('YYYY-MM-DD'),
+        game_name: '',
+        // subtitle: '***-**-***',
+        // password: 'demo@123',
+        session: '',
+        openPanna: '',
+        openDigit: '',
+        closePanna: '',
+        closeDigit: '',
+        // close: '10:45 PM',
+        // coins: 1000,
+        // phone: '8209555243',
+        // state: 'los-angeles',
+        // country: 'USA'
     });
-    const [openDialog, setOpenDialog] = useState(false);
-    const [showButton, setShowButton] = useState(false);
+    // State to hold game titles
+    const [gameTitles, setGameTitles] = useState([
+        {
+            value: '',
+            label: '',
+        },
+    ]);
     const [gameRates, setGameRates] = useState({
         singleDigitValue1: '',
         singleDigitValue2: '',
@@ -1153,79 +1187,42 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
         fullSangamValue1: '',
         fullSangamValue2: '',
     })
-    const [tableData, setTableData] = useState([]);
-    const [result, setResult] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [wonData, setWonData] = useState([]);
+    // const [tableData, setTableData] = useState([]);
 
-    const handleChange = useCallback(
-        (event) => {
-            const { name, value } = event.target;
-            setValues((prevState) => ({
-                ...prevState,
-                [name]: value
-            }));
-
-            // If the changed field is 'panna', set the corresponding 'digit' based on the selected 'panna'
-            if (name === 'panna') {
-                const selectedPanna = value;
-                const correspondingDigit = data[selectedPanna];
-
-                // Update the 'digit' value in the state
-                setValues((prevState) => ({
-                    ...prevState,
-                    digit: correspondingDigit.toString()
-                }));
-            }
-            setShowButton(false);
-            setTableData([]);
-        },
-        []
-    );
-    const handleOpenDialog = (customer) => {
-        // setSelectedCustomer(customer);
-        setOpenDialog(true);
-    };
-    // Function to handle closing the dialog
-    const handleCloseDialog = () => {
-        // setSelectedCustomer(null);
-        setOpenDialog(false);
-    };
-    const handleSave = async (event) => {
-        event.preventDefault();
-
-        if (!values.panna || !values.digit) {
-            setSnackbarMessage('Please enter Panna and Digit!');
+    const handleSave = async () => {
+        if (!values.openPanna) {
+            setSnackbarMessage('Please select Open Panna!');
+            return;
+        }else if(values.session === 'close' && !values.closePanna){
+            setSnackbarMessage('Please select Close Panna!');
             return;
         }
 
-        const resultDate = new Date(game.result_date).toDateString();
-        const resultQuery = query(collection(db, 'Result'), where('result_date', '==', resultDate), where('game_name', '==', game.game_name));
-        const resultSnapshot = await getDocs(resultQuery);
-        setResult(resultSnapshot);
+        const resultDate = new Date(values.result_date).toDateString();
+        // const resultQuery = query(collection(db, 'Result'), where('result_date', '==', resultDate), where('game_name', '==', values.game_name));
+        // const resultSnapshot = await getDocs(resultQuery);
 
-        if (game.session === 'close' && resultSnapshot.empty) {
-            handleOpenSnackbar('Please declare Open result first!');
-            setShow(false);
-            return;
-        }
+        // if (values.session === 'close' && resultSnapshot.empty) {
+        //     handleOpenSnackbar('Please declare Open result first!');
+        //     return;
+        // }
 
         try {
             setLoading(true);
 
-            const sessionType = game.session === 'open';
+            const sessionType = values.session === 'open';
             let resultQueryEvents;
             if (sessionType) {
                 // Fetch data from 'User_Events' collection where conditions match
                 resultQueryEvents = query(collection(db, 'User_Events'),
-                    where('event', '==', game.game_name),
+                    where('event', '==', values.game_name),
                     where('date', '==', resultDate),
-                    where('session', '==', game.session === 'open' ? 'Open' : '')
+                    where('session', '==', values.session === 'open' ? 'Open' : '')
                 );
             } else {
                 // Fetch data from 'User_Events' collection where conditions match
                 resultQueryEvents = query(collection(db, 'User_Events'),
-                    where('event', '==', game.game_name),
+                    where('event', '==', values.game_name),
                     where('date', '==', resultDate),
                 );
             }
@@ -1233,54 +1230,64 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
             const resultSnapshotEvents = await getDocs(resultQueryEvents);
 
             if (!resultSnapshotEvents.empty) {
-                const resultData = resultSnapshotEvents.docs.map((doc) => doc.data());
+                const resultData = resultSnapshotEvents.docs.map((doc) => ({
+                    ...doc.data(),
+                    id: doc.ref.id,
+                }));
                 // console.log(resultData)
-                if (game.session === 'open') {
-                    const filteredDigit = resultData.filter(item => item.session === 'Open' && item.opendigit === values.digit);
-                    const filteredPanna = resultData.filter(item => item.session === 'Open' && item.openpanna === values.panna);
+                if (values.session === 'open') {
+                    const filteredDigit = resultData.filter(item => item.session === 'Open' && item.opendigit === values.openDigit);
+                    const filteredPanna = resultData.filter(item => item.session === 'Open' && item.openpanna === values.openPanna);
                     const mergedData = [...filteredDigit, ...filteredPanna];
 
-                    const winningResults = mergedData.map((data) => {
-                        const wininngPoint = calculateWinningPoints(gameRates, data.game, parseFloat(data.points));
+                    // const winningResults = mergedData.map((data) => {
+                    //     const wininngPoint = calculateWinningPoints(gameRates, data.game, parseFloat(data.points));
 
-                        const winningHistoryData = {
-                            name: data.name,
-                            points: data.points,
-                            won: wininngPoint,
-                            game: data.game,
-                            phone: data.phone,
-                            session: data.session.toLowerCase(),
-                            event: data.event,
-                            date: data.date,
-                        };
-                        return winningHistoryData;
-                    });
+                    //     const winningHistoryData = {
+                    //         name: data.name,
+                    //         points: data.points,
+                    //         won: wininngPoint,
+                    //         game: data.game,
+                    //         phone: data.phone,
+                    //         session: data.session.toLowerCase(),
+                    //         event: data.event,
+                    //         date: data.date,
+                    //     };
+                    //     return winningHistoryData;
+                    // });
                     const updatedMergedData = mergedData.map((data) => {
                         const wininngPoint = calculateWinningPoints(gameRates, data.game, parseFloat(data.points));
 
                         const updatedData = {
                             ...data,
+                            game_type: data?.game,
+                            openpanna: data?.openpanna ? data.openpanna : 'N/A',
+                            closepanna: data?.closepanna ? data.closepanna : 'N/A',
+                            opendigit: data?.opendigit ? data.opendigit : 'N/A',
+                            closedigit: data?.closedigit ? data.closedigit : 'N/A',
                             won: wininngPoint, // Assuming you want to store the won value with 2 decimal places
                         };
 
                         return updatedData;
                     });
-                    setWonData(updatedMergedData);
-                    setTableData(winningResults);
+                    handleValues(updatedMergedData);
+                    // setTableData(winningResults);
                 } else {
-                    if (!resultSnapshot.empty) {
-                        const openResultData = resultSnapshot.docs[0].data();
-                        const { open } = openResultData;
+                    // if (!resultSnapshot.empty) {
+                        // const openResultData = resultSnapshot.docs[0].data();
+                        // const { open } = openResultData;
 
                         // Extract opendigit and openpanna from the 'open' result
-                        const [openpanna, opendigit] = open.split('-');
+                        // const [openpanna, opendigit] = open.split('-');
+                        const openpanna = values.openPanna;
+                        const opendigit = values.openDigit;
 
                         // Filter data based on opendigit, openpanna, closedigit, closepanna
                         const filteredData = resultData.filter(item =>
                             (item.opendigit === opendigit ||
                                 item.openpanna === openpanna) &&
-                            (item.closedigit === values.digit ||
-                                item.closepanna === values.panna)
+                            (item.closedigit === values.closeDigit ||
+                                item.closepanna === values.closePanna)
                         );
                         // Additional filter conditions based on game
                         const gameFilterData = resultData.filter(item => {
@@ -1288,13 +1295,13 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
 
                             switch (gameName) {
                                 case 'Single Digit':
-                                    return item.closedigit === values.digit;
+                                    return item.closedigit === values.closeDigit;
                                 case 'Single Panna':
-                                    return item.closepanna === values.panna;
+                                    return item.closepanna === values.closePanna;
                                 case 'Double Panna':
-                                    return item.closepanna === values.panna;
+                                    return item.closepanna === values.closePanna;
                                 case 'Triple Panna':
-                                    return item.closepanna === values.panna;
+                                    return item.closepanna === values.closePanna;
                                 default:
                                     return null; // Default condition
                             }
@@ -1302,37 +1309,42 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
 
                         const mergedData = [...gameFilterData, ...filteredData];
 
-                        const winningResults = mergedData.map((data) => {
-                            const wininngPoint = calculateWinningPoints(gameRates, data.game, parseFloat(data.points));
+                        // const winningResults = mergedData.map((data) => {
+                        //     const wininngPoint = calculateWinningPoints(gameRates, data.game, parseFloat(data.points));
 
-                            const winningHistoryData = {
-                                name: data.name,
-                                points: data.points,
-                                won: wininngPoint,
-                                game: data.game,
-                                phone: data.phone,
-                                session: data.session.toLowerCase(),
-                                event: data.event,
-                                date: data.date,
-                            };
-                            return winningHistoryData;
-                        });
+                        //     const winningHistoryData = {
+                        //         name: data.name,
+                        //         points: data.points,
+                        //         won: wininngPoint,
+                        //         game: data.game,
+                        //         phone: data.phone,
+                        //         session: data.session.toLowerCase(),
+                        //         event: data.event,
+                        //         date: data.date,
+                        //     };
+                        //     return winningHistoryData;
+                        // });
                         const updatedMergedData = mergedData.map((data) => {
                             const wininngPoint = calculateWinningPoints(gameRates, data.game, parseFloat(data.points));
 
                             const updatedData = {
                                 ...data,
+                                game_type: data?.game,
+                                openpanna: data?.openpanna ? data.openpanna : 'N/A',
+                                closepanna: data?.closepanna ? data.closepanna : 'N/A',
+                                opendigit: data?.opendigit ? data.opendigit : 'N/A',
+                                closedigit: data?.closedigit ? data.closedigit : 'N/A',
                                 won: wininngPoint, // Assuming you want to store the won value with 2 decimal places
                             };
 
                             return updatedData;
                         });
-                        setWonData(updatedMergedData);
-                        setTableData(winningResults);
-                    } else {
-                        // Handle case when no open result data is found
-                        handleOpenSnackbar('No open result data found for the specified game and date.');
-                    }
+                        handleValues(updatedMergedData);
+                        // setTableData(winningResults);
+                    // } else {
+                    //     // Handle case when no open result data is found
+                    //     handleOpenSnackbar('No open result data found for the specified game and date.');
+                    // }
                 }
             } else {
                 // Handle case when no data is found
@@ -1342,166 +1354,118 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
             handleOpenSnackbar('Error fetching data. Please try again.');
         } finally {
             setLoading(false);
-            setShowButton(true);
         }
     };
+    // Function to fetch game titles from Firebase
+    const fetchGameTitles = async () => {
+        try {
+            // Replace this with the actual logic to fetch game titles from Firebase
+            // For example, if you're using Firestore
+            const eventsCollection = collection(db, 'Events');
+            const eventsSnapshot = await getDocs(eventsCollection);
 
-    const handleSubmit = async (event) => {
-        debugger;
-        event.preventDefault();
-        let resultDate = new Date(game.result_date).toDateString();
+            const titles = eventsSnapshot.docs.map(doc => ({
+                value: doc.data().title, // Keep original casing as label
+                label: `${doc.data().title.toUpperCase()} (${doc.data().open} - ${doc.data().close})`, // Set value to lowercase
+            }));
 
-        let openValue;
-        let closeValue;
-        let openDate = getFormatedDateTimeStamp(resultDate);
-        if (game.session === 'open') {
-            // Calculate open and close values
-            openValue = `${values.panna}-${values.digit}`;
-            closeValue = '*-***';
+            // Update the gameTitles state by merging the existing titles with the new ones
+            setGameTitles([{
+                value: '',
+                label: '',
+            },
+            ...titles]);
             try {
-                setLoading(true);
-                // Add a new document to the "Result" collection
-                const resultRef = await addDoc(collection(db, 'Result'), {
-                    game_name: game.game_name,
-                    result_date: resultDate,
-                    open_date: openDate,
-                    open: openValue,
-                    close_date: '',
-                    close: closeValue,
-                    // timestamp: serverTimestamp(),
-                });
-                try {
-                    const currentDate = new Date().toDateString();
-                    if (resultDate === currentDate) {
-                        const subtitle = `${openValue}${closeValue}`;
-                        // Update the 'subtitle' column in the 'Events' table
-                        const eventsQuery = query(collection(db, 'Events'), where('title', '==', game.game_name));
-                        const eventsSnapshot = await getDocs(eventsQuery);
+                const q = query(collection(db, 'admin'), where('name', '==', 'GameRates'));
+                const querySnapshot = await getDocs(q);
 
-                        if (!eventsSnapshot.empty) {
-                            eventsSnapshot.forEach(async (doc) => {
-                                // Update the 'subtitle' field of the document
-                                await updateDoc(doc.ref, {
-                                    subtitle: subtitle,  // Replace with your new subtitle value
-                                });
-                            });
-                            // console.log('Subtitle Updated Successfully!')
-                            // Trigger a fetch or update based on your requirements
-                            // setFetch(true);
-                        } else {
-                            // Document not found, show error message in snackbar
-                            handleOpenSnackbar('Event not found!');
-                        }
-                    }
-                    AddWinningHistory(tableData, wonData);
-                    // You can perform additional actions or update the state as needed
-                    SendResultNotification(game.game_name, game.session);
-                } catch (error) {
-                    console.error('Error updating subtitle: ', error);
-                    handleOpenSnackbar('Error updating subtitle. Please try again.');
+                if (!querySnapshot.empty) {
+                    const adminDoc = querySnapshot.docs[0].data();
+                    setGameRates({
+                        singleDigitValue1: adminDoc?.singleDigitValue1 || '',
+                        singleDigitValue2: adminDoc?.singleDigitValue2 || '',
+                        jodiDigitValue1: adminDoc?.jodiDigitValue1 || '',
+                        jodiDigitValue2: adminDoc?.jodiDigitValue2 || '',
+                        singlePannaValue1: adminDoc?.singlePannaValue1 || '',
+                        singlePannaValue2: adminDoc?.singlePannaValue2 || '',
+                        doublePannaValue1: adminDoc?.doublePannaValue1 || '',
+                        doublePannaValue2: adminDoc?.doublePannaValue2 || '',
+                        triplePannaValue1: adminDoc?.triplePannaValue1 || '',
+                        triplePannaValue2: adminDoc?.triplePannaValue2 || '',
+                        halfSangamValue1: adminDoc?.halfSangamValue1 || '',
+                        halfSangamValue2: adminDoc?.halfSangamValue2 || '',
+                        fullSangamValue1: adminDoc?.fullSangamValue1 || '',
+                        fullSangamValue2: adminDoc?.fullSangamValue2 || '',
+                    })
                 }
-                // console.log('Document added with ID: ', resultRef.id);
-                // You can perform additional actions or update the state as needed
-                handleOpenSnackbar('Open Result Declared Successfully!')
-                // Trigger a fetch or update based on your requirements
-                setShow(false);
-                setFetch(true);
             } catch (error) {
-                console.error('Error adding document: ', error);
-                setSnackbarMessage('Error adding result. Please try again.');
+                console.log('Error fetching game rates.')
             }
-            setLoading(false);
-        } else {
-            let closeDate = getFormatedDateTimeStamp(resultDate);
-            // Calculate open and close values
-            closeValue = `${values.digit}-${values.panna}`;
-            try {
-                setLoading(true);
-                // Update the existing document in the "Result" collection
-                const resultDocRef = doc(db, 'Result', result.docs[0].ref._key.path.segments.slice(-1)[0]);
-
-                await updateDoc(resultDocRef, {
-                    close_date: closeDate,
-                    close: closeValue,
-                });
-                try {
-                    const currentDate = new Date().toDateString();
-                    if (resultDate === currentDate) {
-                        openValue = result.docs[0].data().open;
-                        const subtitle = `${openValue}${closeValue}`;
-                        // Update the 'subtitle' column in the 'Events' table
-                        const eventsQuery = query(collection(db, 'Events'), where('title', '==', game.game_name));
-                        const eventsSnapshot = await getDocs(eventsQuery);
-
-                        if (!eventsSnapshot.empty) {
-                            eventsSnapshot.forEach(async (doc) => {
-                                // Update the 'subtitle' field of the document
-                                await updateDoc(doc.ref, {
-                                    subtitle: subtitle,  // Replace with your new subtitle value
-                                });
-                            });
-                            // console.log('Subtitle Updated Successfully!')
-                            // Trigger a fetch or update based on your requirements
-                            // setFetch(true);
-                        } else {
-                            // Document not found, show error message in snackbar
-                            handleOpenSnackbar('Event not found!');
-                        }
-                    }
-                    AddWinningHistory(tableData, wonData);
-                    // You can perform additional actions or update the state as needed
-                    SendResultNotification(game.game_name, game.session);
-                } catch (error) {
-                    console.error('Error updating subtitle: ', error);
-                    handleOpenSnackbar('Error updating subtitle. Please try again.');
-                }
-                // console.log('Document updated successfully!');
-                handleOpenSnackbar('Close Result Declared Successfully!');
-                // Trigger a fetch or update based on your requirements
-                setShow(false);
-                setFetch(true);
-            } catch (error) {
-                console.error('Error updating document: ', error);
-                setSnackbarMessage('Error updating result. Please try again.');
-            }
-            setLoading(false)
+        } catch (error) {
+            console.error('Error fetching game titles:', error);
         }
+    };
+    const handleChange = useCallback(
+        (event) => {
+            const { name, value } = event.target;
+            setValues((prevState) => ({
+                ...prevState,
+                [name]: value
+            }));
+
+            // If the changed field is 'panna', set the corresponding 'digit' based on the selected 'panna'
+            if (name === 'session') {
+                // Update the 'digit' value in the state
+                setValues((prevState) => ({
+                    ...prevState,
+                    closeDigit: '',
+                    closePanna: '',
+                }));
+            }
+            if (name === 'openPanna') {
+                const selectedPanna = value;
+                const correspondingDigit = data[selectedPanna];
+
+                // Update the 'digit' value in the state
+                setValues((prevState) => ({
+                    ...prevState,
+                    openDigit: correspondingDigit.toString()
+                }));
+            }
+            if (name === 'closePanna') {
+                const selectedPanna = value;
+                const correspondingDigit = data[selectedPanna];
+
+                // Update the 'digit' value in the state
+                setValues((prevState) => ({
+                    ...prevState,
+                    closeDigit: correspondingDigit.toString()
+                }));
+            }
+            // setShowButton(false);
+            handleValues([]);
+        },
+        []
+    );
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        // Other form submission logic
+        if (!values.game_name || !values.session || !values.openPanna) {
+            setSnackbarMessage('Please Fill all fields!');
+            return;
+        }
+        // If the form is successfully submitted, call the callback function
+        handleSave();
+    };
+    useEffect(() => {
+        fetchGameTitles();
+    }, [])
+    const handleOpenSnackbar = (message) => {
+        setSnackbarMessage(message);
     };
     const handleCloseSnackbar = () => {
         setSnackbarMessage(null);
     };
-    const fetchGameRates = async () => {
-        try {
-            const q = query(collection(db, 'admin'), where('name', '==', 'GameRates'));
-            const querySnapshot = await getDocs(q);
-
-            if (!querySnapshot.empty) {
-                const adminDoc = querySnapshot.docs[0].data();
-                setGameRates({
-                    singleDigitValue1: adminDoc?.singleDigitValue1 || '',
-                    singleDigitValue2: adminDoc?.singleDigitValue2 || '',
-                    jodiDigitValue1: adminDoc?.jodiDigitValue1 || '',
-                    jodiDigitValue2: adminDoc?.jodiDigitValue2 || '',
-                    singlePannaValue1: adminDoc?.singlePannaValue1 || '',
-                    singlePannaValue2: adminDoc?.singlePannaValue2 || '',
-                    doublePannaValue1: adminDoc?.doublePannaValue1 || '',
-                    doublePannaValue2: adminDoc?.doublePannaValue2 || '',
-                    triplePannaValue1: adminDoc?.triplePannaValue1 || '',
-                    triplePannaValue2: adminDoc?.triplePannaValue2 || '',
-                    halfSangamValue1: adminDoc?.halfSangamValue1 || '',
-                    halfSangamValue2: adminDoc?.halfSangamValue2 || '',
-                    fullSangamValue1: adminDoc?.fullSangamValue1 || '',
-                    fullSangamValue2: adminDoc?.fullSangamValue2 || '',
-                })
-            }
-        } catch (error) {
-            console.log('Error fetching game rates.')
-        }
-    }
-
-    useEffect(() => {
-        fetchGameRates();
-    }, [])
 
     return (
         <>
@@ -1517,10 +1481,10 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
                 noValidate
                 onSubmit={handleSubmit}
             >
-                <Card sx={{border: '1px solid #556ee6'}}>
+                <Card sx={{ border: '1px solid #556ee6' }}>
                     <CardHeader
                         // subheader="The information can be edited"
-                        title="Declare Result"
+                        title="Select Game"
                     />
                     <CardContent sx={{ pt: 0 }}>
                         <Box sx={{ m: -1.5 }}>
@@ -1528,21 +1492,147 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
                                 container
                                 spacing={3}
                             >
+                                {/* <Grid
+                                xs={12}
+                                md={6}
+                            >
+                                <TextField
+                                    fullWidth
+                                    // helperText="Please specify the first name"
+                                    label="Game Title"
+                                    name="title"
+                                    onChange={handleChange}
+                                    required
+                                    value={values.title}
+                                />
+                            </Grid>
+                            <Grid
+                                xs={12}
+                                md={6}
+                            >
+                                <TextField
+                                    fullWidth
+                                    helperText="Please specify the Yes or No"
+                                    label="Active status"
+                                    name="isPlay"
+                                    onChange={handleChange}
+                                    required
+                                    value={values.isPlay}
+                                />
+                            </Grid> */}
+                                <Grid
+                                    xs={12}
+                                    md={3}
+                                    lg={3}
+                                >
+                                    <Stack sx={{
+                                        '& .css-4jnixx-MuiStack-root': {
+                                            padding: '2px'
+                                        }
+                                    }}>
+                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                            <DemoContainer components={['DatePicker']}>
+                                                <DatePicker
+                                                    label="Result Date"
+                                                    value={dayjs(values.result_date)}
+                                                    onChange={(newValue) => {
+                                                        setValues((prevState) => ({
+                                                            ...prevState,
+                                                            result_date: newValue.format('YYYY-MM-DD'),
+                                                        }));
+                                                    }}
+                                                    textField={(props) => (
+                                                        <TextField fullWidth label="Result Date" {...props} sx={{ width: '100%' }} />
+                                                    )}
+                                                    slotProps={{
+                                                        textField: {
+                                                            helperText: 'MM/DD/YYYY',
+                                                        },
+                                                    }}
+                                                    maxDate={dayjs()} // Disable future dates
+                                                />
+                                            </DemoContainer>
+                                        </LocalizationProvider>
+                                    </Stack>
+                                    {/* <TextField
+                                    fullWidth
+                                    label="Open Time"
+                                    name="open"
+                                    type='timepicker'
+                                    onChange={handleChange}
+                                    required
+                                    value={values.open}
+                                /> */}
+                                </Grid>
+                                {/* <Grid
+                                xs={12}
+                                md={6}
+                            >
+                                <Stack sx={{
+                                    '& .css-4jnixx-MuiStack-root': {
+                                        padding: '2px'
+                                    }
+                                }}>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DemoContainer components={['TimePicker']}>
+                                            <TimePicker
+                                                label="Close Time"
+                                                value={dayjs(values.close, 'hh:mm A')}
+                                                onChange={(newValue) => handleTimeChange('close', newValue)}
+                                                textField={(props) => (
+                                                    <TextField
+                                                        fullWidth
+                                                        label="Close Time"
+                                                        {...props}
+                                                        sx={{
+                                                            width: '100%',
+                                                        }}
+                                                    />
+                                                )}
+                                            />
+                                        </DemoContainer>
+                                    </LocalizationProvider>
+                                </Stack>
+                            </Grid> */}
                                 <Grid
                                     xs={12}
                                     md={6}
                                 >
                                     <TextField
                                         fullWidth
-                                        label="Select Panna"
-                                        name="panna"
+                                        label="Select Game Name"
+                                        name="game_name"
                                         onChange={handleChange}
                                         required
                                         select
                                         SelectProps={{ native: true }}
-                                        value={values.panna}
+                                        value={values.game_name}
                                     >
-                                        {states.map((option) => (
+                                        {gameTitles.map((option, index) => (
+                                            <option
+                                                key={index}
+                                                value={option.value}
+                                            >
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </TextField>
+                                </Grid>
+                                <Grid
+                                    xs={12}
+                                    md={3}
+                                >
+                                    <TextField
+                                        fullWidth
+                                        label="Select Session"
+                                        name="session"
+                                        onChange={handleChange}
+                                        required
+                                        select
+                                        SelectProps={{ native: true }}
+                                        value={values.session}
+                                    >
+                                        {session.map((option) => (
                                             <option
                                                 key={option.value}
                                                 value={option.value}
@@ -1554,47 +1644,63 @@ export const DeclareResultDetails = ({ game, setFetch, setShow, handleOpenSnackb
                                 </Grid>
                                 <Grid
                                     xs={12}
-                                    md={6}
+                                    md={4}
                                 >
                                     <TextField
                                         fullWidth
-                                        label="Digit"
-                                        name="digit"
-                                        type='number'
+                                        label="Select Open Panna"
+                                        name="openPanna"
                                         onChange={handleChange}
-                                        // required
-                                        InputProps={{
-                                            readOnly: game.session === 'open' ? true : false,
-                                        }}
-                                        value={values.digit}
-                                    />
+                                        required
+                                        select
+                                        SelectProps={{ native: true }}
+                                        value={values.openPanna}
+                                    >
+                                        {states.map((option) => (
+                                            <option
+                                                key={option.value}
+                                                value={option.value}
+                                            >
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </TextField>
                                 </Grid>
+                                {values.session === 'close' && <Grid
+                                    xs={12}
+                                    md={4}
+                                >
+                                    <TextField
+                                        fullWidth
+                                        label="Select Close Panna"
+                                        name="closePanna"
+                                        onChange={handleChange}
+                                        required
+                                        select
+                                        SelectProps={{ native: true }}
+                                        value={values.closePanna}
+                                    >
+                                        {states.map((option) => (
+                                            <option
+                                                key={option.value}
+                                                value={option.value}
+                                            >
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </TextField>
+                                </Grid>}
                             </Grid>
                         </Box>
                     </CardContent>
                     <Divider />
                     <CardActions sx={{ justifyContent: 'flex-end' }}>
-                        <Button variant="contained" onClick={handleSave}>
-                            Save
+                        <Button variant="contained" onClick={handleSubmit}>
+                            Submit
                         </Button>
-                        {showButton && (
-                            <>
-                                <Button variant="contained" onClick={handleOpenDialog}>
-                                    Show Winner
-                                </Button>
-                                <Button variant="contained" onClick={handleSubmit}>
-                                    Declare
-                                </Button>
-                            </>)}
                     </CardActions>
                 </Card>
             </form>
-            {/* Alert Dialog for changing status */}
-            <ResultShowWinner
-                openDialog={openDialog}
-                handleCloseDialog={handleCloseDialog}
-                tableData={tableData}
-            />
             <Backdrop
                 sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
                 open={loading}
