@@ -70,7 +70,7 @@ export const BidWinCard = ({ values, handleOpenSnackbar }) => {
                         total += Number(data.won); // Add points from each document to the total
                     });
                     setTotalWin(total);
-                    handleOpenDialog('Data Fetched Successfully!')
+                    handleOpenSnackbar('Data Fetched Successfully!')
                 }
             })
         } catch (error) {
@@ -93,7 +93,7 @@ export const BidWinCard = ({ values, handleOpenSnackbar }) => {
                         total += Number(data.points); // Add points from each document to the total
                     });
                     setTotalBid(total); // Set the total bid amount
-                    handleOpenDialog('Data Fetched Successfully!')
+                    handleOpenSnackbar('Data Fetched Successfully!')
                 }
             })
         } catch (error) {

@@ -100,6 +100,7 @@ export const SideNav = (props) => {
             px: 2,
             py: 3
           }}
+          style={{ maxHeight: "580px", overflow: "scroll", scrollbarWidth: "none",}}
         >
           <Stack
             component="ul"

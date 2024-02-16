@@ -74,7 +74,7 @@ const WinHistory = () => {
                         >
                             <Stack spacing={1}>
                                 <Typography variant="h4">
-                                    Winning History
+                                    Winning History Report
                                 </Typography>
                             </Stack>
                             {/* <div>

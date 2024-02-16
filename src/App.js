@@ -20,6 +20,8 @@ import AddFund from './pages/addfund';
 import PreWinner from './pages/prewinner';
 import BidWinReport from './pages/bidwinreport';
 import BidRevert from './pages/bidrevert';
+import WithdrawReport from './pages/withdrawreport';
+import Games from './pages/games';
 
 function App() {
   const location = useLocation();
@@ -43,8 +45,10 @@ function App() {
               <Route path="/users/:id" element={<User />} />
               <Route path="/games" element={<GameManagement />} />
               <Route path="/games/rates" element={<GameRates />} />
+              <Route path="/game/:game" element={<Games />} />
               <Route path="/games/:id" element={<Game />} />
               <Route path="/withdraw" element={<WalletManagement />} />
+              <Route path="/withdrawreport" element={<WithdrawReport />} />
               <Route path="/addfund" element={<AddFund />} />
               <Route path="/bids" element={<BidHistory />} />
               <Route path="/bid" element={<BidRevert />} />

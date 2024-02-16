@@ -70,6 +70,88 @@ export const items = [
     ]
   },
   {
+    title: 'Game & Numbers',
+    path: '/game',
+    icon: (
+      <SvgIcon fontSize="small">
+        <PuzzlePieceIcon />
+      </SvgIcon>
+    ),
+    // Example of dropdown items
+    children: [
+      {
+        title: 'Single Digit',
+        path: '/game/singledigit',
+        icon: (
+          <SvgIcon fontSize="small">
+            {/* Add icon for subgame1 */}
+            <PlayIcon />
+          </SvgIcon>
+        )
+      },
+      {
+        title: 'Jodi Digit',
+        path: '/game/jodidigit',
+        icon: (
+          <SvgIcon fontSize="small">
+            {/* Add icon for subgame2 */}
+            <PlayIcon />
+          </SvgIcon>
+        )
+      },
+      {
+        title: 'Single Pana',
+        path: '/game/singlepana',
+        icon: (
+          <SvgIcon fontSize="small">
+            {/* Add icon for subgame2 */}
+            <PlayIcon />
+          </SvgIcon>
+        )
+      },
+      {
+        title: 'Double Pana',
+        path: '/game/doublepana',
+        icon: (
+          <SvgIcon fontSize="small">
+            {/* Add icon for subgame2 */}
+            <PlayIcon />
+          </SvgIcon>
+        )
+      },
+      {
+        title: 'Tripple Pana',
+        path: '/game/tripplepana',
+        icon: (
+          <SvgIcon fontSize="small">
+            {/* Add icon for subgame2 */}
+            <PlayIcon />
+          </SvgIcon>
+        )
+      },
+      {
+        title: 'Half Sangam',
+        path: '/game/halfsangam',
+        icon: (
+          <SvgIcon fontSize="small">
+            {/* Add icon for subgame2 */}
+            <PlayIcon />
+          </SvgIcon>
+        )
+      },
+      {
+        title: 'Full Sangam',
+        path: '/game/fullsangam',
+        icon: (
+          <SvgIcon fontSize="small">
+            {/* Add icon for subgame2 */}
+            <PlayIcon />
+          </SvgIcon>
+        )
+      },
+    ]
+  },
+  {
     title: 'Report Management',
     path: '/report',
     icon: (
@@ -90,7 +172,7 @@ export const items = [
         )
       },
       {
-        title: 'Bid Win History',
+        title: 'Bid Win Report',
         path: '/bidwin',
         icon: (
           <SvgIcon fontSize="small">
@@ -100,12 +182,22 @@ export const items = [
         )
       },
       {
-        title: 'Winning History',
+        title: 'Winning Report',
         path: '/winning',
         icon: (
           <SvgIcon fontSize="small">
             {/* Add icon for subgame2 */}
             <AcademicCapIcon />
+          </SvgIcon>
+        )
+      },
+      {
+        title: 'Withdraw Report',
+        path: '/withdrawreport',
+        icon: (
+          <SvgIcon fontSize="small">
+            {/* Add icon for subgame2 */}
+            <ArrowsRightLeftIcon />
           </SvgIcon>
         )
       },

@@ -41,6 +41,7 @@ export const BidWinTable = (props) => {
         // selected = [],
         // handleRowSelect,
         searchQuery = '', // Accept search query as a prop
+        win,
     } = props;
     const [resultData, setResultData] = useState([]);
     const navigate = useNavigate();
@@ -62,7 +63,7 @@ export const BidWinTable = (props) => {
             // Replace this with the actual logic to fetch data from your source
             // For example, if you're using Firestore
             const formattedDate = new Date(valuesResult.result_date).toDateString();
-            const q = query(collection(db, 'User_Events'), where('date', '==', formattedDate), where('event', '==', valuesResult.game_name), orderBy('won', 'asc'));
+            const q = win ? query(collection(db, 'User_Events'), where('date', '==', formattedDate), where('event', '==', valuesResult.game_name), orderBy('won', 'asc')) : query(collection(db, 'User_Events'), where('date', '==', formattedDate), where('event', '==', valuesResult.game_name));
             await onSnapshot(q, (querySnapshot) => {
                 if (querySnapshot.empty) {
                     setResultData([]);
@@ -113,7 +114,7 @@ export const BidWinTable = (props) => {
         <Card sx={{ border: '1px solid #556ee6' }}>
             <CardHeader
                 // subheader="The information can be edited"
-                title="Winning History List"
+                title={win ? "Winning History List" : "Bid History List"}
             />
             <Scrollbar sx={{ '.simplebar-placeholder': { display: 'none !important' } }}>
                 <Box sx={{ minWidth: 800 }}>
@@ -160,9 +161,9 @@ export const BidWinTable = (props) => {
                                 <TableCell>
                                     Points
                                 </TableCell>
-                                <TableCell>
+                                {win && <TableCell>
                                     Amount
-                                </TableCell>
+                                </TableCell>}
                                 <TableCell>
                                     Date
                                 </TableCell>
@@ -241,9 +242,9 @@ export const BidWinTable = (props) => {
                                         <TableCell>
                                             {customer.points}
                                         </TableCell>
-                                        <TableCell>
+                                        {win && <TableCell>
                                             {customer.won}
-                                        </TableCell>
+                                        </TableCell>}
                                         <TableCell>
                                             {date}
                                         </TableCell>  

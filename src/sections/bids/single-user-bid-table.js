@@ -64,7 +64,7 @@ export const SingleUserBidTable = (props) => {
             await onSnapshot(q, (querySnapshot) => {
                 if (querySnapshot.empty) {
                     setResultData([]);
-                    handleOpenSnackbar('No Bid history available!')
+                    // handleOpenSnackbar('No Bid history available!')
                 } else {
                     setResultData(querySnapshot.docs.map(doc => ({
                         id: doc.ref._key.path.segments.slice(-1)[0],

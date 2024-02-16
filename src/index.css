@@ -9,6 +9,9 @@ body {
 #root{
   display: contents;
 }
+html{
+  scrollbar-width: thin;
+}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

@@ -186,6 +186,7 @@ const User = () => {
                             // onDeselectOne={customersSelection.handleDeselectOne}
                             onPageChange={handleBidPageChange}
                             onRowsPerPageChange={handleBidRowsPerPageChange}
+                            handleOpen
                             // handleOpenSnackbar={handleOpenSnackbar}
                             // onSelectAll={customersSelection.handleSelectAll}
                             // onSelectOne={customersSelection.handleSelectOne}
