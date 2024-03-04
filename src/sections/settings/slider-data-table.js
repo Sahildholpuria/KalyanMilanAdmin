@@ -141,11 +141,12 @@ export const SliderDataTable = (props) => {
                                         <TableCell sx={{ color: statusColor, textTransform: 'capitalize' }}>
                                             {customer.status ? 'Active' : 'Inactive'}
                                         </TableCell>
-                                        <TableCell sx={{display: 'flex', justifyContent: 'space-between', gap: '10px'}}>
+                                        <TableCell sx={{textWrap: 'nowrap'}}>
                                             <Button
                                                 variant="outlined"
                                                 onClick={() => handleOpenDialog(customer)}
                                                 color='error'
+                                                sx={{marginRight: '10px'}}
                                             >
                                                 Delete
                                             </Button>
