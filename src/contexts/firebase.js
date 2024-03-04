@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 // src.firebase.js
 import { initializeApp } from "firebase/app"
+import { getStorage } from 'firebase/storage';
 import { getFirestore } from "firebase/firestore"
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -28,4 +29,5 @@ const appCheck = initializeAppCheck(app, {
     isTokenAutoRefreshEnabled: true
 });
 const db = getFirestore(app)
-export { db }
+const imgDB = getStorage(app)
+export { db, imgDB }

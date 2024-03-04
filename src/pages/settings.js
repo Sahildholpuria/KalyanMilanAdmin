@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { SettingApp } from '../sections/settings/settings-app';
 import { SupportDetails } from '../sections/settings/support-details';
 import { Maintainence } from '../sections/settings/setting-mentainance';
+import SliderData from '../sections/settings/slider-data';
 
 const Settings = () => {
   useEffect(() => {
@@ -19,34 +20,35 @@ const Settings = () => {
     };
   }, []);
   return (
-  <>
-    {/* <Head>
+    <>
+      {/* <Head>
       <title>
         Settings | Devias Kit
       </title>
     </Head> */}
-    <Box
-      component="main"
-      sx={{
-        flexGrow: 1,
-        py: 8
-      }}
-    >
-      <Container maxWidth="lg">
-        <Stack spacing={3}>
-          <Typography variant="h4">
-            Settings
-          </Typography>
-          <SettingDetails />
-          <SettingsPassword />
-          <SettingApp />
-          <SupportDetails />
-          <Maintainence />
-        </Stack>
-      </Container>
-    </Box>
-  </>
-);
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          py: 8
+        }}
+      >
+        <Container maxWidth="lg">
+          <Stack spacing={3}>
+            <Typography variant="h4">
+              Settings
+            </Typography>
+            <SettingDetails />
+            <SettingsPassword />
+            <SettingApp />
+            <SupportDetails />
+            <Maintainence />
+            <SliderData />
+          </Stack>
+        </Container>
+      </Box>
+    </>
+  );
 }
 Settings.getLayout = (page) => (
   <DashboardLayout>

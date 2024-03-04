@@ -22,6 +22,7 @@ export const SupportDetails = () => {
         phone_number: '',
         whatsapp: '',
         telegram: '',
+        youtube: '',
     });
 
     const handleChange = useCallback(
@@ -70,6 +71,7 @@ export const SupportDetails = () => {
                     phone_number: adminData.phone_number || '',
                     whatsapp: adminData.whatsapp || '',
                     telegram: adminData?.telegram || '',
+                    youtube: adminData?.youtube || '',
                 });
             })
         } catch (error) {
@@ -148,6 +150,20 @@ export const SupportDetails = () => {
                                         onChange={handleChange}
                                         required
                                         value={values.telegram}
+                                    />
+                                </Grid>
+                                <Grid
+                                    xs={12}
+                                    md={6}
+                                >
+                                    <TextField
+                                        fullWidth
+                                        // helperText="Please specify the first name"
+                                        label="Youtube Link"
+                                        name="youtube"
+                                        onChange={handleChange}
+                                        // required
+                                        value={values.youtube}
                                     />
                                 </Grid>
                             </Grid>
