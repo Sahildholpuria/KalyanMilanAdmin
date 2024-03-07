@@ -10,19 +10,19 @@ import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyDNXKfK-KRs_2iEqhsD3MzqbxCH8kYBjZk",
-    authDomain: "otp-demo-86e6a.firebaseapp.com",
-    projectId: "otp-demo-86e6a",
-    storageBucket: "otp-demo-86e6a.appspot.com",
-    messagingSenderId: "163356141884",
-    appId: "1:163356141884:web:a4d1867be3dc8c5e0a1639",
-    measurementId: "G-J579VZE4W5"
+    apiKey: "AIzaSyAQrpnAsQJ-xkJhWlTRuNffghI9X457HEc",
+    authDomain: "kalyanmilanofficial.firebaseapp.com",
+    projectId: "kalyanmilanofficial",
+    storageBucket: "kalyanmilanofficial.appspot.com",
+    messagingSenderId: "1022966513419",
+    appId: "1:1022966513419:web:64a603178ecfc4f3382c0e",
+    measurementId: "G-XNPSF17BC8"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const appCheck = initializeAppCheck(app, {
-    provider: new ReCaptchaV3Provider('6LcdUFcpAAAAABjmfz7aJPOc9JdTSfwT-IK_Su2E'),
+    provider: new ReCaptchaV3Provider('6LfycY4pAAAAAGSfteWq0s2wo5CMziCP7GUlZTp4'),
 
     // Optional argument. If true, the SDK automatically refreshes App Check
     // tokens as needed.
