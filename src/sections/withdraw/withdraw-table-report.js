@@ -31,6 +31,7 @@ import { useNavigate } from 'react-router-dom';
 import { fetchUserDataByPhone, fetchUserId } from '../../utils/get-single-user';
 import EyeIcon from '@heroicons/react/24/solid/EyeIcon';
 import WalletIcon from '@heroicons/react/24/solid/WalletIcon';
+import { updateCoins } from '../../utils/withdraw-reject-update-coins';
 // import { useRouter } from 'next/router';
 
 export const WithdrawReportTable = (props) => {
@@ -107,7 +108,9 @@ export const WithdrawReportTable = (props) => {
             await updateDoc(withdrawDocRef, {
                 status: newStatus,
             });
-
+            if (action === 'Reject'){
+                await updateCoins(selectedCustomer);
+            }
             // Log success message
             console.log(`Withdraw request ${newStatus} successfully!`);
             handleOpenSnackbar(`Withdraw request ${newStatus} successfully!`)

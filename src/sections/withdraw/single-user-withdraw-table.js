@@ -30,6 +30,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../contexts/firebase';
 import { useNavigate } from 'react-router-dom';
 import { fetchUserDataByPhone, fetchUserId } from '../../utils/get-single-user';
+import { updateCoins } from '../../utils/withdraw-reject-update-coins';
 // import { useRouter } from 'next/router';
 
 export const SingleUserWithdrawTable = (props) => {
@@ -95,7 +96,9 @@ export const SingleUserWithdrawTable = (props) => {
             await updateDoc(withdrawDocRef, {
                 status: newStatus,
             });
-
+            if (action === 'Reject') {
+                await updateCoins(selectedCustomer);
+            }
             // Log success message
             console.log(`Withdraw request ${newStatus} successfully!`);
             // handleOpenSnackbar(`Withdraw request ${newStatus} successfully!`)

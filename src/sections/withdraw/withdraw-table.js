@@ -29,6 +29,7 @@ import { db } from '../../contexts/firebase';
 import { useNavigate } from 'react-router-dom';
 import { fetchUserDataByPhone, fetchUserId } from '../../utils/get-single-user';
 import EyeIcon from '@heroicons/react/24/solid/EyeIcon';
+import { updateCoins } from '../../utils/withdraw-reject-update-coins';
 // import { useRouter } from 'next/router';
 
 export const WithdrawTable = (props) => {
@@ -93,6 +94,9 @@ export const WithdrawTable = (props) => {
                 status: newStatus,
             });
 
+            if (action === 'Reject') {
+                await updateCoins(selectedCustomer);
+            }
             // Log success message
             console.log(`Withdraw request ${newStatus} successfully!`);
             handleOpenSnackbar(`Withdraw request ${newStatus} successfully!`)
