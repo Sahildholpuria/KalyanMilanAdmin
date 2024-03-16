@@ -27,7 +27,7 @@ export const SendRandomNotification = async (title, message) => {
     try {
         const fcmTokens = await getTokens();
         // console.log(fcmTokens);
-        const serverKey = 'AAAA7i2OPws:APA91bFG8F0UTG_OH_MR5ZvfcQTq8vjgeltTF9Ttj1PI5_MEv2znfPDA1oQtgWs2Nadh1kIsPCxYZGAfvVatjspuht8pSq4hDe0Dbkt4y-9Tk7t0BYMWHY57mLUEZZI5i9YCMP1ckD6w';
+        const serverKey = 'AAAAUthtCLE:APA91bFs5unrO7fJD3XrP2iXhbjBPnvjace7MWIGWwydcLWHhI_nmhMT0qZyoOKO9B_lri-mrTKsc_tX_x2X2wtuEyxQptZmB7YG_9yDXrNZunkBMV8qsFN0bwPCULyhYOWCLGcU5q2b';
 
         const notification = {
             title: title,
@@ -82,7 +82,7 @@ export const SendResultNotification = async (title, session) => {
     try {
         const fcmTokens = await getTokens();
         // console.log(fcmTokens);
-        const serverKey = 'AAAA7i2OPws:APA91bFG8F0UTG_OH_MR5ZvfcQTq8vjgeltTF9Ttj1PI5_MEv2znfPDA1oQtgWs2Nadh1kIsPCxYZGAfvVatjspuht8pSq4hDe0Dbkt4y-9Tk7t0BYMWHY57mLUEZZI5i9YCMP1ckD6w';
+        const serverKey = 'AAAAUthtCLE:APA91bFs5unrO7fJD3XrP2iXhbjBPnvjace7MWIGWwydcLWHhI_nmhMT0qZyoOKO9B_lri-mrTKsc_tX_x2X2wtuEyxQptZmB7YG_9yDXrNZunkBMV8qsFN0bwPCULyhYOWCLGcU5q2b';
 
         const notification = {
             title: 'Result Declared',

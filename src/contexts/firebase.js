@@ -10,13 +10,13 @@ import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyAQrpnAsQJ-xkJhWlTRuNffghI9X457HEc",
-    authDomain: "kalyanmilanofficial.firebaseapp.com",
-    projectId: "kalyanmilanofficial",
-    storageBucket: "kalyanmilanofficial.appspot.com",
-    messagingSenderId: "1022966513419",
-    appId: "1:1022966513419:web:64a603178ecfc4f3382c0e",
-    measurementId: "G-XNPSF17BC8"
+    apiKey: "AIzaSyBOdaMsn7JKYLOG_GxERfBYVF3LXYIuIxI",
+    authDomain: "kalyanmilanapp-18a1e.firebaseapp.com",
+    projectId: "kalyanmilanapp-18a1e",
+    storageBucket: "kalyanmilanapp-18a1e.appspot.com",
+    messagingSenderId: "355818342577",
+    appId: "1:355818342577:web:cd711b63b6a5035f6aba90",
+    measurementId: "G-ZH54MTVRJZ"
 };
 
 // Initialize Firebase
