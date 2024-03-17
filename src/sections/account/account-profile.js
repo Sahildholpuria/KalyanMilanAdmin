@@ -10,6 +10,8 @@ import {
 } from '@mui/material';
 import { getInitials } from '../../utils/get-initials';
 import { format } from 'date-fns';
+import whatsApp from '../../components/whatsapp.png'
+import phone from '../../components/phone.png'
 
 // const user = {
 //   avatar: '/assets/avatars/avatar-anika-visser.png',
@@ -79,6 +81,10 @@ export const AccountProfile = ({ user }) => {
           >
             Available Balance : {user?.coins}
           </Typography>
+          <Box sx={{display: 'flex', flexDirection: 'row', marginTop: 1}}>
+          <a href={`whatsapp://send?&phone=91${user?.phone}`}><img src={whatsApp} alt='whatsapp' style={{width: '70%'}} /></a>
+          <a href={`tel:${user?.phone}`}><img src={phone} alt='whatsapp' style={{width: '70%'}} /></a>
+          </Box>
         </Box>
       </CardContent>
       <Divider />

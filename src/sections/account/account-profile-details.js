@@ -43,6 +43,7 @@ export const AccountProfileDetails = ({ user, id }) => {
     email: '',
     coins: '',
     phone: '',
+    password: '',
     // state: 'los-angeles',
     // country: 'USA'
   });
@@ -145,7 +146,7 @@ export const AccountProfileDetails = ({ user, id }) => {
                     value={values.name}
                   />
                 </Grid>
-                {/* <Grid
+                <Grid
                   xs={12}
                   md={6}
                 >
@@ -157,7 +158,7 @@ export const AccountProfileDetails = ({ user, id }) => {
                     required
                     value={values.password}
                   />
-                </Grid> */}
+                </Grid>
                 <Grid
                   xs={12}
                   md={6}
