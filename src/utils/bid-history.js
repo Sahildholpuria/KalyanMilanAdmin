@@ -5,7 +5,7 @@ import { useCallback, useState } from "react";
 
 export const BidHistoryDialog = ({ openDialog, handleCloseDialog, values, win }) => {
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [rowsPerPage, setRowsPerPage] = useState(25);
     const handlePageChange = useCallback(
         (event, value) => {
             setPage(value);

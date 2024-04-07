@@ -22,6 +22,7 @@ import BidWinReport from './pages/bidwinreport';
 import BidRevert from './pages/bidrevert';
 import WithdrawReport from './pages/withdrawreport';
 import Games from './pages/games';
+import AutoDeposit from './pages/auto-deposit';
 
 function App() {
   const location = useLocation();
@@ -49,6 +50,7 @@ function App() {
               <Route path="/games/:id" element={<Game />} />
               <Route path="/withdraw" element={<WalletManagement />} />
               <Route path="/withdrawreport" element={<WithdrawReport />} />
+              <Route path="/autodeposit" element={<AutoDeposit />} />
               <Route path="/addfund" element={<AddFund />} />
               <Route path="/bids" element={<BidHistory />} />
               <Route path="/bid" element={<BidRevert />} />

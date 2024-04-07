@@ -1,6 +1,6 @@
 // import Head from 'next/head';
 import { subDays, subHours } from 'date-fns';
-import { Box, Container, Unstable_Grid2 as Grid, Typography } from '@mui/material';
+import { Box, Container, Unstable_Grid2 as Grid, Tooltip, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from '../layouts/dashboard/layout';
 import { OverviewBudget } from '../sections/overview/overview-budget';
 import { OverviewLatestOrders } from '../sections/overview/overview-latest-orders';
@@ -22,6 +22,7 @@ import { MarketBidDetails } from '../sections/overview/market-bid-details';
 import { SingleAnkDetails } from '../sections/overview/single-ank-details';
 import { OverviewSingleAnk } from '../sections/overview/single-ank-card';
 import { getAnkColor } from '../utils/ank-colors';
+import { OverviewTotalDeposit } from '../sections/overview/overview-daily-deposit';
 
 const now = new Date();
 
@@ -32,6 +33,7 @@ const Home = () => {
   const [profitCount, setProfitCount] = useState(0);
   const [withdrawReqCount, setWithdrawReqCount] = useState(0);
   const [totalBids, setTotalBids] = useState(0);
+  const [totalDeposit, setTotalDeposit] = useState(0);
   const adminData = auth.admin;
   const [ankData, setAnkData] = useState([]);
   useEffect(() => {
@@ -67,6 +69,20 @@ const Home = () => {
 
             setCountFunction(totalPoints);
           });
+        } else if (collectionName === 'AutoDeposit') {
+          const currentDate = new Date().toDateString();
+          const q = query(collection(db, collectionName), where('date', '==', currentDate));
+
+          onSnapshot(q, (querySnapshot) => {
+            let totalPoints = 0;
+
+            querySnapshot.forEach((doc) => {
+              const points = Number(doc.data().amount);
+              totalPoints += points;
+            });
+
+            setCountFunction(totalPoints);
+          });
         } else {
           const q = query(collection(db, collectionName));
           onSnapshot(q, (querySnapshot) => {
@@ -90,6 +106,7 @@ const Home = () => {
     fetchDocumentCount('AddMoney', setProfitCount);
     fetchDocumentCount('Withdraw_List', setWithdrawReqCount);
     fetchDocumentCount('User_Events', setTotalBids);
+    fetchDocumentCount('AutoDeposit', setTotalDeposit);
   }, []);
   return (
     <>
@@ -172,6 +189,16 @@ const Home = () => {
               <OverviewTotalBid
                 sx={{ height: '100%', border: '1px solid #556ee6' }}
                 value={formatUserCount(totalBids)}
+              />
+            </Grid>
+            <Grid
+              xs={12}
+              sm={6}
+              lg={3}
+            >
+              <OverviewTotalDeposit
+                sx={{ height: '100%', border: '1px solid #556ee6' }}
+                value={formatUserCount(totalDeposit)}
               />
             </Grid>
             {/* <Grid

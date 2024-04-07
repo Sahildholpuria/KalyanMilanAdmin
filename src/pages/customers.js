@@ -182,7 +182,7 @@ const data = [
 const UserManagement = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
   const [users, setUsers] = useState(null);
   // const customers = useCustomers(page, rowsPerPage);
   // const customersIds = useCustomerIds(customers);

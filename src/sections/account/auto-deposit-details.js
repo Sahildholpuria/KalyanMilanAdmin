@@ -18,7 +18,6 @@ import { Stack } from '@mui/system';
 import dayjs from 'dayjs';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../contexts/firebase';
-import { updateUserCoins } from '../../utils/get-single-user';
 
 const session = [
     {
@@ -26,52 +25,59 @@ const session = [
         label: ''
     },
     {
-        value: 'open',
-        label: 'Open'
+        value: 'user',
+        label: 'User'
     },
     {
-        value: 'close',
-        label: 'Close'
+        value: 'admin',
+        label: 'Admin'
     },
 ];
 
-export const AddFundDetails = ({ setLoading }) => {
+export const AutoDepositDetails = ({ handleValues }) => {
     const [snackbarMessage, setSnackbarMessage] = useState(null);
     const [values, setValues] = useState({
-        user_name: '',
-        amount: '',
+        date: dayjs().format('YYYY-MM-DD'),
+        // game_name: '',
+        // subtitle: '***-**-***',
+        // password: 'demo@123',
+        // money_type: '',
+        // close: '10:45 PM',
+        // coins: 1000,
+        // phone: '8209555243',
+        // state: 'los-angeles',
+        // country: 'USA'
     });
     // State to hold game titles
-    const [gameTitles, setGameTitles] = useState([
-        {
-            value: '',
-            label: '',
-        },
-    ]);
+    // const [gameTitles, setGameTitles] = useState([
+    //     {
+    //         value: '',
+    //         label: '',
+    //     },
+    // ]);
     // Function to fetch game titles from Firebase
-    const fetchGameTitles = async () => {
-        try {
-            // Replace this with the actual logic to fetch game titles from Firebase
-            // For example, if you're using Firestore
-            console.log('running')
-            const eventsCollection = collection(db, 'Users');
-            const eventsSnapshot = await getDocs(eventsCollection);
+    // const fetchGameTitles = async () => {
+    //     try {
+    //         // Replace this with the actual logic to fetch game titles from Firebase
+    //         // For example, if you're using Firestore
+    //         const eventsCollection = collection(db, 'Events');
+    //         const eventsSnapshot = await getDocs(eventsCollection);
 
-            const titles = eventsSnapshot.docs.map(doc => ({
-                value: doc.ref._key.path.segments.slice(-1)[0], // Keep original casing as label
-                label: `${doc.data().name} (${doc.data().phone})`, // Set value to lowercase
-            }));
+    //         const titles = eventsSnapshot.docs.map(doc => ({
+    //             value: doc.data().title, // Keep original casing as label
+    //             label: doc.data().title.toUpperCase(), // Set value to lowercase
+    //         }));
 
-            // Update the gameTitles state by merging the existing titles with the new ones
-            setGameTitles([{
-                value: '',
-                label: '',
-            },
-            ...titles]);
-        } catch (error) {
-            console.error('Error fetching game titles:', error);
-        }
-    };
+    //         // Update the gameTitles state by merging the existing titles with the new ones
+    //         setGameTitles([{
+    //             value: '',
+    //             label: '',
+    //         },
+    //         ...titles]);
+    //     } catch (error) {
+    //         console.error('Error fetching game titles:', error);
+    //     }
+    // };
     const handleChange = useCallback(
         (event) => {
             setValues((prevState) => ({
@@ -81,35 +87,22 @@ export const AddFundDetails = ({ setLoading }) => {
         },
         []
     );
-    const handleSubmit = async (event) => {
+    const handleSubmit = (event) => {
         event.preventDefault();
         // Other form submission logic
-        if (!values.user_name || !values.amount) {
-            setSnackbarMessage('Please Fill all fields!');
+        if (!values.money_type) {
+            setSnackbarMessage('Please Select Deposit Type!');
             return;
         }
         // If the form is successfully submitted, call the callback function
-        try {
-            setLoading(true)
-            await updateUserCoins(values);
-            setSnackbarMessage('Amount added successfully!')
-        } catch (error) {
-            setSnackbarMessage('Error adding Amount!')
-        } finally {
-            setLoading(false);
-            setValues({
-                user_name: '',
-                amount: '',
-            });
-        }
+        handleValues(values);
     };
-    useEffect(() => {
-        fetchGameTitles();
-    }, [])
+    // useEffect(() => {
+    //     fetchGameTitles();
+    // }, [])
     const handleCloseSnackbar = () => {
         setSnackbarMessage(null);
     };
-
     return (
         <>
             <Snackbar
@@ -126,17 +119,14 @@ export const AddFundDetails = ({ setLoading }) => {
             >
                 <Card sx={{ border: '1px solid #556ee6' }}>
                     <CardHeader
-                        sx={{ color: 'info.dark', textAlign: 'center' }}
                         // subheader="The information can be edited"
-                        title="Add Balance In User Wallet"
+                        title="Auto Deposit History Details"
                     />
-                    <CardContent sx={{ pt: 1 }}>
+                    <CardContent sx={{ pt: 0 }}>
                         <Box sx={{ m: -1.5 }}>
                             <Grid
                                 container
                                 spacing={3}
-                                flexDirection='column'
-                                alignItems='center'
                             >
                                 {/* <Grid
                                 xs={12}
@@ -166,10 +156,10 @@ export const AddFundDetails = ({ setLoading }) => {
                                     value={values.isPlay}
                                 />
                             </Grid> */}
-                                {/* <Grid
+                                <Grid
                                     xs={12}
                                     md={6}
-                                    lg={6}
+                                    lg={3}
                                 >
                                     <Stack sx={{
                                         '& .css-4jnixx-MuiStack-root': {
@@ -179,17 +169,16 @@ export const AddFundDetails = ({ setLoading }) => {
                                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                                             <DemoContainer components={['DatePicker']}>
                                                 <DatePicker
-                                                    label="Result Date"
-                                                    value={dayjs(values.result_date)}
+                                                    label="Date"
+                                                    value={dayjs(values.date)}
                                                     onChange={(newValue) => {
                                                         setValues((prevState) => ({
                                                             ...prevState,
-                                                            result_date: newValue.format('YYYY-MM-DD'),
+                                                            date: newValue.format('YYYY-MM-DD'),
                                                         }));
-                                                        setShow(false);
                                                     }}
                                                     textField={(props) => (
-                                                        <TextField fullWidth label="Result Date" {...props} sx={{ width: '100%' }} />
+                                                        <TextField fullWidth label="Date" {...props} sx={{ width: '100%' }} />
                                                     )}
                                                     slotProps={{
                                                         textField: {
@@ -200,8 +189,8 @@ export const AddFundDetails = ({ setLoading }) => {
                                                 />
                                             </DemoContainer>
                                         </LocalizationProvider>
-                                    </Stack> */}
-                                {/* <TextField
+                                    </Stack>
+                                    {/* <TextField
                                     fullWidth
                                     label="Open Time"
                                     name="open"
@@ -210,7 +199,7 @@ export const AddFundDetails = ({ setLoading }) => {
                                     required
                                     value={values.open}
                                 /> */}
-                                {/* </Grid> */}
+                                </Grid>
                                 {/* <Grid
                                 xs={12}
                                 md={6}
@@ -241,19 +230,19 @@ export const AddFundDetails = ({ setLoading }) => {
                                     </LocalizationProvider>
                                 </Stack>
                             </Grid> */}
-                                <Grid
+                                {/* <Grid
                                     xs={12}
-                                    md={6}
+                                    md={3}
                                 >
                                     <TextField
                                         fullWidth
-                                        label="Select User"
-                                        name="user_name"
+                                        label="Select Game Name"
+                                        name="game_name"
                                         onChange={handleChange}
                                         required
                                         select
                                         SelectProps={{ native: true }}
-                                        value={values.user_name}
+                                        value={values.game_name}
                                     >
                                         {gameTitles.map((option, index) => (
                                             <option
@@ -264,21 +253,30 @@ export const AddFundDetails = ({ setLoading }) => {
                                             </option>
                                         ))}
                                     </TextField>
-                                </Grid>
+                                </Grid> */}
                                 <Grid
                                     xs={12}
-                                    md={6}
+                                    md={3}
                                 >
                                     <TextField
                                         fullWidth
-                                        // helperText="Please specify the first name"
-                                        label="Enter Amount"
-                                        name="amount"
+                                        label="Select Deposit Type"
+                                        name="money_type"
                                         onChange={handleChange}
-                                        type='number'
                                         required
-                                        value={values.amount}
-                                    />
+                                        select
+                                        SelectProps={{ native: true }}
+                                        value={values.money_type}
+                                    >
+                                        {session.map((option) => (
+                                            <option
+                                                key={option.value}
+                                                value={option.value}
+                                            >
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </TextField>
                                 </Grid>
                             </Grid>
                         </Box>

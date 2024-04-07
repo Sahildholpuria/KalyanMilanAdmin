@@ -176,7 +176,7 @@ const useCustomerIds = (customers) => {
 
 const Page = () => {
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [rowsPerPage, setRowsPerPage] = useState(25);
     const customers = useCustomers(page, rowsPerPage);
     const customersIds = useCustomerIds(customers);
     const customersSelection = useSelection(customersIds);

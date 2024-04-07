@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, onSnapshot, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, onSnapshot, query, updateDoc, where } from "firebase/firestore";
 import { db } from "../contexts/firebase";
 import { getRandomAvatar } from "./get-initials";
 
@@ -41,17 +41,21 @@ export const fetchUserId = async (phone) => {
             return () => unsubscribe();
         });
     } catch (error) {
-    console.error('Error fetching user data:', error);
+        console.error('Error fetching user data:', error);
     }
 };
-export const updateUser = async (userId, updatedData) => {
+export const updateUser = async (userId, updatedData, user) => {
     try {
         // Reference to the user document in Firestore
         const userRef = doc(db, 'Users', userId);
 
         // Update the document with the new data
         await updateDoc(userRef, updatedData);
-
+        let amount;
+        if (Number(user?.coins) < Number(updatedData?.coins)) {
+            amount = Number(updatedData?.coins) - Number(user?.coins);
+            await addAutoDeposite(updatedData, amount);
+        }
         console.log('User data updated successfully!');
     } catch (error) {
         console.error('Error updating user data:', error);
@@ -78,6 +82,21 @@ export const updateEventField = async (customerId, field, value) => {
         throw error; // Optionally, handle the error in your component
     }
 };
+export const addAutoDeposite = async (values, amount) => {
+    try {
+        const docRef = await addDoc(collection(db, 'AutoDeposit'), {
+            amount: Number(amount),
+            by: 'admin',
+            date: new Date().toDateString(),
+            method: 'custom',
+            name: values.name,
+            phone: values.phone
+        });
+        console.log('Document written with ID: ', docRef.id);
+    } catch (error) {
+        console.error('Error adding document: ', error);
+    }
+};
 export const updateUserCoins = async (values) => {
     try {
         // Fetch the document from the Users collection where userName matches the phone number
@@ -93,7 +112,7 @@ export const updateUserCoins = async (values) => {
 
             // Update the document in the Users collection with the new value of coins
             await updateDoc(userDocRef, { coins: newCoins });
-
+            await addAutoDeposite(userDocSnapshot.data(), values.amount)
             console.log(`Coins updated successfully for user ${values.user_name}`);
         } else {
             console.log(`User ${values.user_name} not found`);

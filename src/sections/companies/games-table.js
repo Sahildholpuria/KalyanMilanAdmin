@@ -183,7 +183,7 @@ export const GamesTable = (props) => {
                 onRowsPerPageChange={onRowsPerPageChange}
                 page={page}
                 rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={[5, 10, 25]}
+                rowsPerPageOptions={[10, 25, 50, 75, 150, 200]}
             />
         </Card>
     );

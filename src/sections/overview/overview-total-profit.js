@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import CurrencyDollarIcon from '@heroicons/react/24/solid/CurrencyDollarIcon';
-import { Avatar, Card, CardContent, Stack, SvgIcon, Typography } from '@mui/material';
+import { Avatar, Card, CardContent, Stack, SvgIcon, Tooltip, Typography } from '@mui/material';
+import { formatUserCount } from '../../utils/format-count';
 
 export const OverviewTotalProfit = (props) => {
   const { value, sx } = props;
@@ -14,16 +15,18 @@ export const OverviewTotalProfit = (props) => {
           justifyContent="space-between"
           spacing={3}
         >
-          <Stack spacing={1}>
+          <Stack spacing={1} sx={{ maxWidth: '50%' }}>
             <Typography
               color="text.secondary"
               variant="overline"
             >
               Total Profit
             </Typography>
-            <Typography variant="h4">
-              ₹{value}
-            </Typography>
+            <Tooltip title={formatUserCount(value)}>
+              <Typography variant="h4" sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                ₹{value}
+              </Typography>
+            </Tooltip>
           </Stack>
           <Avatar
             sx={{

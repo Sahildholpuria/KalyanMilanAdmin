@@ -69,7 +69,7 @@ export const AccountProfileDetails = ({ user, id }) => {
       }
       // console.log(values, 'values');
       try {
-        await updateUser(id, values);
+        await updateUser(id, values, user);
         setSnackbarMessage('User data updated successfully!');
         setFormModified(false); // Reset form modification status
       } catch (error) {

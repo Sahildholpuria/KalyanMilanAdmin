@@ -19,7 +19,7 @@ import { SingleUserWinTable } from '../sections/winning/single-user-winning-tabl
 const User = () => {
     const params = useParams();
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [rowsPerPage, setRowsPerPage] = useState(25);
     const [bidpage, setBidPage] = useState(0);
     const [bidrowsPerPage, setBidRowsPerPage] = useState(5);
     const [winpage, setWinPage] = useState(0);
@@ -186,7 +186,7 @@ const User = () => {
                             // onDeselectOne={customersSelection.handleDeselectOne}
                             onPageChange={handleBidPageChange}
                             onRowsPerPageChange={handleBidRowsPerPageChange}
-                            handleOpen
+                            // handleOpen
                             // handleOpenSnackbar={handleOpenSnackbar}
                             // onSelectAll={customersSelection.handleSelectAll}
                             // onSelectOne={customersSelection.handleSelectOne}

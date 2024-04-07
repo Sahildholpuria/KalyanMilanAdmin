@@ -201,6 +201,16 @@ export const items = [
           </SvgIcon>
         )
       },
+      {
+        title: 'Auto Deposit History',
+        path: '/autodeposit',
+        icon: (
+          <SvgIcon fontSize="small">
+            {/* Add icon for subgame2 */}
+            <ArrowsRightLeftIcon />
+          </SvgIcon>
+        )
+      },
     ]
   },
   {

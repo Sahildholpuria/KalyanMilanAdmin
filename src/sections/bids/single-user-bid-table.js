@@ -20,6 +20,7 @@ import { db } from '../../contexts/firebase';
 import nProgress from 'nprogress';
 import { EditBidDialog } from '../../utils/bids-edit-dialog';
 import { useEffect, useState } from 'react';
+import { CustomSearch } from '../../utils/CustomSearch';
 
 export const SingleUserBidTable = (props) => {
     const {
@@ -36,22 +37,24 @@ export const SingleUserBidTable = (props) => {
         rowsPerPage = 0,
         // selected = [],
         // handleRowSelect,
-        searchQuery = '', // Accept search query as a prop
+        // searchQuery = '', // Accept search query as a prop
         handleOpenSnackbar,
     } = props;
     const [resultData, setResultData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
     const [count, setCount] = useState(0);
     const sortedDate = resultData?.sort((a, b) => b.date - a.date);
-    // const filteredItems = sortedDate?.filter((customer) =>
-    //     customer.user_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    //     customer.session.toLowerCase().includes(searchQuery.toLowerCase())
-    //     // Add more fields as needed for search
-    // );
+    const filteredItems = sortedDate?.filter((customer) =>
+        customer.game_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        customer.game_type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        customer.session.toLowerCase().includes(searchQuery.toLowerCase())
+        // Add more fields as needed for search
+    );
     // Apply pagination to the filtered results
     const start = page * rowsPerPage;
     const end = start + rowsPerPage;
-    const paginatedItems = sortedDate?.slice(start, end);
+    const paginatedItems = filteredItems?.slice(start, end);
 
     const fetchData = async () => {
         try {
@@ -125,6 +128,9 @@ export const SingleUserBidTable = (props) => {
             fetchData();
         }
     }, [valuesResult]);
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+    };
     // // Function to handle opening the dialog
     // const handleOpenDialog = (customer) => {
     //     setSelectedCustomer(customer);
@@ -149,6 +155,7 @@ export const SingleUserBidTable = (props) => {
                 sx={{ color: 'info.dark' }}
                 // subheader="The information can be edited"
                 title="Bid History List"
+                action={<CustomSearch onSearch={handleSearch} />}
             />
             <Scrollbar sx={{ '.simplebar-placeholder': { display: 'none !important' } }}>
                 <Box sx={{ minWidth: 800 }}>
@@ -301,7 +308,7 @@ export const SingleUserBidTable = (props) => {
                 onRowsPerPageChange={onRowsPerPageChange}
                 page={page}
                 rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={[5, 10, 25]}
+                rowsPerPageOptions={[10, 25, 50, 75, 150, 200]}
             />
             {/* Alert Dialog for changing status */}
             {/* <EditBidDialog

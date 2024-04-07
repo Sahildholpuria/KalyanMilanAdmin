@@ -7,7 +7,7 @@ import { WinTable } from '../sections/winning/winning-table';
 
 const WinHistory = () => {
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [rowsPerPage, setRowsPerPage] = useState(25);
     const [snackbarMessage, setSnackbarMessage] = useState(null);
     // const [users, setUsers] = useState(null);
     const [show, setShow] = useState(false);
