@@ -14,6 +14,7 @@ import {
     DialogContent,
     DialogTitle,
     Stack,
+    SvgIcon,
     Table,
     TableBody,
     TableCell,
@@ -27,10 +28,13 @@ import { getInitials } from '../../utils/get-initials';
 import { useState } from 'react';
 import { ActionDialog } from '../../utils/action-dialog';
 import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '../../contexts/firebase';
+import { db, imgDB } from '../../contexts/firebase';
+import EyeIcon from '@heroicons/react/24/solid/EyeIcon';
 import { useNavigate } from 'react-router-dom';
 import { fetchUserDataByPhone, fetchUserId } from '../../utils/get-single-user';
 import { updateCoins } from '../../utils/withdraw-reject-update-coins';
+import { deleteObject, ref } from 'firebase/storage';
+import { UploadDialog } from './uploaded-image-preview';
 // import { useRouter } from 'next/router';
 
 export const SingleUserWithdrawTable = (props) => {
@@ -54,6 +58,9 @@ export const SingleUserWithdrawTable = (props) => {
     // const navigate = useNavigate();
     const [openDialog, setOpenDialog] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [img, setImg] = useState('');
+    const [uploadedImg, setUploadedImg] = useState('');
+    const [openUploadDialog, setOpenUploadDialog] = useState(false);
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const sortedDate = items?.sort((a, b) => b.date - a.date);
     // const filteredItems = sortedDate?.filter((customer) =>
@@ -73,10 +80,31 @@ export const SingleUserWithdrawTable = (props) => {
         setOpenDialog(true);
     };
     // Function to handle closing the dialog
-    const handleCloseDialog = () => {
+    const handleCloseDialog = (action) => {
         setSelectedCustomer(null);
+        if (action === 'Reject' || action === 'Cancel') {
+            if (img) {
+                const imageRef = ref(imgDB, img);
+                deleteObject(imageRef)
+                    .then(() => {
+                        // Image deleted successfully
+                    })
+                    .catch((error) => {
+                        // Handle error
+                        console.log(error, 'error');
+                    });
+            }
+        }
         setOpenDialog(false);
     };
+    const handleApproveSelect = (image) => {
+        setUploadedImg(image);
+        setOpenUploadDialog(true);
+    }
+    const handleCloseUploadDialog = () => {
+        setUploadedImg('');
+        setOpenUploadDialog(false);
+    }
     // const handleRowSelect = async (phone) => {
     //     const id = await fetchUserId(phone);
     //     console.log(id);
@@ -84,6 +112,10 @@ export const SingleUserWithdrawTable = (props) => {
     // }
     // Function to handle the common action (in this case, console.log)
     const handleCommonAction = async (action) => {
+        if (action === 'Approve' && img === '') {
+            alert('Please Upload Payment ScreenShot!')
+            return;
+        }
         try {
             setLoading(true);
             // Update the status in the Firebase document
@@ -95,6 +127,7 @@ export const SingleUserWithdrawTable = (props) => {
             // Update the document with the new status
             await updateDoc(withdrawDocRef, {
                 status: newStatus,
+                image: img,
             });
             if (action === 'Reject') {
                 await updateCoins(selectedCustomer);
@@ -103,7 +136,7 @@ export const SingleUserWithdrawTable = (props) => {
             console.log(`Withdraw request ${newStatus} successfully!`);
             // handleOpenSnackbar(`Withdraw request ${newStatus} successfully!`)
             // Close the dialog
-            handleCloseDialog();
+            handleCloseDialog(action);
         } catch (error) {
             // handleOpenSnackbar('Error updating withdraw request');
             console.error('Error updating withdraw request:', error);
@@ -220,13 +253,23 @@ export const SingleUserWithdrawTable = (props) => {
                                             {customer.status}
                                         </TableCell>
                                         <TableCell>
-                                            <Button
+                                            {customer.status === 'Approved' && customer?.image ? <Button
+                                                startIcon={(
+                                                    <SvgIcon fontSize="small">
+                                                        <EyeIcon />
+                                                    </SvgIcon>
+                                                )}
+                                                variant="outlined"
+                                                // color={customer.Active ? 'success' : 'error'}
+                                                sx={{ lineHeight: 0, fontSize: '0' }}
+                                                onClick={() => handleApproveSelect(customer?.image)}
+                                            ></Button> : <Button
                                                 variant="outlined"
                                                 onClick={() => handleOpenDialog(customer)}
                                                 disabled={customer.status !== 'pending'}
                                             >
                                                 Action
-                                            </Button>
+                                            </Button>}
                                         </TableCell>
                                     </TableRow>
                                 );
@@ -249,9 +292,19 @@ export const SingleUserWithdrawTable = (props) => {
                 openDialog={openDialog}
                 handleCloseDialog={handleCloseDialog}
                 handleCommonAction={handleCommonAction}
-                content={'Do you want to approve or reject the withdraw request?'}
+                setLoading={setLoading}
+                selectedCustomer={selectedCustomer}
+                setImg={setImg}
+                content={'Do you want to approve or reject the withdraw request? If you approve request than please upload screenshot.'}
                 button1={'Approve'}
                 button2={'Reject'}
+            />
+            <UploadDialog
+                openDialog={openUploadDialog}
+                uploadedImg={uploadedImg}
+                handleCloseDialog={handleCloseUploadDialog}
+                button2={'Close'}
+                content={'No Image found!'}
             />
             <Backdrop
                 sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}

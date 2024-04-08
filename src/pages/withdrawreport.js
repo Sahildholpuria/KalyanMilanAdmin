@@ -66,6 +66,7 @@ const WithdrawReport = () => {
                     method: doc.data().method,
                     amount: doc.data().amount,
                     status: doc.data().status,
+                    image: doc.data()?.image
                 })))
             })
         } catch (error) {

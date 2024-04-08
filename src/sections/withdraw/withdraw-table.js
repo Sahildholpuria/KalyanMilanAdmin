@@ -79,9 +79,10 @@ export const WithdrawTable = (props) => {
         setOpenDialog(true);
     };
     // Function to handle closing the dialog
-    const handleCloseDialog = () => {
+    const handleCloseDialog = (action) => {
         setSelectedCustomer(null);
-        if (img) {
+        if (action === 'Reject' || action === 'Cancel'){
+            if (img) {
             const imageRef = ref(imgDB, img);
             deleteObject(imageRef)
                 .then(() => {
@@ -91,7 +92,7 @@ export const WithdrawTable = (props) => {
                     // Handle error
                     console.log(error, 'error');
                 });
-        }
+        }}
         setOpenDialog(false);
     };
     const handleRowSelect = async (phone) => {
@@ -133,7 +134,7 @@ export const WithdrawTable = (props) => {
             console.log(`Withdraw request ${newStatus} successfully!`);
             handleOpenSnackbar(`Withdraw request ${newStatus} successfully!`)
             // Close the dialog
-            handleCloseDialog();
+            handleCloseDialog(action);
         } catch (error) {
             handleOpenSnackbar('Error updating withdraw request');
             console.error('Error updating withdraw request:', error);
@@ -251,7 +252,7 @@ export const WithdrawTable = (props) => {
                                             {customer.status}
                                         </TableCell>
                                         <TableCell>
-                                            {customer.status === 'Approved' ? <Button
+                                            {customer.status === 'Approved' && customer?.image ? <Button
                                                 startIcon={(
                                                     <SvgIcon fontSize="small">
                                                         <EyeIcon />

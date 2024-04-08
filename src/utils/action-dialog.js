@@ -4,7 +4,7 @@ import { imgDB } from "../contexts/firebase"
 
 export const ActionDialog = ({ openDialog, handleCloseDialog, handleCommonAction, content, button1, button2, handleOpenSnackbar, setLoading, setImg, selectedCustomer }) => {
     const handleUpload = (e) => {
-        console.log(e.target.files[0])
+        // console.log(e.target.files[0])
         try {
             setLoading(true)
             const imgs = ref(imgDB, `Withdraw/${selectedCustomer.id}`)
@@ -21,7 +21,7 @@ export const ActionDialog = ({ openDialog, handleCloseDialog, handleCommonAction
         }
     }
     return (
-        <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <Dialog open={openDialog} onClose={() => handleCloseDialog('Cancel')}>
             <DialogTitle>Change Status</DialogTitle>
             <DialogContent>
                 <Typography variant="body1">
