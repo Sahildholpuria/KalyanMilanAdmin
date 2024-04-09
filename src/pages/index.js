@@ -83,6 +83,12 @@ const Home = () => {
 
             setCountFunction(totalPoints);
           });
+        } else if (collectionName === 'Withdraw_List') {
+          const q = query(collection(db, collectionName), where('status', '==', 'pending'));
+          onSnapshot(q, (querySnapshot) => {
+            const count = querySnapshot?.size;
+            setCountFunction(count);
+          });
         } else {
           const q = query(collection(db, collectionName));
           onSnapshot(q, (querySnapshot) => {
