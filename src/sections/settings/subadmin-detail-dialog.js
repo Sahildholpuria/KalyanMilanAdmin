@@ -3,7 +3,7 @@ import React, { useCallback, useState } from 'react'
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { imgDB, db } from "../../contexts/firebase";
 
-const AddSlider = ({ values, setValues, setImg, openDialog, setLoading, handleOpenSnackbar, handleCloseDialog, handleReset, handleCommonAction, button1, button2 }) => {
+const AddSubAdmin = ({ values, setValues, setImg, openDialog, setLoading, handleOpenSnackbar, handleCloseDialog, handleReset, handleCommonAction, button1, button2 }) => {
     const handleChange = useCallback(
         (event) => {
             setValues((prevState) => ({
@@ -13,31 +13,31 @@ const AddSlider = ({ values, setValues, setImg, openDialog, setLoading, handleOp
         },
         []
     );
-    const handleUpload = (e) => {
-        // console.log(e.target.files[0])
-        if (!values.title) {
-            handleOpenSnackbar('Please type title first!');
-            return;
-        } else {
-            setLoading(true)
-            const imgs = ref(imgDB, `SliderImages/${values?.title}`)
-            uploadBytes(imgs, e.target.files[0]).then(data => {
-                getDownloadURL(data.ref).then(val => {
-                    setImg(val)
-                    setValues((prevState) => ({
-                        ...prevState,
-                        image: val,
-                    }));
-                    // console.log(val)
-                })
-            })
-            setLoading(false);
-            handleOpenSnackbar('File Uploaded Successfully!')
-        }
-    }
+    // const handleUpload = (e) => {
+    //     console.log(e.target.files[0])
+    //     if (!values.title) {
+    //         handleOpenSnackbar('Please type title first!');
+    //         return;
+    //     } else {
+    //         setLoading(true)
+    //         const imgs = ref(imgDB, `SliderImages/${values?.title}`)
+    //         uploadBytes(imgs, e.target.files[0]).then(data => {
+    //             getDownloadURL(data.ref).then(val => {
+    //                 setImg(val)
+    //                 setValues((prevState) => ({
+    //                     ...prevState,
+    //                     image: val,
+    //                 }));
+    //                 console.log(val)
+    //             })
+    //         })
+    //         setLoading(false);
+    //         handleOpenSnackbar('File Uploaded Successfully!')
+    //     }
+    // }
     return (
         <Dialog open={openDialog} onClose={handleCloseDialog} >
-            <DialogTitle>Add Slider Details</DialogTitle>
+            <DialogTitle>Add SubAdmin Details</DialogTitle>
             <DialogContent sx={{ paddingBottom: '10px' }}>
                 <Grid xs={12} md={12} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                     <Grid
@@ -48,11 +48,45 @@ const AddSlider = ({ values, setValues, setImg, openDialog, setLoading, handleOp
                         <TextField
                             fullWidth
                             // helperText="Please specify the first name"
-                            label="Slider Title"
-                            name="title"
+                            label="SubAdmin Name"
+                            name="name"
                             onChange={handleChange}
                             required
-                            value={values.title}
+                            value={values.name}
+                        />
+                    </Grid>
+                    <Grid
+                        xs={12}
+                        md={12}
+                        lg={12}
+                        sx={{ padding: '5px' }}
+                    >
+                        <TextField
+                            fullWidth
+                            type='email'
+                            // helperText="Please specify the Yes or No"
+                            label="Email"
+                            name="email"
+                            onChange={handleChange}
+                            required
+                            value={values.email}
+                        />
+                    </Grid>
+                    <Grid
+                        xs={12}
+                        md={12}
+                        lg={12}
+                        sx={{ padding: '5px' }}
+                    >
+                        <TextField
+                            fullWidth
+                            // type='password'
+                            // helperText="Please specify the Yes or No"
+                            label="Password"
+                            name="password"
+                            onChange={handleChange}
+                            required
+                            value={values.password}
                         />
                     </Grid>
                     <Grid
@@ -70,30 +104,13 @@ const AddSlider = ({ values, setValues, setImg, openDialog, setLoading, handleOp
                             value={values.status}
                         />
                     </Grid>
-                    <Grid
-                        xs={12}
-                        md={12}
-                        lg={12}
-                        sx={{ padding: '5px' }}
-                    >
-                        <TextField
-                            fullWidth
-                            type='number'
-                            // helperText="Please specify the Yes or No"
-                            label="Display Order"
-                            name="order"
-                            onChange={handleChange}
-                            required
-                            value={values.order}
-                        />
-                    </Grid>
-                    <Grid
+                    {/* <Grid
                         xs={12}
                         md={12}
                         sx={{ padding: '15px', textWrap: 'wrap' }}
                     >
                         <input type="file" onChange={(e) => handleUpload(e)} />
-                    </Grid>
+                    </Grid> */}
                 </Grid>
             </DialogContent>
             <DialogActions>
@@ -104,4 +121,4 @@ const AddSlider = ({ values, setValues, setImg, openDialog, setLoading, handleOp
     )
 }
 
-export default AddSlider
+export default AddSubAdmin

@@ -57,7 +57,7 @@ export const SingleUserWinTable = (props) => {
     const fetchData = async () => {
         try {
             setLoading(true);
-            console.log('phone', valuesResult.phone)
+            // console.log('phone', valuesResult.phone)
             // Replace this with the actual logic to fetch data from your source
             // For example, if you're using Firestore
             const q = query(collection(db, 'winningHistory'), where('phone', '==', valuesResult.phone));

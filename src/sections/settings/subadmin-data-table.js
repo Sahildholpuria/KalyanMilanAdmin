@@ -19,8 +19,9 @@ import { db } from '../../contexts/firebase';
 import { format } from 'date-fns';
 import { SliderActionDialog } from '../../utils/silder-action-dialog';
 import { deleteSlider, updateSlider } from '../../utils/slider-actions';
+import { deleteSubAdmin, updateSubAdmin } from '../../utils/subAdmin-actions';
 
-export const SliderDataTable = (props) => {
+export const SubAdminDataTable = (props) => {
     const {
         valuesResult,
         handleOpenSnackbar,
@@ -52,19 +53,19 @@ export const SliderDataTable = (props) => {
         try {
             handleCloseDialog();
             setLoading(true);
-            await deleteSlider(selectedCustomer.id, selectedCustomer.image);
+            await deleteSubAdmin(selectedCustomer.id);
             console.log('SliderData deleted successfully!');
-            handleOpenSnackbar(`SliderData deleted successfully!`);
+            handleOpenSnackbar(`SubAdmin deleted successfully!`);
         } catch (error) {
-            handleOpenSnackbar(`Error Deleting Slider!`);
+            handleOpenSnackbar(`Error Deleting SubAdmin!`);
             console.error('Error Deleting Slider Data:', error);
         }
         setLoading(false);
     };
     const handleStatus = async (id, status) => {
         try {
-            await updateSlider(id, !status);
-            console.log('SliderData Updated successfully!');
+            await updateSubAdmin(id, !status);
+            console.log('SubAdmin Updated successfully!');
         } catch (error) {
             console.error('Error updating slider:', error);
         }
@@ -86,13 +87,13 @@ export const SliderDataTable = (props) => {
                                     #
                                 </TableCell>
                                 <TableCell>
-                                    Slider Image
+                                    Name
                                 </TableCell>
                                 <TableCell>
-                                    Slider Title
+                                    Email
                                 </TableCell>
                                 <TableCell>
-                                    Display Order
+                                    Password
                                 </TableCell>
                                 <TableCell>
                                     Creation Date
@@ -100,7 +101,7 @@ export const SliderDataTable = (props) => {
                                 <TableCell>
                                     Status
                                 </TableCell>
-                                <TableCell sx={{textAlign: 'center'}}>
+                                <TableCell sx={{ textAlign: 'center' }}>
                                     Action
                                 </TableCell>
                             </TableRow>
@@ -124,16 +125,14 @@ export const SliderDataTable = (props) => {
                                         <TableCell>
                                             {index + 1}
                                         </TableCell>
-                                        <TableCell sx={{width: '25%'}}>
-                                            <a href={customer?.image} target='blank'>
-                                            <img src={customer?.image} alt='sliderimg' style={{ height: '50%', width: '80%' }} />
-                                            </a>
+                                        <TableCell>
+                                            {customer.name}
                                         </TableCell>
                                         <TableCell>
-                                            {customer.title}
+                                            {customer.email}
                                         </TableCell>
                                         <TableCell>
-                                            {customer.order}
+                                            {customer.password}
                                         </TableCell>
                                         <TableCell>
                                             {createdAt}
@@ -141,12 +140,12 @@ export const SliderDataTable = (props) => {
                                         <TableCell sx={{ color: statusColor, textTransform: 'capitalize' }}>
                                             {customer.status ? 'Active' : 'Inactive'}
                                         </TableCell>
-                                        <TableCell sx={{textWrap: 'nowrap'}}>
+                                        <TableCell sx={{ textWrap: 'nowrap' }}>
                                             <Button
                                                 variant="outlined"
                                                 onClick={() => handleOpenDialog(customer)}
                                                 color='error'
-                                                sx={{marginRight: '10px'}}
+                                                sx={{ marginRight: '10px' }}
                                             >
                                                 Delete
                                             </Button>
@@ -169,8 +168,8 @@ export const SliderDataTable = (props) => {
                 openDialog={openDialog}
                 handleCloseDialog={handleCloseDialog}
                 handleCommonAction={handleCommonAction}
-                title={'Delete Slider Image'}
-                content={'Are you sure you want to delete this image?'}
+                title={'Delete Sub Admin'}
+                content={'Are you sure you want to delete this subAdmin?'}
                 button1={'Yes'}
                 button2={'No'}
             />
@@ -185,7 +184,7 @@ export const SliderDataTable = (props) => {
     );
 };
 
-SliderDataTable.propTypes = {
+SubAdminDataTable.propTypes = {
     count: PropTypes.number,
     items: PropTypes.array,
     onDeselectAll: PropTypes.func,

@@ -631,7 +631,7 @@ let halfSangam = [
 ];
 
 export const GamesDetails = ({ game }) => {
-    console.log(game)
+    // console.log(game)
     const gameName = game === 'singledigit' ? 'Single Digit' : game === 'jodidigit' ? 'Jodi Digit' : game === 'tripplepana' ? 'Tripple Pana' : game === 'doublepana' ? 'Double Pana' : game === 'singlepana' ? 'Single Pana' : game === 'halfsangam' ? 'Half Sangam' : game === 'fullsangam' ? 'Full Sangam' : '';
     const singleNumbers = game === 'singledigit' ? 'Single Digit' : game === 'jodidigit' ? 'Jodi Digit' : game === 'tripplepana' ? 'Tripple Pana' : '';
     const singleDropDown = game === 'singledigit' ? singleDigit : game === 'jodidigit' ? jodiDigit : game === 'tripplepana' ? triplePanna : [];

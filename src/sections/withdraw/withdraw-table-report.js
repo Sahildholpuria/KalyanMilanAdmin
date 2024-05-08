@@ -113,7 +113,7 @@ export const WithdrawReportTable = (props) => {
     };
     const handleRowSelect = async (phone) => {
         const id = await fetchUserId(phone);
-        console.log(id);
+        // console.log(id);
         navigate(`/users/${id}`);
     }
     const handleApproveSelect = (image) => {

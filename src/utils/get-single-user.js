@@ -92,7 +92,7 @@ export const addAutoDeposite = async (values, amount) => {
             name: values.name,
             phone: values.phone
         });
-        console.log('Document written with ID: ', docRef.id);
+        // console.log('Document written with ID: ', docRef.id);
     } catch (error) {
         console.error('Error adding document: ', error);
     }

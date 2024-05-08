@@ -1,7 +1,8 @@
 import { createContext, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { collection, query, onSnapshot, where } from "firebase/firestore"
+import { collection, query, onSnapshot, where, getDocs } from "firebase/firestore"
 import { db } from './firebase'
+import { getRandomAvatar } from '../utils/get-initials';
 
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
@@ -63,6 +64,33 @@ export const AuthContext = createContext({ undefined });
 
 export const AuthProvider = (props) => {
   const [admin, setAdmin] = useState(null);
+  // Define a state to store the list of sub-admins
+  const [subAdmins, setSubAdmins] = useState(null);
+
+  // Define a function to fetch and set the list of sub-admins
+  const fetchSubAdmins = async () => {
+    try {
+      const q = query(collection(db, 'admin'), where('name', '==', 'admin'));
+      const querySnapshot = await getDocs(q);
+      const data = querySnapshot.docs[0].data();
+      const subAdminData = [];
+      // Iterate over the keys of the document
+      for (const key in data) {
+        // Check if the key starts with 'slider' and the value is truthy
+        if (key.startsWith('subAdmin') && data[key]) {
+          subAdminData.push({
+            id: key, // Assuming key is the ID
+            avatar: getRandomAvatar(),
+            ...data[key],
+          });
+        }
+      }
+      // console.log(subAdminData)
+      setSubAdmins(subAdminData);
+    } catch (error) {
+      console.error('Error fetching sub-admins:', error);
+    }
+  };
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialState);
   const initialized = useRef(false);
@@ -95,16 +123,20 @@ export const AuthProvider = (props) => {
     } catch (err) {
       console.error(err);
     }
-    
+
     if (isAuthenticated) {
-      adminData = window.sessionStorage.getItem('admin');
+      adminData = JSON.parse(window.sessionStorage.getItem('admin'));
       // const user = {
       //   id: '5e86809283e28b96d2d38537',
       //   avatar: '/assets/avatars/avatar-marcus-finn.png',
       //   name: 'Anika Visser',
       //   email: 'anika.visser@devias.io'
       // };
-      setAdmin(adminData)
+      if (adminData.status) {
+        setAdmin([adminData])
+      } else {
+        setAdmin(adminData)
+      }
       dispatch({
         type: HANDLERS.INITIALIZE,
         payload: adminData
@@ -119,7 +151,10 @@ export const AuthProvider = (props) => {
   useEffect(
     () => {
       initialize();
-      handleAdmin();
+      if (window.sessionStorage.getItem('authenticated') === 'false') {
+        handleAdmin();
+      }
+      fetchSubAdmins();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
@@ -146,13 +181,20 @@ export const AuthProvider = (props) => {
   };
 
   const signIn = async (email, password) => {
-    if (email !== admin[0].email || password !== admin[0].password) {
+    const subAdmin = subAdmins.find(admin => admin.email === email && admin.password === password && admin.status);
+    // console.log(subAdmin, 'subadmin')
+    let adminCondition = (email === admin[0].email || password === admin[0].password);
+    if (!adminCondition && !subAdmin) {
       throw new Error('Please check your email and password');
     }
-
+    if (subAdmin) {
+      setAdmin([subAdmin])
+    } else {
+      setAdmin(admin)
+    }
     try {
       window.sessionStorage.setItem('authenticated', 'true');
-      window.sessionStorage.setItem('admin', admin[0]);
+      window.sessionStorage.setItem('admin', JSON.stringify(subAdmin ? subAdmin : admin));
     } catch (err) {
       console.error(err);
     }
@@ -166,7 +208,7 @@ export const AuthProvider = (props) => {
 
     dispatch({
       type: HANDLERS.SIGN_IN,
-      payload: admin?.[0]
+      payload: email === admin[0].email || password === admin[0].password ? admin?.[0] : subAdmin
     });
   };
 
@@ -178,6 +220,8 @@ export const AuthProvider = (props) => {
     try {
       window.sessionStorage.setItem('authenticated', 'false');
       window.sessionStorage.removeItem('admin');
+      setAdmin(null);
+      handleAdmin();
     } catch (err) {
       console.error(err);
     }

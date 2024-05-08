@@ -11,6 +11,7 @@ import {
   TextField
 } from '@mui/material';
 import { updateAdminSettings } from '../../utils/set-settings';
+import { useAuth } from '../../hooks/use-auth';
 
 export const SettingsPassword = () => {
   const [formModified, setFormModified] = useState(false);
@@ -19,7 +20,8 @@ export const SettingsPassword = () => {
     password: '',
     confirm: ''
   });
-
+  const auth = useAuth()
+  const { admin } = auth;
   const handleChange = useCallback(
     (event) => {
       setValues((prevState) => ({
@@ -39,7 +41,7 @@ export const SettingsPassword = () => {
     }
     // console.log(values, 'values');
     try {
-      await updateAdminSettings(values);
+      await updateAdminSettings(values, admin);
       setSnackbarMessage('Admin settings updated successfully!');
       setFormModified(false); // Reset form modification status
     } catch (error) {
@@ -65,7 +67,7 @@ export const SettingsPassword = () => {
         noValidate
         onSubmit={handleSubmit}
       >
-        <Card sx={{border: '1px solid #556ee6'}}>
+        <Card sx={{ border: '1px solid #556ee6' }}>
           <CardHeader
             subheader="Update password"
             title="Password"

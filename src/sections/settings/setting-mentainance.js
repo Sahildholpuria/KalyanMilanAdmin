@@ -51,7 +51,7 @@ export const Maintainence = () => {
                 setSnackbarMessage('All fields are required!')
                 return;
             }
-            console.log(values, 'values');
+            // console.log(values, 'values');
             try {
                 await updateAdminSettings(values);
                 setSnackbarMessage('Admin settings updated successfully!');

@@ -33,7 +33,7 @@ const AutoDeposit = () => {
     }
     useEffect(() => {
         // Dynamically set the document title
-        document.title = 'Bids | KalyanMatka Official';
+        document.title = 'Auto | KalyanMatka Official';
 
         // Clean up the effect when the component unmounts
         return () => {

@@ -2,7 +2,7 @@ import { collection, deleteField, getDocs, query, updateDoc, where, writeBatch }
 import { db, imgDB } from "../contexts/firebase";
 import { deleteObject, ref } from "firebase/storage";
 
-export const deleteSlider = async (id, img) => {
+export const deleteSubAdmin = async (id) => {
     try {
         const q = query(collection(db, 'admin'), where('name', '==', 'admin'));
         const querySnapshot = await getDocs(q);
@@ -16,23 +16,23 @@ export const deleteSlider = async (id, img) => {
         });
 
         await batch.commit();
-        if (img) {
-            const imageRef = ref(imgDB, img);
-            deleteObject(imageRef)
-                .then(() => {
-                    // Image deleted successfully
-                })
-                .catch((error) => {
-                    // Handle error
-                    console.log(error, 'error');
-                });
-        }
-        console.log('SliderData deleted successfully');
+        // if (img) {
+        //     const imageRef = ref(imgDB, img);
+        //     deleteObject(imageRef)
+        //         .then(() => {
+        //             // Image deleted successfully
+        //         })
+        //         .catch((error) => {
+        //             // Handle error
+        //             console.log(error, 'error');
+        //         });
+        // }
+        console.log('SubAdmin deleted successfully');
     } catch (error) {
         console.error('Error deleting slider:', error);
     }
 };
-export const updateSlider = async (id, value) => {
+export const updateSubAdmin = async (id, value) => {
     try {
         const q = query(collection(db, 'admin'), where('name', '==', 'admin'));
         const querySnapshot = await getDocs(q);
@@ -47,12 +47,12 @@ export const updateSlider = async (id, value) => {
         });
 
         await batch.commit();
-        console.log('SliderData Updated successfully');
+        console.log('SubAdmin Updated successfully');
     } catch (error) {
         console.error('Error update slider:', error);
     }
 };
-export const addSliderData = async (values, now, handleOpenSnackbar, setLoading) => {
+export const addSubAdminData = async (values, now, handleOpenSnackbar, setLoading) => {
     try {
         const q = query(collection(db, 'admin'), where('name', '==', 'admin'));
         const querySnapshot = await getDocs(q);
@@ -64,7 +64,7 @@ export const addSliderData = async (values, now, handleOpenSnackbar, setLoading)
 
             // Find the next available sliderData field
             for (let i = 1; i <= 100; i++) {
-                const key = `sliderData${i}`;
+                const key = `subAdmin${i}`;
                 if (!data[key]) {
                     newKey = key;
                     break;
@@ -73,16 +73,16 @@ export const addSliderData = async (values, now, handleOpenSnackbar, setLoading)
 
             if (!newKey) {
                 // Maximum number of sliderData fields reached
-                handleOpenSnackbar('Cannot add more sliderData fields');
+                handleOpenSnackbar('Cannot add more subAdmin fields');
                 setLoading(false);
                 return;
             }
 
             newSliderData[newKey] = {
-                title: values.title,
+                name: values.name,
                 status: values.status === 'Yes' ? true : false,
-                order: values.order,
-                image: values.image,
+                email: values.email,
+                password: values.password,
                 date: now.toString(),
             };
 
@@ -90,10 +90,21 @@ export const addSliderData = async (values, now, handleOpenSnackbar, setLoading)
             await updateDoc(doc.ref, newSliderData);
 
             // Log success message
-            console.log('SliderData added successfully!');
-            handleOpenSnackbar('SliderData added successfully!');
+            console.log('SubAdmin added successfully!');
+            handleOpenSnackbar('SubAdmin added successfully!');
         });
     } catch (error) {
-        
+
     }
+};
+// Email validation function
+export const validateEmail = (email) => {
+    // Regular expression for basic email validation
+    const emailRegex = /^[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
+
+    if (!emailRegex) {
+        return 'Invalid email address';
+    }
+
+    return '';
 };

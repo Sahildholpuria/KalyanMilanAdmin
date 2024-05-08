@@ -8,8 +8,12 @@ import { SettingApp } from '../sections/settings/settings-app';
 import { SupportDetails } from '../sections/settings/support-details';
 import { Maintainence } from '../sections/settings/setting-mentainance';
 import SliderData from '../sections/settings/slider-data';
+import SubAdminData from '../sections/settings/subadmin-data';
+import { useAuth } from '../hooks/use-auth';
 
 const Settings = () => {
+  const auth = useAuth();
+  const { admin } = auth;
   useEffect(() => {
     // Dynamically set the document title
     document.title = 'Settings | KalyanMatka Official';
@@ -44,6 +48,9 @@ const Settings = () => {
             <SupportDetails />
             <Maintainence />
             <SliderData />
+            {admin[0]?.name === 'Admin' &&
+              <SubAdminData />
+            }
           </Stack>
         </Container>
       </Box>

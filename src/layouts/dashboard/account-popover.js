@@ -17,7 +17,7 @@ export const AccountPopover = (props) => {
     },
     [onClose, auth,]
   );
-
+  // console.log(admin)
   return (
     <Popover
       anchorEl={anchorEl}

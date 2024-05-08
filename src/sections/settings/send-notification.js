@@ -65,7 +65,7 @@ export const SendNotification = () => {
     const handleCloseSnackbar = () => {
         setSnackbarMessage(null);
     };
-    console.log(values)
+    // console.log(values)
     return (
         <>
             <Snackbar

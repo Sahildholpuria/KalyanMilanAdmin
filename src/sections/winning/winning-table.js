@@ -63,7 +63,7 @@ export const WinTable = (props) => {
             const formattedDate = new Date(valuesResult.result_date).toDateString();
             const q = query(collection(db, 'User_Events'), where('date', '==', formattedDate), where('event', '==', valuesResult.game_name), where('session', '==', session), orderBy('won', 'asc'));
             await onSnapshot(q, (querySnapshot) => {
-                console.log(querySnapshot)
+                // console.log(querySnapshot)
                 if (querySnapshot.empty) {
                     setResultData([]);
                     handleOpenSnackbar('No Winning history available!')
@@ -152,7 +152,7 @@ export const WinTable = (props) => {
     //     setSelectedCustomer(null);
     //     setOpenDialog(false);
     // };
-    console.log(resultData)
+    // console.log(resultData)
     return (
         <Card sx={{border: '1px solid #556ee6'}}>
             <CardHeader

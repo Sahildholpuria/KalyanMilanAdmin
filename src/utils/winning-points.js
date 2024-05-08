@@ -30,7 +30,7 @@ export const AddWinningHistory = async (tableData, wonData) => {
         for (const data of tableData) {
             await addDoc(collection(db, 'winningHistory'), data);
         }
-        console.log(wonData);
+        // console.log(wonData);
         // Loop through tableData to update user's coins
         for (const data of tableData) {
             // Fetch the user with the specified phone number
@@ -66,7 +66,7 @@ export const AddWinningHistory = async (tableData, wonData) => {
             const userEventsSnapshot = await getDocs(userEventsQuery);
 
             if (!userEventsSnapshot.empty) {
-                console.log(data.won)
+                // console.log(data.won)
                 // Update the document in 'User_Events' with the won amount
                 const userEventsDocRef = userEventsSnapshot.docs[0].ref;
                 await updateDoc(userEventsDocRef, {

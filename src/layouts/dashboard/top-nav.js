@@ -18,6 +18,7 @@ import { alpha } from '@mui/material/styles';
 import { usePopover } from '../../hooks/use-popover';
 import { AccountPopover } from './account-popover';
 import { useTheme } from '@mui/material/styles';
+import { useAuth } from '../../hooks/use-auth';
 
 const SIDE_NAV_WIDTH = 280;
 const TOP_NAV_HEIGHT = 64;
@@ -27,6 +28,8 @@ export const TopNav = (props) => {
   const { onNavOpen } = props;
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const accountPopover = usePopover();
+  const auth = useAuth();
+  const { admin } = auth;
 
   return (
     <>
@@ -113,7 +116,7 @@ export const TopNav = (props) => {
                 height: 40,
                 width: 40
               }}
-              src="/assets/avatars/avatar-marcus-finn.png"
+              src={`${admin[0]?.avatar}`}
             />
           </Stack>
         </Stack>

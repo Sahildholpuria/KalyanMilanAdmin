@@ -11,7 +11,7 @@ export const ActionDialog = ({ openDialog, handleCloseDialog, handleCommonAction
             uploadBytes(imgs, e.target.files[0]).then(data => {
                 getDownloadURL(data.ref).then(val => {
                     setImg(val)
-                    console.log(val)
+                    // console.log(val)
                 })
             })
             setLoading(false);

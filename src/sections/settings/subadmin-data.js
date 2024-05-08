@@ -9,22 +9,25 @@ import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import AddSlider from './slider-detail-dialog';
 import { deleteObject, ref } from 'firebase/storage';
 import { addSliderData } from '../../utils/slider-actions';
+import { SubAdminDataTable } from './subadmin-data-table';
+import AddSubAdmin from './subadmin-detail-dialog';
+import { addSubAdminData, validateEmail } from '../../utils/subAdmin-actions';
 
 const now = new Date();
 
-const SliderData = () => {
+const SubAdminData = () => {
     const [loading, setLoading] = useState(false);
-    const [sliderData, setSliderData] = useState(null);
+    const [subAdminData, setSubAdminData] = useState(null);
     const [values, setValues] = useState({
-        title: '',
+        name: '',
+        email: '',
+        password: '',
         status: '',
-        order: '',
-        image: null,
         date: now.toString(),
     });
     const [openDialog, setOpenDialog] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState(null);
-    const [img, setImg] = useState('')
+    // const [img, setImg] = useState('')
 
     const handleOpenDialog = () => {
         setOpenDialog(true);
@@ -34,42 +37,46 @@ const SliderData = () => {
         setOpenDialog(false);
     };
     const handleReset = () => {
-        if (img) {
-            const imageRef = ref(imgDB, img);
-            deleteObject(imageRef)
-                .then(() => {
-                    // Image deleted successfully
-                })
-                .catch((error) => {
-                    // Handle error
-                    console.log(error, 'error');
-                });
-        }
+        // if (img) {
+        //     const imageRef = ref(imgDB, img);
+        //     deleteObject(imageRef)
+        //         .then(() => {
+        //             // Image deleted successfully
+        //         })
+        //         .catch((error) => {
+        //             // Handle error
+        //             console.log(error, 'error');
+        //         });
+        // }
         setValues((prevState) => ({
             ...prevState,
-            title: '',
+            name: '',
+            email: '',
+            password: '',
             status: '',
-            order: '',
-            image: null,
             date: now.toString(),
         }))
     }
     const handleCommonAction = async () => {
         try {
-            if (!values.title || !values.status || !values.order || !values.image) {
+            if (!values.name || !values.status || !values.email || !values.password) {
                 handleOpenSnackbar('All fields are required!')
+                return;
+            }
+            if(validateEmail(values.email)){
+                handleOpenSnackbar(validateEmail(values.email));
                 return;
             }
             handleCloseDialog();
             setLoading(true);
             // Add the data to the Events table in Firebase
-            await addSliderData(values, now, handleOpenSnackbar, setLoading);
+            await addSubAdminData(values, now, handleOpenSnackbar, setLoading);
             setValues((prevState) => ({
                 ...prevState,
-                title: '',
+                name: '',
+                email: '',
+                password: '',
                 status: '',
-                order: '',
-                image: null,
                 date: now.toString(),
             }))
 
@@ -86,19 +93,19 @@ const SliderData = () => {
             const q = query(collection(db, 'admin'), where('name', '==', 'admin'));
             await onSnapshot(q, (querySnapshot) => {
                 const data = querySnapshot.docs[0].data();
-                const sliders = [];
+                const subAdminData = [];
                 // Iterate over the keys of the document
                 for (const key in data) {
                     // Check if the key starts with 'slider' and the value is truthy
-                    if (key.startsWith('sliderData') && data[key]) {
-                        sliders.push({
+                    if (key.startsWith('subAdmin') && data[key]) {
+                        subAdminData.push({
                             id: key, // Assuming key is the ID
                             ...data[key],
                         });
                     }
                 }
-                // console.log(sliders)
-                setSliderData(sliders);
+                // console.log(subAdminData)
+                setSubAdminData(subAdminData);
             })
         } catch (error) {
             console.log(error, 'error')
@@ -138,7 +145,7 @@ const SliderData = () => {
                         >
                             <Stack spacing={1}>
                                 <Typography variant="h5">
-                                    Slider Image Management
+                                    Sub Admin Management
                                 </Typography>
                                 {/* <Stack
                   alignItems="center"
@@ -177,18 +184,18 @@ const SliderData = () => {
                                     variant="contained"
                                     onClick={handleOpenDialog}
                                 >
-                                    Add Slider Image
+                                    Add SubAdmin
                                 </Button>
                             </div>
                         </Stack>
-                        <SliderDataTable valuesResult={sliderData} handleOpenSnackbar={handleOpenSnackbar}/>
+                        <SubAdminDataTable valuesResult={subAdminData} handleOpenSnackbar={handleOpenSnackbar} />
                     </Stack>
                 </Container>
             </Box>
-            <AddSlider
+            <AddSubAdmin
                 values={values}
                 setValues={setValues}
-                setImg={setImg}
+                // setImg={setImg}
                 openDialog={openDialog}
                 handleOpenSnackbar={handleOpenSnackbar}
                 setLoading={setLoading}
@@ -210,4 +217,4 @@ const SliderData = () => {
     );
 };
 
-export default SliderData;
+export default SubAdminData;
