@@ -15,14 +15,13 @@ import {
     TableRow,
 } from '@mui/material';
 import { Scrollbar } from '../../components/scrollbar';
-import { collection, doc, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
+import { collection, doc, onSnapshot, orderBy, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../contexts/firebase';
 import nProgress from 'nprogress';
 import { EditBidDialog } from '../../utils/bids-edit-dialog';
 import { useEffect, useState } from 'react';
-import { CustomSearch } from '../../utils/CustomSearch';
 
-export const AutoDepositTable = (props) => {
+export const SingleUserAutoDepositTable = (props) => {
     const {
         // count = 0,
         // items = [],
@@ -37,45 +36,39 @@ export const AutoDepositTable = (props) => {
         rowsPerPage = 0,
         // selected = [],
         // handleRowSelect,
-        // searchQuery = '', // Accept search query as a prop
+        searchQuery = '', // Accept search query as a prop
         handleOpenSnackbar,
+        show,
     } = props;
     const [resultData, setResultData] = useState([]);
-    const [values, setValues] = useState({
-        open_panna: '',
-        open_digit: '',
-        close_panna: '',
-        close_digit: '',
-    });
-    const [openDialog, setOpenDialog] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [count, setCount] = useState(0);
     const sortedDate = resultData?.sort((a, b) => b.date - a.date);
-    const filteredItems = sortedDate?.filter((customer) =>
-        customer.user_name.toLowerCase().includes(searchQuery.toLowerCase()) || customer.method.toLowerCase().includes(searchQuery.toLowerCase())
-        // Add more fields as needed for search
-    );
+    // const filteredItems = sortedDate?.filter((customer) =>
+    //     customer.user_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    //     customer.session.toLowerCase().includes(searchQuery.toLowerCase())
+    //     // Add more fields as needed for search
+    // );
     // Apply pagination to the filtered results
     const start = page * rowsPerPage;
     const end = start + rowsPerPage;
-    const paginatedItems = filteredItems?.slice(start, end);
+    const paginatedItems = sortedDate?.slice(start, end);
 
     const fetchData = async () => {
         try {
-            nProgress.start();
             setLoading(true);
+            // console.log('phone', valuesResult.phone)
             // Replace this with the actual logic to fetch data from your source
             // For example, if you're using Firestore
-            const formattedDate = new Date(valuesResult.date).toDateString();
-            const by = valuesResult.money_type;
-            const q = query(collection(db, 'AutoDeposit'), where('date', '==', formattedDate), where('by', '==', by));
+            const q = query(collection(db, 'AutoDeposit'), where('phone', '==', valuesResult.phone));
             await onSnapshot(q, (querySnapshot) => {
                 if (querySnapshot.empty) {
                     setResultData([]);
-                    handleOpenSnackbar('No Deposit history available!')
+                    // handleOpenSnackbar('No Winning history available!')
                 } else {
+                    // querySnapshot.docs.map(docs => {
+                    //     const q = query(collection(db, 'User_Events'), where('date', '==', formattedDate), where('event', '==', valuesResult.game_name), where('game', '==', valuesResult.game_type), where('session', '==', valuesResult.session), where('phone', '==', docs.data().phone));
+                    //     onSnapshot(q, (querySnapshot) => {
                     setResultData(querySnapshot.docs.map(doc => ({
                         id: doc.ref._key.path.segments.slice(-1)[0],
                         // avatar: '',
@@ -83,6 +76,8 @@ export const AutoDepositTable = (props) => {
                         phone: doc.data().phone,
                         method: doc.data().method,
                         by: doc.data().by,
+                        // game_name: doc.data().event,
+                        // game_type: doc.data().game,
                         // session: doc.data().session ? doc.data().session : 'N/A',
                         date: new Date(doc.data().date),
                         // opendigit: doc.data().opendigit ? doc.data().opendigit : 'N/A',
@@ -92,108 +87,61 @@ export const AutoDepositTable = (props) => {
                         amount: doc.data().amount,
                     })));
                     setCount(querySnapshot.size);
+                    // })
                 }
             })
         } catch (error) {
             console.error('Error fetching result data:', error);
         } finally {
-            nProgress.done();
             setLoading(false);
         }
     };
-    // Function to handle the common action (in this case, console.log)
-    // const handleCommonAction = async () => {
-    //     try {
-    //         handleCloseDialog();
-    //         setLoading(true);
-    //         // Replace "N/A" with ""
-    //         const updatedValues = {
-    //             openpanna: values.open_panna === 'N/A' ? '' : values.open_panna,
-    //             opendigit: values.open_digit === 'N/A' ? '' : values.open_digit,
-    //             closepanna: values.close_panna === 'N/A' ? '' : values.close_panna,
-    //             closedigit: values.close_digit === 'N/A' ? '' : values.close_digit,
-    //         };
 
-
-    //         // Update the Firestore document with the updated values
-    //         const bidDocRef = doc(db, 'User_Events', selectedCustomer.id);
-
-    //         await updateDoc(bidDocRef, updatedValues);
-
-    //         // Log success message
-    //         console.log('Document updated successfully!');
-    //         handleOpenSnackbar(`Bid updated successfully!`);
-
-    //         // Close the dialog
-    //     } catch (error) {
-    //         handleOpenSnackbar(`Error updating bid!`);
-    //         console.error('Error updating bid:', error);
-    //     }
-    //     setLoading(false);
-    // };
     useEffect(() => {
-        if (valuesResult?.date) {
+        if (valuesResult?.phone) {
             // Fetch data based on date
             fetchData();
         }
     }, [valuesResult]);
-    // Function to handle opening the dialog
-    // const handleOpenDialog = (customer) => {
-    //     setSelectedCustomer(customer);
-    //     setValues((prevState) => ({
-    //         ...prevState,
-    //         // updated_bid: bid, 
-    //         open_panna: customer?.openpanna,
-    //         open_digit: customer?.opendigit,
-    //         close_panna: customer?.closepanna,
-    //         close_digit: customer?.closedigit,
-    //     }))
-    //     setOpenDialog(true);
-    // };
-    // Function to handle closing the dialog
-    // const handleCloseDialog = () => {
-    //     setSelectedCustomer(null);
-    //     setOpenDialog(false);
-    // };
-    const handleSearch = (query) => {
-        setSearchQuery(query);
-    };
+
     return (
         <Card sx={{ border: '1px solid #556ee6' }}>
             <CardHeader
+                sx={{ color: 'info.dark' }}
                 // subheader="The information can be edited"
-                title="Auto Deposit History List"
-                action={<CustomSearch onSearch={handleSearch} />}
+                title="Total Deposit History"
             />
             <Scrollbar sx={{ '.simplebar-placeholder': { display: 'none !important' } }}>
                 <Box sx={{ minWidth: 800 }}>
                     <Table>
                         <TableHead>
                             <TableRow>
-                                {/* <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedAll}
-                    indeterminate={selectedSome}
-                    onChange={(event) => {
-                      if (event.target.checked) {
-                        onSelectAll?.();
-                      } else {
-                        onDeselectAll?.();
-                      }
-                    }}
-                  />
-                </TableCell> */}
                                 <TableCell>
                                     #
                                 </TableCell>
                                 <TableCell>
-                                    User Name
+                                    Deposited By
                                 </TableCell>
+                                {/* <TableCell>
+                                    Game Type
+                                </TableCell>
+                                <TableCell>
+                                    Session
+                                </TableCell>
+                                <TableCell>
+                                    Open Panna
+                                </TableCell>
+                                <TableCell>
+                                    Open Digit
+                                </TableCell>
+                                <TableCell>
+                                    Close Panna
+                                </TableCell>
+                                <TableCell>
+                                    Close Digit
+                                </TableCell> */}
                                 <TableCell>
                                     Method
-                                </TableCell>
-                                <TableCell>
-                                    Deposited By
                                 </TableCell>
                                 <TableCell>
                                     Phone
@@ -226,61 +174,48 @@ export const AutoDepositTable = (props) => {
                                     // selected={isSelected}
                                     // onClick={() => handleRowSelect(customer.id)}
                                     >
-                                        {/* <TableCell padding="checkbox">
-                      <Checkbox
-                        checked={isSelected}
-                        onChange={(event) => {
-                          if (event.target.checked) {
-                            onSelectOne?.(customer.id);
-                          } else {
-                            onDeselectOne?.(customer.id);
-                          }
-                        }}
-                      />
-                    </TableCell> */}
                                         {/* <TableCell>
-                                            <Stack
-                                                alignItems="center"
-                                                direction="row"
-                                                spacing={2}
-                                            >
-                                                <Avatar src={customer.avatar}>
-                                                    {getInitials(customer.name)}
-                                                </Avatar>
-                                                <Typography variant="subtitle2">
-                                                    {customer.name}
-                                                </Typography>
-                                            </Stack>
+                                            {customer.user_name}
                                         </TableCell> */}
                                         <TableCell>
                                             {index + 1 + page * rowsPerPage}
                                         </TableCell>
-                                        <TableCell>
-                                            {customer.user_name}
+                                        <TableCell sx={{ textTransform: 'capitalize' }}>
+                                            {customer.by}
                                         </TableCell>
                                         <TableCell>
                                             {customer.method.toUpperCase()}
                                         </TableCell>
-                                        <TableCell sx={{ textTransform: 'capitalize'}}>
-                                            {customer.by}
-                                        </TableCell>
+                                        {/* <TableCell>
+                                            {customer.user_name}
+                                        </TableCell> */}
                                         <TableCell>
                                             {customer.phone}
                                         </TableCell>
+                                        {/* <TableCell>
+                                            {customer.game_type}
+                                        </TableCell>
+                                        <TableCell>
+                                            {customer.session}
+                                        </TableCell>
+                                        <TableCell>
+                                            {customer.openpanna}
+                                        </TableCell>
+                                        <TableCell>
+                                            {customer.opendigit}
+                                        </TableCell>
+                                        <TableCell>
+                                            {customer.closepanna}
+                                        </TableCell>
+                                        <TableCell>
+                                            {customer.closedigit}
+                                        </TableCell> */}
                                         <TableCell>
                                             {customer.amount}
                                         </TableCell>
                                         <TableCell>
                                             {date}
                                         </TableCell>
-                                        {/* <TableCell>
-                                            <Button
-                                                variant="outlined"
-                                                onClick={() => handleOpenDialog(customer)}
-                                            >
-                                                Edit
-                                            </Button>
-                                        </TableCell> */}
                                     </TableRow>
                                 );
                             }))}
@@ -319,7 +254,7 @@ export const AutoDepositTable = (props) => {
     );
 };
 
-AutoDepositTable.propTypes = {
+SingleUserAutoDepositTable.propTypes = {
     count: PropTypes.number,
     items: PropTypes.array,
     onDeselectAll: PropTypes.func,

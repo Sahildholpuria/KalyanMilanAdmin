@@ -43,7 +43,7 @@ export const SingleUserWinTable = (props) => {
     const [resultData, setResultData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [count, setCount] = useState(0);
-    const sortedDate = resultData?.sort((a, b) => b.open_date - a.open_date);
+    const sortedDate = resultData?.sort((a, b) => b.date - a.date);
     // const filteredItems = sortedDate?.filter((customer) =>
     //     customer.user_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     //     customer.session.toLowerCase().includes(searchQuery.toLowerCase())

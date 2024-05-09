@@ -15,6 +15,7 @@ import { SingleUserWithdrawTable } from '../sections/withdraw/single-user-withdr
 import { SingleUserBidTable } from '../sections/bids/single-user-bid-table';
 import { getRandomAvatar } from '../utils/get-initials';
 import { SingleUserWinTable } from '../sections/winning/single-user-winning-table';
+import { SingleUserAutoDepositTable } from '../sections/account/single-user-deposit-table';
 
 const User = () => {
     const params = useParams();
@@ -24,6 +25,8 @@ const User = () => {
     const [bidrowsPerPage, setBidRowsPerPage] = useState(5);
     const [winpage, setWinPage] = useState(0);
     const [winrowsPerPage, setWinRowsPerPage] = useState(5);
+    const [autopage, setAutoPage] = useState(0);
+    const [autorowsPerPage, setAutoRowsPerPage] = useState(5);
     const [user, setUser] = useState(null);
     const [items, setItems] = useState([]);
     const handlePageChange = useCallback(
@@ -62,6 +65,19 @@ const User = () => {
     const handleWinRowsPerPageChange = useCallback(
         (event) => {
             setWinRowsPerPage(event.target.value);
+        },
+        []
+    );
+    const handleAutoPageChange = useCallback(
+        (event, value) => {
+            setAutoPage(value);
+        },
+        []
+    );
+
+    const handleAutoRowsPerPageChange = useCallback(
+        (event) => {
+            setAutoRowsPerPage(event.target.value);
         },
         []
     );
@@ -210,6 +226,23 @@ const User = () => {
                             // onSelectOne={customersSelection.handleSelectOne}
                             page={winpage}
                             rowsPerPage={winrowsPerPage}
+                        // selected={customersSelection.selected}
+                        // searchQuery={searchQuery} // Pass the search query as a prop
+                        />
+                        <SingleUserAutoDepositTable
+                            // count={users?.length}
+                            // items={users}
+                            valuesResult={user}
+                            // handleRowSelect={handleRowSelect}
+                            // onDeselectAll={customersSelection.handleDeselectAll}
+                            // onDeselectOne={customersSelection.handleDeselectOne}
+                            onPageChange={handleAutoPageChange}
+                            onRowsPerPageChange={handleAutoRowsPerPageChange}
+                            // handleOpenSnackbar={handleOpenSnackbar}
+                            // onSelectAll={customersSelection.handleSelectAll}
+                            // onSelectOne={customersSelection.handleSelectOne}
+                            page={autopage}
+                            rowsPerPage={autorowsPerPage}
                         // selected={customersSelection.selected}
                         // searchQuery={searchQuery} // Pass the search query as a prop
                         />
