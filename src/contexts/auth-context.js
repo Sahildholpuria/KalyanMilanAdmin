@@ -151,7 +151,7 @@ export const AuthProvider = (props) => {
   useEffect(
     () => {
       initialize();
-      if (window.sessionStorage.getItem('authenticated') === 'false') {
+      if (window.sessionStorage.getItem('authenticated') === 'false' || window.sessionStorage.getItem('authenticated') === null) {
         handleAdmin();
       }
       fetchSubAdmins();
@@ -182,7 +182,8 @@ export const AuthProvider = (props) => {
 
   const signIn = async (email, password) => {
     const subAdmin = subAdmins.find(admin => admin.email === email && admin.password === password && admin.status);
-    // console.log(subAdmin, 'subadmin')
+    console.log(subAdmin, 'subadmin')
+    console.log(admin, 'admin')
     let adminCondition = (email === admin[0].email || password === admin[0].password);
     if (!adminCondition && !subAdmin) {
       throw new Error('Please check your email and password');
