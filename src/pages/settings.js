@@ -43,7 +43,9 @@ const Settings = () => {
               Settings
             </Typography>
             <SettingDetails />
-            <SettingsPassword />
+            {admin[0]?.name === 'Admin' &&
+              <SettingsPassword />
+            }
             <SettingApp />
             <SupportDetails />
             <Maintainence />

@@ -182,9 +182,9 @@ export const AuthProvider = (props) => {
 
   const signIn = async (email, password) => {
     const subAdmin = subAdmins.find(admin => admin.email === email && admin.password === password && admin.status);
-    console.log(subAdmin, 'subadmin')
-    console.log(admin, 'admin')
-    let adminCondition = (email === admin[0].email || password === admin[0].password);
+    // console.log(subAdmin, 'subadmin')
+    // console.log(admin, 'admin')
+    let adminCondition = (email === admin[0].email && password === admin[0].password);
     if (!adminCondition && !subAdmin) {
       throw new Error('Please check your email and password');
     }
@@ -209,7 +209,7 @@ export const AuthProvider = (props) => {
 
     dispatch({
       type: HANDLERS.SIGN_IN,
-      payload: email === admin[0].email || password === admin[0].password ? admin?.[0] : subAdmin
+      payload: email === admin[0].email && password === admin[0].password ? admin?.[0] : subAdmin
     });
   };
 
@@ -239,7 +239,7 @@ export const AuthProvider = (props) => {
         signIn,
         signUp,
         signOut,
-        admin
+        admin,
       }}
     >
       {children}
